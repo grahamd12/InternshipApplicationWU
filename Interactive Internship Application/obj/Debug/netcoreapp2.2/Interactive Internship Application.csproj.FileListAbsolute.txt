@@ -1,0 +1,30 @@
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.deps.json
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.runtimeconfig.json
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.runtimeconfig.dev.json
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.dll
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.pdb
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.Views.dll
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.Views.pdb
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csprojAssemblyReference.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csproj.CoreCompileInputs.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorAssemblyInfo.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorAssemblyInfo.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.AssemblyInfoInputs.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.AssemblyInfo.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.TagHelpers.input.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.TagHelpers.output.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorCoreGenerate.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Home/Index.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Home/Privacy.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Shared/Error.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Shared/_CookieConsentPartial.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Shared/_Layout.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/Shared/_ValidationScriptsPartial.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/_ViewImports.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Razor/Views/_ViewStart.g.cshtml.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorTargetAssemblyInfo.cache
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorTargetAssemblyInfo.cs
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.Views.pdb
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.dll
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.pdb
+/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csproj.CopyComplete
