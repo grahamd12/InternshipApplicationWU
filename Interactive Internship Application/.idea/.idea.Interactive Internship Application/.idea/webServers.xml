@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="fecc45af-b67c-4aef-8138-1b64d2ab6784" name="Birdnest" url="https://apps.birdnest.org/csci475teamthree/">
+        <fileTransfer host="apps.birdnest.org" port="22" rootFolder="/csci475_2019S/TeamThree" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
