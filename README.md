@@ -1,4 +1,2 @@
 # website
-a website for website things
-
-hey groupme
+Software solution that digitizes Winthrop University's College of Business Administration's Internship Application Process. 
