@@ -12413,28 +12413,30 @@
     ]
   },
   "packageFolders": {
-    "/home/dan/.nuget/packages/": {},
-    "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\teria\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/Interactive Internship Application.csproj",
+      "projectUniqueName": "C:\\Users\\teria\\Source\\Repos\\dbranham20\\InternshipApplicationWU\\Interactive Internship Application\\Interactive Internship Application.csproj",
       "projectName": "Interactive Internship Application",
-      "projectPath": "/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/Interactive Internship Application.csproj",
-      "packagesPath": "/home/dan/.nuget/packages/",
-      "outputPath": "/home/dan/Apps/InternshipApplicationWU/Interactive Internship Application/obj/",
+      "projectPath": "C:\\Users\\teria\\Source\\Repos\\dbranham20\\InternshipApplicationWU\\Interactive Internship Application\\Interactive Internship Application.csproj",
+      "packagesPath": "C:\\Users\\teria\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\teria\\Source\\Repos\\dbranham20\\InternshipApplicationWU\\Interactive Internship Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/dan/.config/NuGet/NuGet.Config"
+        "C:\\Users\\teria\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
