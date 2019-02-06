@@ -17,6 +17,21 @@ namespace Interactive_Internship_Application.Controllers
         {
             return View();
         }
+
+         public IActionResult Application()
+        {
+            return View();
+        }
+
+        public IActionResult CheckStatus()
+        {
+            return View();
+        }
+
+        public IActionResult SignJobDescription()
+        {
+            return View();
+        }
     }
 }
 

@@ -17,6 +17,12 @@ h1 {
 }
 h2{
     font-size: 2em;
+    text-align: center;
+}
+p{
+  font-size:1em;
+  align: left; 
+
 }
 @media (min-width: 768px) {
   html {
@@ -51,6 +57,8 @@ button.accept-policy {
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
+    border-radius: 25px; /* for rounded corners */
+
 }
 
 .buttonMenu {
@@ -64,7 +72,10 @@ button.accept-policy {
     font-size: 14px;
     margin: 4px 2px;
     cursor: pointer;
+    border-radius: 25px; /* for rounded corners */
+
 }
+
 
 div {
     margin-right: 10px;

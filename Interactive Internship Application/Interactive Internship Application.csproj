@@ -15,8 +15,14 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+       <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.1" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
+   
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Composition" Version="1.0.30" ExcludeAssets="All" />
+    <PackageReference Include="System.Composition" Version="1.0.31" />
+
     </ItemGroup>
 
 </Project>
