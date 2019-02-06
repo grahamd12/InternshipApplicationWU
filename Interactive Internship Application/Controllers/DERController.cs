@@ -1,41 +1,39 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Interactive_Internship_Application.Models;
 
 namespace Interactive_Internship_Application.Controllers
 {
-    public class StudentController : Controller
+    public class DERController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
-
-        public IActionResult ViewApplications()
+      public IActionResult EditAppTemp()
         {
             return View();
         }
 
-         public IActionResult Application()
+        public IActionResult EditWebsite()
         {
             return View();
         }
-
-        public IActionResult CheckStatus()
+        public IActionResult ManageActiveApps()
         {
             return View();
         }
-
-        public IActionResult SignJobDescription()
+        public IActionResult ManagePreviousApps()
+        {
+            return View();
+        }
+        public IActionResult ManageUsers()
         {
             return View();
         }
     }
 }
-
-/*InvalidOperationException: The view 'Index' was not found.The following locations were searched:
-/Views/Student/Index.cshtml
-/Views/Shared/Index.cshtml
-/Pages/Shared/Index.cshtml */

@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "cc02fb4e5dce3b44e8455e036e849ccfe0be55ee"
+    "signature": "4804b9f8d71b354426a1bd7838c9c4bccd6b6273"
   },
   "compilationOptions": {
     "defines": [
@@ -26,9 +26,12 @@
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
+          "Microsoft.Composition": "1.0.30",
           "Microsoft.EntityFrameworkCore.Sqlite": "2.2.1",
           "Microsoft.NETCore.App": "2.2.0",
-          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.0"
+          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.0",
+          "System.Composition": "1.0.31",
+          "System.Data.SqlClient": "4.6.0"
         },
         "runtime": {
           "Interactive Internship Application.dll": {}
@@ -72,6 +75,7 @@
           "lib/netstandard1.3/Microsoft.CodeAnalysis.Workspaces.dll": {}
         }
       },
+      "Microsoft.Composition/1.0.30": {},
       "Microsoft.Data.Sqlite.Core/2.2.1": {
         "dependencies": {
           "SQLitePCLRaw.core": "1.1.11"
@@ -3724,6 +3728,13 @@
       "path": "microsoft.codeanalysis.workspaces.common/2.8.0",
       "hashPath": "microsoft.codeanalysis.workspaces.common.2.8.0.nupkg.sha512"
     },
+    "Microsoft.Composition/1.0.30": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dUqE4Q9Pv35IoJyamZ2Fai66vAH568hz1vfPyt9FRy00UafIzmSuC/8CA+ZgqCKWELjirSNeOK8XtTB6OILj/w==",
+      "path": "microsoft.composition/1.0.30",
+      "hashPath": "microsoft.composition.1.0.30.nupkg.sha512"
+    },
     "Microsoft.Data.Sqlite.Core/2.2.1": {
       "type": "package",
       "serviceable": true,
@@ -3951,14 +3962,14 @@
     "System.Composition.AttributedModel/1.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NHWhkM3ZkspmA0XJEsKdtTt1ViDYuojgSND3yHhTzwxepiwqZf+BCWuvCbjUt4fe0NxxQhUDGJ5km6sLjo9qnQ==",
+      "sha512": "sha512-rhZeg+i71Q0MZjYIdIpyfzKM7E9EsvytXxq+CaZ/vWCV09ZfMnb0MOEkfM4wfKhTo7Xoo3TJkkfTLx8kUCltkg==",
       "path": "system.composition.attributedmodel/1.0.31",
       "hashPath": "system.composition.attributedmodel.1.0.31.nupkg.sha512"
     },
     "System.Composition.Convention/1.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-GLjh2Ju71k6C0qxMMtl4efHa68NmWeIUYh4fkUI8xbjQrEBvFmRwMDFcylT8/PR9SQbeeL48IkFxU/+gd0nYEQ==",
+      "sha512": "sha512-9GFJIdwg0zr8s2KHVVgVikYfPJ/KntH1D79Z7VzCovUZwDNNq66MMKkLJIOCztXsgDdgYKOp3BAYASRS9EvYGw==",
       "path": "system.composition.convention/1.0.31",
       "hashPath": "system.composition.convention.1.0.31.nupkg.sha512"
     },
@@ -3972,14 +3983,14 @@
     "System.Composition.Runtime/1.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0LEJN+2NVM89CE4SekDrrk5tHV5LeATltkp+9WNYrR+Huiyt0vaCqHbbHtVAjPyeLWIc8dOz/3kthRBj32wGQg==",
+      "sha512": "sha512-iZH3/g2js6fmV3atN2Ym/o+dM2ZMA1GA0GXc70nhbIqK67L29Lh3YrAWiBlyoOIUjNEggA6L4i++7PSID2wMdQ==",
       "path": "system.composition.runtime/1.0.31",
       "hashPath": "system.composition.runtime.1.0.31.nupkg.sha512"
     },
     "System.Composition.TypedParts/1.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0Zae/FtzeFgDBBuILeIbC/T9HMYbW4olAmi8XqqAGosSOWvXfiQLfARZEhiGd0LVXaYgXr0NhxiU1LldRP1fpQ==",
+      "sha512": "sha512-H6fLWxFy+cy+YsHRcvUBskvDYkpDdUJky+GkqYvi8B/5cm/KIQ5QVDOLKuul4PHFZ/x0yRacS8CpY3x/PxiBeA==",
       "path": "system.composition.typedparts/1.0.31",
       "hashPath": "system.composition.typedparts.1.0.31.nupkg.sha512"
     },
@@ -3993,7 +4004,7 @@
     "System.Linq.Parallel/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-td7x21K8LalpjTWCzW/nQboQIFbq9i0r+PCyBBCdLWWnm4NBcdN18vpz/G9hCpUaCIfRL+ZxJNVTywlNlB1aLQ==",
+      "sha512": "sha512-sQecdZDCWCXg4+798nka4N60JB8Zsm5T/QLKvagHFd4FuaFXQw20125Di5GI/AHA/qbWIOBNnQeGeDxMcdALUg==",
       "path": "system.linq.parallel/4.3.0",
       "hashPath": "system.linq.parallel.4.3.0.nupkg.sha512"
     },

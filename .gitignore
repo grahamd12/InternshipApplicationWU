@@ -4,3 +4,17 @@
 
 /.vs
 /Interactive Internship Application/.vs
+.vscode
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.assets.cache
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.dll
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.pdb
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.RazorCoreGenerate.cache
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.Views.dll
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.Views.pdb
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csproj.CoreCompileInputs.cache
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csproj.FileListAbsolute.txt
+Interactive Internship Application/obj/Debug/netcoreapp2.2/Interactive Internship Application.csprojAssemblyReference.cache
+Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.Views.pdb
+Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.dll
+Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.pdb
+Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.Views.dll
