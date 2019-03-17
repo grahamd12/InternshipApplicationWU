@@ -1,0 +1,68 @@
+﻿<!-- AUTHORS: Brando Dill, Daniel Branham, Dustin Graham, and Matea Milojkovic
+     PURPOSE: Login Page for Winthrop Entities
+     LAST MODIFIED: 01/21/2019
+
+    NEEDS WORK: -Validation of login and password combination
+                -link to appropriate homepage based on login (student, professor, etc)
+ -->
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Student"))
+    {
+
+    }
+
+    @*{
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+
+    }*@
+</ul>
+
+<head>
+    <!-- link css styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <h1><i>college of business administration</i></h1>
+        <h2>internship application login</h2>
+        <br />
+
+        <body>
+            <div>
+               <button><a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a></button> 
+            </div> 
+           
+            <div>
+                <button><a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a></button>
+            </div>
+            
+            <br><br>
+            <font size=".75em">
+                *login using your wingspan credentials. contact <a href="https://www.winthrop.edu/technology/default.aspx?id=7739">winthrop it</a> winthrop
+                to reset these credentials, if necessary.
+            </font>
+
+        </body>
+    </div>
+</head>
+
+
+
+
+</html> <!-- end login page code-->
