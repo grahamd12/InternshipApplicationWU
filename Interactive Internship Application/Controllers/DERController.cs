@@ -5,11 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Interactive_Internship_Application.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Interactive_Internship_Application.Controllers
 {
     public class DERController : Controller
     {
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
