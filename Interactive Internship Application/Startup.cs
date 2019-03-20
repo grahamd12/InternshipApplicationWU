@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Interactive_Internship_Application;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Interactive_Internship_Application.Models;
 
 namespace Interactive_Internship_Application
 {
@@ -36,7 +37,7 @@ namespace Interactive_Internship_Application
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("IdentityDBContext")));
+            options.UseSqlServer(Configuration.GetConnectionString("LocalServer")));
             services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 // Default Lockout settings.

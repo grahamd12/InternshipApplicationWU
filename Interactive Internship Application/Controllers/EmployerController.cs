@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Interactive_Internship_Application.Controllers
 {
-    /*
+    [Authorize(Roles = "Admin, Employer")]
     public class EmployerController : Controller
     {
-            [Authorize(Roles = "Admin, Employer")]
 
 
         //create this to have a local variable to manipulate the database
@@ -42,21 +42,21 @@ namespace Interactive_Internship_Application.Controllers
             //returns all entries in the application template table
             using (var context = new Models.ApplicationDbContext())
             {
-                /* var getCompanyInfo = context.ApplicationTemplate.ToList();
+                 var getCompanyInfo = context.ApplicationTemplate.ToList();
 
                  var companyInfoRightOrder =
                      from e in getCompanyInfo.AsQueryable<ApplicationTemplate>()
                      orderby e.Id
                      select e;
                  ViewBag.companyInfo = companyInfoRightOrder;
-                 */
-    //        return View(context.ApplicationTemplate.ToList());
-    //    }
+                 
+            return View(context.ApplicationTemplate.ToList());
+        }
 
 
-    //   }
+       }
     //unsure what the bit below does, Dysean had Matea add this. 
-    /*  [HttpPost]
+      [HttpPost]
       [ValidateAntiForgeryToken]
       public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
       {
@@ -89,8 +89,8 @@ namespace Interactive_Internship_Application.Controllers
 
           return View("Index");
 
-      } */
-    //    }
+      } 
+        }
 
 }
 
