@@ -5,14 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Interactive_Internship_Application.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Interactive_Internship_Application.Controllers
 {
+    //[Area("Identity")]
     public class HomeController : Controller
     {
         public IActionResult Index()
         {
-            return View();
+           
+                return View();
         }
 
         public IActionResult Privacy()

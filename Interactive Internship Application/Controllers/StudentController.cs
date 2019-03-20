@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Interactive_Internship_Application.Controllers
 {
     public class StudentController : Controller
     {
+
+    
+        [Authorize(Roles = "Admin,Student")]
         public IActionResult Index()
         {
             return View();
@@ -32,6 +37,7 @@ namespace Interactive_Internship_Application.Controllers
         {
             return View();
         }
+
     }
 }
 
