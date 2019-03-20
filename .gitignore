@@ -18,3 +18,36 @@ Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internshi
 Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.dll
 Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.pdb
 Interactive Internship Application/bin/Debug/netcoreapp2.2/Interactive Internship Application.Views.dll
+
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Visual Studio Code
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
