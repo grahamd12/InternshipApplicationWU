@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Interactive_Internship_Application.Models
 {
-    public partial class ApplicationDbContext : IdentityDbContext 
-    {
+    //public partial class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext
+    { 
+        
         public ApplicationDbContext()
         {
         }
@@ -16,8 +18,6 @@ namespace Interactive_Internship_Application.Models
         {
 
         }
-
-
 
         public virtual DbSet<ApplicationData> ApplicationData { get; set; }
         public virtual DbSet<ApplicationTemplate> ApplicationTemplate { get; set; }
@@ -33,7 +33,7 @@ namespace Interactive_Internship_Application.Models
                 optionsBuilder.UseSqlServer("Data Source=localhost\\MSSQLSERVER01;Initial Catalog=IIP;Integrated Security=True");
             }
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

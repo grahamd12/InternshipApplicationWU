@@ -1,0 +1,141 @@
+﻿
+
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<!--IS IT POSSIBLE TO KNOW WHICH ENTITY SHE CLICKED AND THEN FILL THIS PAGE DYNAMICALLY,
+INSTEAD OF HAVING A DIFFERENT WEBPAGE PER ENTITY?-->
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>Edit Application Template</i></h1>
+        <br /><br />
+
+</head>
+<body>
+    <div style="text-align: center">
+        <!--STATIC; INFORMATION GOES INTO DB-->
+        <h2>Add a Field</h2>
+        <table border="1" cellpadding="10" align="center">
+            <thead>
+                <tr>
+                    <th>Field Name</th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Field Name</td>
+                    <td><input type="text" name="fieldname" value="" size="15"></td>
+                </tr>
+
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Field Description</td>
+                    <td><input type="text" name="fieldname" value="" size="15"></td>
+                </tr>
+
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Type</td>
+                    <td>
+                        <select name="class">
+                            <option value="select">[Select One]</option>
+                            <option value="checkbox">Check Box</option>
+                            <option value="number">Number</option>
+                            <option value="text">Text</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Required</td>
+                    <td><input type="checkbox" value="1" /></td>
+                </tr>
+
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Validation</td>
+                    <td>
+                        <select name="class">
+                            <option value="select">[Select One]</option>
+                            <option value="none">None</option>
+                            <option value="numbers">Numbers</option>
+                            <option value="text">Text</option>
+                        </select>
+                    </td></td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        <!-- Add Button-->
+        <div style="text-align: center">
+            <a href="~/">
+                <button class="buttonMenu" type="button">Add</button>
+            </a>
+        </div>
+
+    </div>
+    <br><br>
+
+    <!--DYNAMIC SINCE WE NEED TO KNOW THE SPECIFIC FIELDS FOR AN ENTITY IN ORDER TO KNOW WHICH SHE CAN DELETE IN THE FIRST PLACE-->
+    <h2>Delete A Field</h2>
+    <table border="1" cellpadding="10" align="center">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Field Name</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="font-size:12px" class="clickable-row" data-href=''>
+                <td><input type="checkbox" value="1" /></td>
+                <td>Student Name</td>
+            </tr>
+
+            <tr style="font-size:12px" class="clickable-row" data-href=''>
+                <td><input type="checkbox" value="1" /></td>
+                <td>Student Phone Number</td>
+            </tr>
+
+            <tr style="font-size:12px" class="clickable-row" data-href=''>
+                <td><input type="checkbox" value="1" /></td>
+                <td>Student Email</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <!-- Delete Button-->
+    <div style="text-align: center">
+        <a href="~/">
+            <button class="buttonMenu" type="button">Delete</button>
+        </a>
+    </div>
+
+    </div>
+
+</body>
+</html>

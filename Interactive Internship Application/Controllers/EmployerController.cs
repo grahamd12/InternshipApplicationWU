@@ -40,8 +40,8 @@ namespace Interactive_Internship_Application.Controllers
         public IActionResult CompanyInformation()
         {
             //returns all entries in the application template table
-            using (var context = new Models.ApplicationDbContext())
-            {
+             using (var context = new Models.ApplicationDbContext())
+             {
                  var getCompanyInfo = context.ApplicationTemplate.ToList();
 
                  var companyInfoRightOrder =
@@ -49,9 +49,10 @@ namespace Interactive_Internship_Application.Controllers
                      orderby e.Id
                      select e;
                  ViewBag.companyInfo = companyInfoRightOrder;
-                 
-            return View(context.ApplicationTemplate.ToList());
-        }
+
+                 return View(context.ApplicationTemplate.ToList());
+             }
+            return View();
 
 
        }

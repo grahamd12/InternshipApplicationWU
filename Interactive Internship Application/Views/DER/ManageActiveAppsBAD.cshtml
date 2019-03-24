@@ -58,30 +58,12 @@
                 <tbody>
                     <Interactive_Internship_Application.Models.StudentInformation>
                       
-                        @{
-                            var data = ViewBag.info; 
-                          
-                            int currID = 1;
-                            <tr style="font-size:12px" class="clickable-row" data-href=''></tr>
-                                    foreach (var item in data)
-                                    {
+                            @foreach (var item in (List<StudentInformation>)Model)
+                             {
 
-                                        if (currID != item.ID)
-                                        {
-                                            currID = item.ID;
-
-                                    <tr style="font-size:12px" class="clickable-row" data-href=''></tr>
-                                }
+                                
 
                                 <td>item.Value</td>
-
-
-
-
-
-
-
-
 
                             }
                         }

@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<!--CONTAINS DYNAMIC PARTS, WHICH ARE NOTED-->
+
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>Manage Users</i></h1>
+        <br /><br />
+
+</head>
+<body>
+    <div style="text-align: center">
+        <table border="1" cellpadding="10" align="center">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>User Type</th>
+                    <th>Course</th>
+                    <th>Last Login</th>
+                    <th>Organization Name</th>
+                    <th>Select</th> <!--For deleting users or changing user type -->
+                </tr>
+            </thead>
+            <!--EACH ROW ATER HEADER IN TABLE IS DYNAMIC-->
+            <tbody>
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Dummy Professor</td>
+                    <td>Faculty</td>
+                    <td>CSCI 471</td>
+                    <td>May 2, 2019</td>
+                    <td>Winthrop</td>
+                    <td><input type="checkbox" value="1" /></td>
+                </tr>
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <td>Dummy Department Rep</td>
+                    <td>Department Rep</td>
+                    <td>CSCI 471</td>
+                    <td>May 2, 2019</td>
+                    <td>Firm</td>
+                    <td><input type="checkbox" value="1" /></td>
+                </tr>
+
+                <tr><td colspan="8">&nbsp;</td></tr>
+
+
+            </tbody>
+            <!--END DYNAMIC PORTION-->
+        </table>
+    </div>
+
+    <!-- Withdraw and Excel Report Buttons-->
+  
+        <a href="~/">
+            <button class="buttonMenu" type="button">Change Permissions</button>
+        </a>
+    </div>
+</body>
+</html>
+
