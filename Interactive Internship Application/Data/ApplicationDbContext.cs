@@ -14,13 +14,25 @@ namespace Interactive_Internship_Application.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
+
+
 
         public virtual DbSet<ApplicationData> ApplicationData { get; set; }
         public virtual DbSet<ApplicationTemplate> ApplicationTemplate { get; set; }
         public virtual DbSet<EmployerLogin> EmployerLogin { get; set; }
         public virtual DbSet<FacultyInformation> FacultyInformation { get; set; }
         public virtual DbSet<StudentInformation> StudentInformation { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=localhost\\MSSQLSERVER01;Initial Catalog=IIP;Integrated Security=True");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
