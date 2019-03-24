@@ -6,12 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Interactive_Internship_Application.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DERController : Controller
     {
-        [Authorize(Roles = "Admin")]
+        public Models.ApplicationDbContext applicationDbContext { get; set; }
+        public DERController(Models.ApplicationDbContext dbContext)
+        {
+            applicationDbContext = dbContext;
+        }
         public IActionResult Index()
         {
             return View();
@@ -21,13 +27,46 @@ namespace Interactive_Internship_Application.Controllers
             return View();
         }
 
+        public IActionResult EditAppTempEntity()
+        {
+            return View();
+        }
+
+
         public IActionResult EditWebsite()
         {
             return View();
         }
+        [HttpGet]
         public IActionResult ManageActiveApps()
         {
-            return View();
+            //returns all entries in the StudentInfo table
+            using (var context = new Models.ApplicationDbContext())
+            { 
+                //var getStudents = context.StudentInformation.ToList();
+                var getStudentsInfo = context.ApplicationData.ToList();
+
+                    var getActiveStudentsInfoRightOrder =
+                     (from e in getStudentsInfo.AsQueryable<ApplicationData>()
+                     orderby e.RecordId
+                     select new { ID = e.DataKeyId, value = e.Value, student = e.RecordId })
+                     .ToList();
+
+                ViewBag.info = getActiveStudentsInfoRightOrder;
+          
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ManageActiveAppsBAD()
+        {
+            //returns all entries in the StudentInfo table
+            using (var context = new Models.ApplicationDbContext())
+            {
+            
+                return View(context.ApplicationData.ToList());
+            }
         }
         public IActionResult ManagePreviousApps()
         {

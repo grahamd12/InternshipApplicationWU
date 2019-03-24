@@ -35,9 +35,10 @@ namespace Interactive_Internship_Application
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+         
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("LocalServer")));
+
             services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 // Default Lockout settings.
