@@ -2,47 +2,13 @@
 <html>
 <meta charset="UTF-8">
 
-<!--Menu-->
-<div style="text-align: right">
-    <a href="~/">
-        <button class="buttonMenu" type="button">Log Off</button>
-
-
-    </a>
-</div>
-
-
-
 <head>
     <!-- Link CSS styling code to html page-->
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
-
     <div style="text-align: center">
-        <!--Quick Links-->
-        <table align="left" style="width:20%" margin-left="10px">
-            <tr>
-                <th>Quick Links</th>
-            </tr>
-            <tr>
-                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
-            </tr>
-            <tr>
-                <td><a href="https://www.winthrop.edu">Winthrop Homepage</a></td>
-            </tr>
-            <tr>
-                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
-            </tr>
-
-
         </table>
-
-        <h1><i>CSCI 471 Internship Application</i></h1>
-
+        <h1><i>Winthrop's Internship Application - Employer</i></h1>
     </div>
-
-    <br>
-    <br>
-    <br>
 
 </head>
 <!--display data from Controller-->
@@ -53,62 +19,66 @@
 <!--variable to determine where to put breaks-->
 @{var count = 0;}
 <!--Below is what was added after talking with Dysean, it is an attempt to get data from view to controller-->
-<form asp-action="SubmittedEmployer" asp-controller="Employer" asp-antiforgery="true" method="post">
+    <form asp-action="SubmittedEmployer" asp-controller="Employer" asp-antiforgery="true" method="post">
+        <div class="outer-div">
 
-    @Html.AntiForgeryToken()
 
-    @foreach (var item in (List<ApplicationTemplate>)Model)
-    {
-        count++;
-
-        @if (item.ControlType == "check" && item.Entity == "Employer")
-        {
-            @item.ProperName
-            <p>No <input type="radio" name=@item.Id value="No" checked></p>
-            <p>Yes<input type="radio" name=@item.Id value="Yes"></p>
-
-            if (count == 2)
+            @Html.AntiForgeryToken()
+            @foreach (var item in (List<ApplicationTemplate>)Model)
             {
-                <br />
-                count = 0; //reset count
-            }
-        }
 
-        else if (item.ControlType == "file" && item.Entity == "Employer")
-        {
-            <input type="file" name="@item.Id">
-            <br>
-            <br>
-        }
 
-        else if (item.ControlType == "textares" && item.Entity == "Employer")
-        {
-            <textarea name="@item.Id" value="@item.ProperName" rows="4" cols="100"></textarea>
+                count++;
 
-        }
+                @if (item.ControlType == "check" && item.Entity == "Employer")
+                {
+                    <br /><br />
+                    @item.ProperName
+                    <p>
 
-        else if (item.Entity == "Employer")
-        {
-            <p>
-                @item.ProperName <input type="text" name="@item.Id" value="" size="15">
-
-                @{ if (count == 2)
-                    {
-                        <br />
-                        count = 0; //reset count
-                    }
+                        No <input type="radio" name=@item.Id value="No" checked>
+                        Yes<input type="radio" name=@item.Id value="Yes">
+                    </p>
                 }
-            </p>
 
-        }
+                else if (item.ControlType == "file" && item.Entity == "Employer")
+                {
+                    <input type="file" name="@item.Id" style="padding:5px;">
+                    <br>
+                    <br>
+                }
 
-    }
-    <!--<input type="submit" value="Save">
-     <input type="submit" value="Submit">-->
+                else if (item.ControlType == "textarea" && item.Entity == "Employer")
+                {
+                    <div class="inner-div">
+                    <br /> @item.ProperName <br /><textarea name="@item.Id" value="@item.ProperName" rows="4" cols="100"></textarea> <br />
+                    </div>
+                }
 
-    <!--Dysean code to save data into database-->
-    <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submitted")
-           formmethod="post">
+                else if (item.Entity == "Employer")
+                {
+
+                    <div class="inner-div">
+                        @item.ProperName <input type="text" name="@item.Id" value="" size="15" rows="1" cols="5">
+                    </div>
+
+
+
+                }
+
+                if (count == 3)
+                {
+                    <br />
+                    count = 0; //reset count
+                }
+
+            }
+    </div>
+            <!--<input type="submit" value="Save">
+    <input type="submit" value="Submit">-->
+            <!--Dysean code to save data into database-->
+            <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submitted")
+                   formmethod="post">
 
 
 </form>

@@ -97,7 +97,7 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
                     }
                     else if (getCurrentRole[0] == "Employer")
                     {
-                        return LocalRedirect("/Employer");
+                        return LocalRedirect("/Employer/CompanyInformation");
                     }
 
                     //yo we gotta change this in the future when we get a department controller
