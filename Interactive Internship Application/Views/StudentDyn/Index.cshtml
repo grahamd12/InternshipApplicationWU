@@ -1,0 +1,82 @@
+﻿<!-- AUTHORS: Brando Dill, Daniel Branham, Dustin Graham, and Matea Milojkovic
+     PURPOSE: Student Homepage
+     LAST MODIFIED: 01/22/2019
+
+    NEEDS WORK: -Database connections
+                -Menu 
+ -->
+
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<!--Menu-->
+
+
+
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+    
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%"  margin-left= "10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://www.winthrop.edu">Winthrop Homepage</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>College of Business Administration</i></h1>
+        <h2>Your Active Applications</h2>
+        <br /><br />
+        <a href="~/student/ViewApplications">
+            <button class="button" type="button">View/Edit Application(s)</button>
+        </a>
+        <br /><br />
+
+        <!--
+      Connect to database
+    var databaseConnection = Database.Open("DATABASE_NAME");
+    var query = "SELECT * FROM TABLE_NAME"
+     -->
+        <!--CHECK STATUS page becomes available after student submits application
+    add code to do this
+
+    Check if student has submitted all fields for particular application
+         select all fields in table where student ID == this student; if all values are entered (not null),
+         this appears
+    -->
+        <a href="~/student/CheckStatus">
+            <button class="button" type="button">Check Status</button>
+        </a>
+        <br /><br />
+
+
+        <!-- SIGN JOB DESCRIPTION becomes available after employer submits his portion of application
+
+         Check table to see if employer submitted his portion of form
+            select all fields in table where student ID == this student and find field where employer enters his
+            values
+    -->
+        <a href="~/student/SignJobDescription">
+            <button class="button" type="button">Sign Job Description</button>
+        </a>
+
+    </div>
+</head>
+
+
+
+</html>
