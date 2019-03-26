@@ -22,7 +22,7 @@ namespace Interactive_Internship_Application.Controllers
         {
             return View();
         }
-      public IActionResult EditAppTemp()
+        public IActionResult EditAppTemp()
         {
             return View();
         }
@@ -39,22 +39,52 @@ namespace Interactive_Internship_Application.Controllers
         }
         [HttpGet]
         public IActionResult ManageActiveApps()
-        {
+        {                                                                                                       
             //returns all entries in the StudentInfo table
             using (var context = new Models.ApplicationDbContext())
-            { 
+            {
                 //var getStudents = context.StudentInformation.ToList();
-                var getStudentsInfo = context.ApplicationData.ToList();
+                int records = (from actives in context.ApplicationData
+                               select actives.RecordId).Distinct().Count();
 
-                    var getActiveStudentsInfoRightOrder =
-                     (from e in getStudentsInfo.AsQueryable<ApplicationData>()
-                     orderby e.RecordId
-                     select new { ID = e.DataKeyId, value = e.Value, student = e.RecordId })
-                     .ToList();
+                string[,] tableArray = new string[records+1,8];
+                tableArray[0, 0] = "1";
+                tableArray[0, 1] = "2";
+                tableArray[0, 2] = "3";
+                tableArray[0, 3] = "7";
+                tableArray[0, 4] = "8";
+                tableArray[0, 5] = "11";
+                tableArray[0, 6] = "14";
+                tableArray[0, 7] = "20";
 
-                ViewBag.info = getActiveStudentsInfoRightOrder;
-          
-                return View();
+                var activeAppsQuery = (from actives in context.ApplicationData
+                                      orderby actives.RecordId
+                                      select actives)
+                                      .ToList();
+
+                int currentDataID = 0;
+                foreach(var item in activeAppsQuery)
+                {
+                    if((currentDataID <8 ) && (item.DataKeyId).ToString() == tableArray[0, currentDataID])
+                    {
+                        tableArray[item.RecordId, currentDataID] = item.Value;
+                        currentDataID++;
+
+                    }
+                }
+                ViewBag.tableArray = tableArray;
+
+                return View(tableArray);
+                //List<actives> activeList = activeAppsQuery.ToList<actives>();
+                //    var getActiveStudentsInfoRightOrder =
+                //     (from e in getStudentsInfo.AsQueryable<ApplicationData>()
+                //     orderby e.RecordId
+                //     select new { ID = e.DataKeyId, value = e.Value, student = e.RecordId })
+                //     .ToList();
+
+                //ViewBag.info = getActiveStudentsInfoRightOrder;
+
+                //return View(getActiveStudentsInfoRightOrder);
             }
         }
 
