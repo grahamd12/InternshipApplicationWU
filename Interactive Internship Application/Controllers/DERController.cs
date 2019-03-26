@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
+using excel = Microsoft.Office.Interop.Excel;
+using System;
+using System.IO;
 
 namespace Interactive_Internship_Application.Controllers
 {
@@ -37,17 +35,21 @@ namespace Interactive_Internship_Application.Controllers
         {
             return View();
         }
+
         [HttpGet]
         public IActionResult ManageActiveApps()
         {                                                                                                       
-            //returns all entries in the StudentInfo table
             using (var context = new Models.ApplicationDbContext())
             {
-                //var getStudents = context.StudentInformation.ToList();
+                // get current number of records in database
                 int records = (from actives in context.ApplicationData
                                select actives.RecordId).Distinct().Count();
 
+                // make 2d array with amount of records and columns
                 string[,] tableArray = new string[records+1,8];
+
+                // the string numbers are the values we want from 
+                // our database for our table 
                 tableArray[0, 0] = "1";
                 tableArray[0, 1] = "2";
                 tableArray[0, 2] = "3";
@@ -57,11 +59,14 @@ namespace Interactive_Internship_Application.Controllers
                 tableArray[0, 6] = "14";
                 tableArray[0, 7] = "20";
 
+                // get everything from ApplicationData and sort by record_id
                 var activeAppsQuery = (from actives in context.ApplicationData
                                       orderby actives.RecordId
                                       select actives)
                                       .ToList();
 
+                // go through all records, pull out the data_key_ids we want and
+                // insert them into the 2d array, row by row
                 int currentDataID = 0;
                 foreach(var item in activeAppsQuery)
                 {
@@ -72,32 +77,65 @@ namespace Interactive_Internship_Application.Controllers
 
                     }
                 }
-                ViewBag.tableArray = tableArray;
-
                 return View(tableArray);
-                //List<actives> activeList = activeAppsQuery.ToList<actives>();
-                //    var getActiveStudentsInfoRightOrder =
-                //     (from e in getStudentsInfo.AsQueryable<ApplicationData>()
-                //     orderby e.RecordId
-                //     select new { ID = e.DataKeyId, value = e.Value, student = e.RecordId })
-                //     .ToList();
-
-                //ViewBag.info = getActiveStudentsInfoRightOrder;
-
-                //return View(getActiveStudentsInfoRightOrder);
             }
         }
 
-        [HttpGet]
-        public IActionResult ManageActiveAppsBAD()
+        [HttpPost]
+        public ActionResult Report()
         {
-            //returns all entries in the StudentInfo table
             using (var context = new Models.ApplicationDbContext())
             {
-            
-                return View(context.ApplicationData.ToList());
+                // get column names for report
+                var reportDataColumns = (from temp in context.ApplicationTemplate
+                                        orderby temp.Id
+                                        select temp)
+                                        .ToList();
+
+                // get actual data to be fitted under each column
+                var reportData = (from data in context.ApplicationData
+                                  orderby data.RecordId
+                                  select data)
+                                  .ToList();
+
+                // make excel object
+                excel.Application excelApp = new excel.Application();
+                excel.Workbook wrkBook = excelApp.Workbooks.Add(System.Reflection.Missing.Value);
+                excel.Worksheet workSheet = (excel.Worksheet)wrkBook.ActiveSheet;
+
+                // attempt to write columns to excel file...
+                int colNum = 0;
+                foreach(var columns in reportDataColumns)
+                {
+                    var dummy = columns.ProperName;
+                    workSheet.Cells[1, colNum] = columns.ProperName;
+                    colNum++;
+                }
+
+                // attempt to write data to excel file...
+                int currID = 2;
+                int dataID = 1;
+                foreach(var item in reportData)
+                {
+                    if(currID-1 != item.RecordId)
+                    {
+                        currID++;
+                    }
+                    var otherDummy = item.Value;
+                    workSheet.Cells[currID, dataID] = item.Value;
+                    dataID++;
+                }
+
+                // get current time and save workbook as following
+                DateTime currTime = DateTime.Today;
+                wrkBook.SaveAs("Active_Applications_Generated_Report_" + currTime.ToString("MM-dd-yyy") + ".xlsx");
+                wrkBook.Close();
+                excelApp.Quit();
+                
+                return View("Index");
             }
         }
+
         public IActionResult ManagePreviousApps()
         {
             return View();
