@@ -63,17 +63,17 @@
                           
                             int currID = 1;
                             <tr style="font-size:12px" class="clickable-row" data-href=''></tr>
-                                    foreach (var item in data)
+                                    foreach (var item in (List<ApplicationData>)Model)
                                     {
 
-                                        if (currID != item.ID)
+                                        @*if (currID != item.Id)
                                         {
-                                            currID = item.ID;
+                                            currID = item.Id;
 
                                     <tr style="font-size:12px" class="clickable-row" data-href=''></tr>
-                                }
-
-                                <td>item.Value</td>
+                                }*@
+                                
+                                <td>@item.Value</td>
 
 
 

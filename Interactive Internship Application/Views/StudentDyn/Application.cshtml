@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://www.winthrop.edu">Winthrop Homepage</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>CSCI 471 Internship Application</i></h1>
+
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+</head>
+<!--display data from Controller-->
+@*List<Interactive_Internship_Application.Models.ApplicationTemplate>*@
+<!-- Iterates through every piece in the list and displays it-->
+<!--NEED TO ADD DROP DOWN MENU TO DB-->
+<!--variable to determine where to put breaks-->
+@{var count = 0;}
+
+<!--CHECK HW 9 FROM CSCI 297-->
+<form asp-action="Submitted" asp-controller="StudentDynamic" asp-antiforgery="true" method="post">
+    @Html.AntiForgeryToken()
+
+    @foreach (var item in (List<ApplicationTemplate>)Model)
+    {
+        count++;
+
+        @if (item.ControlType == "check" && item.Entity == "Student")
+        {
+            @item.FieldName
+            @Html.RadioButtonFor(m => item.ControlType, "", new { })
+            <input type="radio" name=@item.Id value="Yes">
+
+            if (count == 3)
+            {
+                <br />
+                count = 0; //reset count
+            }
+        }
+        else if (item.FieldName == "class_enrolled" && item.Entity == "Student")
+        {
+
+            @item.FieldName
+            <select name="@item.Id">
+                <option value="select">[Select One]</option>
+                <option value="acct491">ACCT 491</option>
+                <option value="badm491">BADM 491</option>
+                <option value="badm492">BADM 492</option>
+                <option value="badm694">BADM 694</option>
+                <option value="csci491">CSCI 491</option>
+                <option value="csci492">CSCI 492</option>
+                <option value="econ491">ECON 491</option>
+                <option value="entr491">ENTR 491</option>
+                <option value="finc491">FINC 491</option>
+                <option value="mgmt491">MGMT 491</option>
+                <option value="mktg491">MKTG 491</option>
+            </select>
+
+            if (count == 3)
+            {
+                <br />
+                count = 0; //reset count
+            }
+        }
+
+        else if (item.Entity == "Student")
+        {
+            @item.FieldName
+
+            <input type="text" id="name" name="@item.Id" value="" size="15">
+
+            if (count == 3)
+            {
+                <br />
+                count = 0; //reset count
+            }
+        }
+
+    }
+    <!---  <input type="submit" name ="response" value="Save" formaction=@Url.Action("Save") formmethod="post">
+      -->
+    <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submit")
+           formmethod="post">
+
+</form>
+</html>
