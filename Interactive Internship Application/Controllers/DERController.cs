@@ -52,9 +52,10 @@ namespace Interactive_Internship_Application.Controllers
                      select new { ID = e.DataKeyId, value = e.Value, student = e.RecordId })
                      .ToList();
 
+
                 ViewBag.info = getActiveStudentsInfoRightOrder;
           
-                return View();
+                return View(context.ApplicationData.ToList());
             }
         }
 

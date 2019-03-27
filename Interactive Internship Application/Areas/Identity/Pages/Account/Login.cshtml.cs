@@ -93,7 +93,7 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
                     }
                     else if (getCurrentRole[0] == "Student")
                     {
-                        return LocalRedirect("/Student");
+                        return LocalRedirect("/StudentDyn");
                     }
                     else if (getCurrentRole[0] == "Employer")
                     {
