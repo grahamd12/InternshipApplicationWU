@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Interactive_Internship_Application.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DERController : Controller
     {
-        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();

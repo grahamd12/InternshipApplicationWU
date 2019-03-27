@@ -10,6 +10,6 @@ namespace Interactive_Internship_Application.Models
         public string Value { get; set; }
 
         public virtual ApplicationTemplate DataKey { get; set; }
-        public virtual StudentInformation Record { get; set; }
+        public virtual StudentAppNum Record { get; set; }
     }
 }
