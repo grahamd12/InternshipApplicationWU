@@ -14,72 +14,81 @@
 <!--display data from Controller-->
 
 <Interactive_Internship_Application.Models.ApplicationTemplate>
-<!-- Iterates through every piece in the list and displays it-->
-<!--NEED TO ADD DROP DOWN MENU TO DB-->
-<!--variable to determine where to put breaks-->
-@{var count = 0;}
-<!--Below is what was added after talking with Dysean, it is an attempt to get data from view to controller-->
+    <!-- Iterates through every piece in the list and displays it-->
+    <!--NEED TO ADD DROP DOWN MENU TO DB-->
+    <!--variable to determine where to put breaks-->
+    @{var count = 0;}
+    <!--Below is what was added after talking with Dysean, it is an attempt to get data from view to controller-->
     <form asp-action="SubmittedEmployer" asp-controller="Employer" asp-antiforgery="true" method="post">
         <div class="outer-div">
 
-
             @Html.AntiForgeryToken()
-            @foreach (var item in (List<ApplicationTemplate>)Model)
-            {
+            <table align="center">
+                <tr>
+                    @foreach (var item in (List<ApplicationTemplate>)Model)
+                    {
 
+                        count++;
 
-                count++;
+                        if (count == 2)
+                        {
+                        <tr></tr>
+                        count = 0;
+                    }
 
-                @if (item.ControlType == "check" && item.Entity == "Employer")
-                {
-                    <br /><br />
-                    @item.ProperName
-                    <p>
+                    @if (item.ControlType == "check" && item.Entity == "Employer")
+                    {
+                        <td>
+                            @item.ProperName
+                        </td>
+                        <td>
+                            No <input type="radio" name=@item.Id value="No" checked>
+                            Yes<input type="radio" name=@item.Id value="Yes">
+                        </td>
+                    }
 
-                        No <input type="radio" name=@item.Id value="No" checked>
-                        Yes<input type="radio" name=@item.Id value="Yes">
-                    </p>
+                    else if (item.ControlType == "file" && item.Entity == "Employer")
+                    {
+                        <td>
+                            <input type="file" name="@item.Id" style="padding:5px;">
+                        </td>
+                    }
+
+                    else if (item.ControlType == "textarea" && item.Entity == "Employer")
+                    {
+                        count = 1;
+                        <div class="inner-div">
+                            <td>
+                                @item.ProperName
+                            </td>
+                            <td colspan="3"><textarea name="@item.Id" value="@item.ProperName" rows="4" cols="100"></textarea> <td />
+
+                        </div>
+
+                    }
+
+                    else if (item.Entity == "Employer")
+                    {
+                        <div class="inner-div">
+                            <td>
+                                @item.ProperName
+                            </td>
+                            <td>
+                                <input type="text" name="@item.Id" value="" size="15" rows="1" cols="5">
+                            </td>
+                        </div>
+                    }
+
                 }
-
-                else if (item.ControlType == "file" && item.Entity == "Employer")
-                {
-                    <input type="file" name="@item.Id" style="padding:5px;">
-                    <br>
-                    <br>
-                }
-
-                else if (item.ControlType == "textarea" && item.Entity == "Employer")
-                {
-                    <div class="inner-div">
-                    <br /> @item.ProperName <br /><textarea name="@item.Id" value="@item.ProperName" rows="4" cols="100"></textarea> <br />
-                    </div>
-                }
-
-                else if (item.Entity == "Employer")
-                {
-
-                    <div class="inner-div">
-                        @item.ProperName <input type="text" name="@item.Id" value="" size="15" rows="1" cols="5">
-                    </div>
-
-
-
-                }
-
-                if (count == 3)
-                {
-                    <br />
-                    count = 0; //reset count
-                }
-
-            }
-    </div>
+                    </tr>
+                </table>
+            </div>
             <!--<input type="submit" value="Save">
-    <input type="submit" value="Submit">-->
+            <input type="submit" value="Submit">-->
             <!--Dysean code to save data into database-->
             <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submitted")
                    formmethod="post">
 
 
-</form>
+        </form>
 </html>

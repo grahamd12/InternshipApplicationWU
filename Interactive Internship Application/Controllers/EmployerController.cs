@@ -13,7 +13,7 @@ namespace Interactive_Internship_Application.Controllers
     [Authorize(Roles = "Admin, Employer")]
     public class EmployerController : Controller
     {
-        
+
 
         //create this to have a local variable to manipulate the database
         //below takes in the database (the data from the view ) and puts it local for this
@@ -26,7 +26,7 @@ namespace Interactive_Internship_Application.Controllers
 
         //look in database to see count of entries for Employer entity 
 
-      
+
 
 
 
@@ -40,67 +40,81 @@ namespace Interactive_Internship_Application.Controllers
         public IActionResult CompanyInformation()
         {
             //returns all entries in the application template table
-             using (var context = new Models.ApplicationDbContext())
-             {
-                 var getCompanyInfo = context.ApplicationTemplate.ToList();
+            using (var context = new Models.ApplicationDbContext())
+            {
+                var getCompanyInfo = context.ApplicationTemplate.ToList();
 
-                 var companyInfoRightOrder =
-                     from e in getCompanyInfo.AsQueryable<ApplicationTemplate>()
-                     orderby e.Id
-                     select e;
-                 ViewBag.companyInfo = companyInfoRightOrder;
+                var companyInfoRightOrder =
+                    from e in getCompanyInfo.AsQueryable<ApplicationTemplate>()
+                    orderby e.Id
+                    select e;
+                ViewBag.companyInfo = companyInfoRightOrder;
 
-                 return View(context.ApplicationTemplate.ToList());
-             }
+                return View(context.ApplicationTemplate.ToList());
+            }
             return View();
 
 
-       }
-    //unsure what the bit below does, Dysean had Matea add this. 
-      [HttpPost]
-      [ValidateAntiForgeryToken]
-      public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
-      {
-           /* string name = User.Identity.Name;
-           
-            var studentId = from e in applicationDbContext.EmployerLogin
-                            where e.Email == name
-                            && e.StudentEmail == 
-                                
-                                
-                                select e.Id;
-                                */
-          int count = 0;
-          var context = new Models.ApplicationDbContext();
-          int numEmployerFieldCount = (from x in context.ApplicationTemplate
-                                       where x.Entity == "Employer"
-                                       select x).Count();
-
-
-          var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-              foreach (var item in dict)
-              {
-
-                  if (count < numEmployerFieldCount)
-                  {
-                      int intKey = Int32.Parse(item.Key.ToString());
-
-                  //changed the recordId to not be a foreign key on StudentInformation just to see if it was working. 
-                  //Change AppData DB back the right way later
-                  //Had to take out the FK's of the AppData table to make it work too
-                  var appDataCurrent = new ApplicationData { RecordId = 1, DataKeyId = intKey, Value = item.Value };
-                      applicationDbContext.ApplicationData.Add(appDataCurrent);
-                      applicationDbContext.SaveChanges();
-                  count++;
-                  }
-               }
-
-
-
-          return View("Index");
-
-      } 
         }
+        //unsure what the bit below does, Dysean had Matea add this. 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
+        {
+            /* string name = User.Identity.Name;
+
+             var studentId = from e in applicationDbContext.EmployerLogin
+                             where e.Email == name
+                             && e.StudentEmail == 
+
+
+                                 select e.Id;
+                                 */
+            int count = 0;
+            ApplicationDbContext context = new Models.ApplicationDbContext();
+            int numEmployerFieldCount = (from x in context.ApplicationTemplate
+                                         where x.Entity == "Employer"
+                                         select x).Count();
+
+            //below gets the student's ID that the employer is tied to for input in to application 
+
+
+            var employersStudentEmail = (from employer in context.EmployerLogin
+                                         where employer.Email == User.Identity.Name.ToString()
+                                         select employer.StudentEmail).FirstOrDefault();
+
+            var employerStudentEmail = from student in context.StudentInformation
+                                       where student.Email == employersStudentEmail.ToString()
+                                       select student.Email;
+
+            var studentUniqueRecordNum = (from studentUniqueNum in context.StudentAppNum
+                                          where studentUniqueNum.StudentEmail == employersStudentEmail
+                                          select studentUniqueNum.Id).FirstOrDefault();
+
+
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            foreach (var item in dict)
+            {
+
+                if (count < numEmployerFieldCount)
+                {
+                    int intKey = Int32.Parse(item.Key.ToString());
+
+                    //changed the recordId to not be a foreign key on StudentInformation just to see if it was working. 
+                    //Change AppData DB back the right way later
+                    //Had to take out the FK's of the AppData table to make it work too
+                    var appDataCurrent = new ApplicationData { RecordId = studentUniqueRecordNum, DataKeyId = intKey, Value = item.Value };
+                    applicationDbContext.ApplicationData.Add(appDataCurrent);
+                    applicationDbContext.SaveChanges();
+                    count++;
+                }
+            }
+
+
+
+            return View("Index");
+
+        }
+    }
 
 }
-
