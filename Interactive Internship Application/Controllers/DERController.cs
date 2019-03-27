@@ -78,6 +78,7 @@ namespace Interactive_Internship_Application.Controllers
                     }
                 }
                 return View(tableArray);
+
             }
         }
 
