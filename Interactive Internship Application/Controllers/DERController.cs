@@ -11,11 +11,13 @@ namespace Interactive_Internship_Application.Controllers
     [Authorize(Roles = "Admin")]
     public class DERController : Controller
     {
+
         public Models.ApplicationDbContext applicationDbContext { get; set; }
         public DERController(Models.ApplicationDbContext dbContext)
         {
             applicationDbContext = dbContext;
         }
+
         public IActionResult Index()
         {
             return View();

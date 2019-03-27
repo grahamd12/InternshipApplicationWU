@@ -51,20 +51,22 @@
 
         @if (item.ControlType == "check" && item.Entity == "Student")
         {
-            @item.FieldName
-            @Html.RadioButtonFor(m => item.ControlType, "", new { })
+            @item.ProperName
+
             <input type="radio" name=@item.Id value="Yes">
 
             if (count == 3)
             {
-                <br />
+                <br /><br />
+
                 count = 0; //reset count
             }
         }
         else if (item.FieldName == "class_enrolled" && item.Entity == "Student")
         {
 
-            @item.FieldName
+            @item.ProperName
+
             <select name="@item.Id">
                 <option value="select">[Select One]</option>
                 <option value="acct491">ACCT 491</option>
@@ -82,28 +84,134 @@
 
             if (count == 3)
             {
-                <br />
+                <br /><br />
+
                 count = 0; //reset count
             }
         }
 
-        else if (item.Entity == "Student")
+        else if (item.Entity == "Student" && item.Id !=32 && item.Id != 34 && item.Id!= 45
+            && item.Id != 46 && item.Id != 52 && item.Id != 53)
         {
-            @item.FieldName
+            @item.ProperName
+
 
             <input type="text" id="name" name="@item.Id" value="" size="15">
 
             if (count == 3)
             {
                 <br />
+
+                <br />
+
                 count = 0; //reset count
             }
         }
 
     }
+
+    <br /> <br />
+    <h2>Personal Learning Goals</h2>
+        <br>
+         Explain how this internship will add to your educational experience at Winthrop University.
+         <textarea name="36" rows="4" cols="100"></textarea>
+
+        <br><br>
+
+        What professional and personal goals do you hope to achieve while at this internship? (Be specific)
+         <textarea name="37" rows="4" cols="100"></textarea>
+
+        <br><br><br>
+        <h2>Internship Program Guidelines</h2>
+        <br>
+       <p> Students participating in Winthrop University’s College of Business Administration Internship program required to:
+        <ul>
+            <li>Be actively enrolled as a Junior, Senior, or Graduate student in a degree program in the College of Business Administration.</li>
+            <li>Maintain minimum cumulative GPA requirements: Undergraduate- 2.0 for BADM; 2.5 for ECON, ENTR, CSCI, MGMT, and MKTG;
+                2.75 for ACCT and FINC; Graduate-3.0.</li>
+            <li>Complete course requirements prior to internship placement. </li>
+            <li>Submit a resume as part of the application for the internship.</li>
+            <li>Attend orientation session for interns.</li>
+            <li>Perform all tasks assigned to the best of their ability, meet all standards and conditions of employment, and
+                abide by the work schedule established by the employer. </li>
+            <li>Maintain strict confidentiality of all employer proprietary information.</li>
+            <li>Keep internship course instructor informed of any changes in supervision, duties, or special situations that may occur during work
+                experience.</li>
+            <li>Work a minimum of 150 hours over the semester; graduate students work 200 hours.</li>
+            <li>Attend required meetings of internship class.</li>
+            <li>Maintain and submit for evaluation a detailed journal of work experiences and achievements.</li>
+            <li>Submit a final written evaluation of the work experience.</li>
+            <li>Submit a final paper summarizing the educational benefits and managerial focus of the internship experience; graduate students to submit
+                a written management project of the industry, profession, and/or business function.</li>
+            <li>Remain in assigned work experience position for the duration of the assignment.</li>
+        </ul>
+        *NOTE:<i>Students receiving financial aid should contact the Financial Aid Office regarding how accepting a paid internship position will affect
+            their financial aid. International students must receive employment authorization from the office of International Student Services before
+            beginning paid employment.
+        </i><br>
+        <b>PERMISSION TO DISTRIBUTE INFORMATION:</b> I grant permission to the Internship program coordinator to submit my resume and other relevant documents
+        to prospective employers with the intentions of an internship position. Employer requests for official transcripts are made through the internship
+        program and/or directly to me, whereupon it will be my responsibility to provide transcripts. All referrals of information will be made in accordance
+        with the policies of the Confidentiality of Student Records and the Privacy Act of 1974.
+        <br><b>LIKLIHOOD OF EMPLOYEMENT:</b>I understand that applying for an internship does not guarantee me a position.
+        <br><b>AGREEMENT:</b> I agree to comply with the terms and conditions of the College of Business Administration Internship Program and to meet all
+        requirements set forth by the employer and the faculty supervisor. In addition, I will not terminate my employment early without the written consent
+        of the course instructor and chair of the department or college dean.
+        </p>
+
+
+        <b>Student Signature (typed)
+        <input type="text" name="45" value="">
+        Date </b>
+        <input type="text" name="46" value="">
+
+        <br><br><br>
+
+        <h2>Professional Conduct Expectations</h2>
+        <br>
+        <p>An academic internship is an opportunity to live, learn, and lead. As a business professional, the internship should be viewed from the standpoint
+            of employment in terms of the level of commitment. This means that regardless of whether the internship is paid or unpaid the student will have
+            the same regard for the experience because it is a "professional" position. Employment is considered a binding agreement between an employer and
+            employee. Internships should be seen as a binding agreement also. Students will abide by company policies regarding appropriate dress, professional
+            conduct, safety, customer service, and moral and ethical behavior. In addition students should display a professional work ethic which include:
+            <ul>
+                <li>Be on time and be prepared for all interviews. If you agree to interview for a position, you are expeced to follow through with the
+                    interview and be professionally dressed and prepared to answer questions. It is NOT appropriate to just miss an interview. IF an
+                    emergency arises, call the interviewer, tell them what happened, and ask if it is possible to reschedule.</li>
+                <li>Be courteous and thoughtful-- Take nothing for granted and always show appreciation for any given opportunity. Send thank you notes
+                    after interviews, and at the beginning and end of the internship.</li>
+                <li>Be at work as scheduled-- Absentees should be avoided at all costs and reserved for "dire" emergencies only. You should notify your
+                    employer as soon as possible of anying scheduling issues, preferably 24 hours in advance or according to the company's policies. You do
+                    not miss work to handle course assignments. Other appointments should be scheduled around your work schedule.</li>
+                <li>Be on time for work and meetings-- Timeliness is critical to career success, lateness is not an option. You may even arrive early to
+                    show initiative.</li>
+                <li>Meet deadlines-- All work assignments should be completed on time regardless of how "mundane" they may appear (without exception).</li>
+                <li>Seek clarification as needed-- Always seek the appropriate supervisor when in doubt. Do not make any major decisions without first
+                    seeking advice. Do not complete a work assignment that you are unsure of. Ask for clarification.</li>
+                <li>Dress to impress-- Dress appropriately for the work environment. Most companies require business or business casual attire. If in doubt
+                    ask for information regarding the company dress policy, (no sneakers, T-shirts, or spike heels with bare legs please)!</li>
+                <li>Exhibit Emotional Intelligence at all times-- Mind your manners and manage your emotions. Self-control is the key; understand how you
+                    impact others and be aware of your non-verbal cues. Always seek to understand and then be understood (Steven Covey).</li>
+                <li>Get your foot in the door-- This is a perfect opportunity to land a full-time position or secure an outstanding reference. Make good
+                    use of it.</li>
+            </ul>
+
+        <b> By signing below you acknowledge that you have read and understand the professional conduct expectations outlined above. By signing you agree
+            that if you violate any of the above guidelines you may no longer by eligible for assistance from the College of Business in securing an
+            internship or future opportunities.</b>
+        </p>
+
+
+        <b>Student Signature (typed)
+        <input type="text" name="52" value="">
+        Date</b>
+        <input type="text" name="53" value="">
+
+        <br><br>
     <!---  <input type="submit" name ="response" value="Save" formaction=@Url.Action("Save") formmethod="post">
       -->
-    <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submit")
+    <input type="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+
            formmethod="post">
 
 </form>
