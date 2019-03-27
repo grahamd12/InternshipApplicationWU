@@ -1,7 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,13 +16,36 @@ namespace Interactive_Internship_Application.Controllers
         [Authorize(Roles = "Admin,Professor")]
 
         // GET: /<controller>/
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            using (var context = new Models.ApplicationDbContext())
+            {
+
+                var getStudents = context.ApplicationData.ToList();
+
+                var getActiveStudentsInfoRightOrder =
+                    from e in getStudents.AsQueryable<ApplicationData>()
+                    orderby e.RecordId
+                    select e;
+
+                return View(getStudents);
+            }
         }
         public IActionResult ProfAppView1()
         {
-            return View();
+
+            using (var context1 = new Models.ApplicationDbContext())
+            {
+                var getStudents = context1.ApplicationData.ToList();
+
+                var getActiveStudentsInfoRightOrder =
+                    from e in getStudents.AsQueryable<ApplicationData>()
+                    orderby e.RecordId
+                    select e;
+
+                return View(getStudents);
+            }
         }
         public IActionResult ProfAppView2()
         {
