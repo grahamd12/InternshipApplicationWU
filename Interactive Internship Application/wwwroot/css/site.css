@@ -77,11 +77,11 @@ button.accept-policy {
 }
 
 
-div {
+/*div {
     padding: 5px;
     display: inline-block;
-}
-.outer-div {
+}*/
+/*.outer-div {
     padding: 30px;
     align-content:center;
 }
@@ -90,7 +90,7 @@ div {
     margin: 0 auto;
     width: 100px;
     display: inline-block;
-}
+}*/
 
 
     
