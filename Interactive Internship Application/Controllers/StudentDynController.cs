@@ -62,6 +62,16 @@ namespace Interactive_Internship_Application.Controllers
                                          where x.Entity == "Student"
                                          select x).Count();
 
+            //below gets the student's record id using queries
+
+            var studentsEmail = (from student in context.StudentInformation
+                                 where student.Email == User.Identity.Name.ToString()
+                                 select student.Email).FirstOrDefault();
+
+            var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+                                       where stuAppNum.StudentEmail == studentsEmail
+                                       select stuAppNum.Id).FirstOrDefault();
+
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
             foreach (var item in dict)
             {
@@ -74,7 +84,9 @@ namespace Interactive_Internship_Application.Controllers
                     //changed the recordId to not be a foreign key on StudentInformation just to see if it was working. 
                     //Change AppData DB back the right way later
                     //Had to take out the FK's of the AppData table to make it work too
-                    var appDataCurrent = new ApplicationData { RecordId = 1, DataKeyId = intKey, Value = item.Value };
+
+
+                    var appDataCurrent = new ApplicationData { RecordId = currStudentRecordId, DataKeyId = intKey, Value = item.Value };
                     _dataContext.ApplicationData.Add(appDataCurrent);
                     _dataContext.SaveChanges();
                     count++;
