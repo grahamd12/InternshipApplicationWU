@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>Active Applications</i></h1>
+        <br /><br />
+
+</head>
+
+<body>       
+    <div style="text-align: center">
+        <table border="1" cellpadding="10" align="center">
+            <tr>
+                <!--FROM STUDENT'S APPLICATION -->
+                <th>Class Enrolled</th>
+                <th>Semester Enrolled</th>
+                <th>Student Name</th>
+                <th>Grad Year</th>
+                <th>Major/Concentration</th>
+                <th>Organization Name</th>
+                <!--end FROM STUDENT'S APPLICATION -->
+                <!--SEARCH FACULTY INFO TABLE AND MATCH PROFESSOR WITH CLASS ENROLLED -->
+                <th>Faculty Member</th>
+                @*<th>View</th>*@ <!--NEED TO ADD A LINE FOR HER TO SIGN IT; EITHER ANOTHER BUTTON OR APPEND TO STUDENT'S APP-->
+                @*<th>Signed</th>*@
+                <th>Last Student Login</th>
+                @*<th>Select</th>*@ <!--For withdrawing or creating excel reports -->
+                @*<th>Status</th>*@
+            </tr>
+            @*<Interactive_Internship_Application.Models.StudentInformation>*@
+
+                @model string[,]
+                
+                    @for (int row = 1; row <= Model.GetUpperBound(0); row++)
+                    {
+                        <tr>
+                            @for (int column = 0; column <= Model.GetUpperBound(1); column++)
+                            {
+                                    <td>@Model[row, column] </td>
+                            }
+                        </tr>
+                    }
+        </table>
+    </div>
+
+    <!-- Withdraw and Excel Report Buttons-->
+    <div style="text-align: center">
+        <form asp-action="Report" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Excel Report" formaction=@Url.Action("Report")
+                   formmethod="post">
+        </form>
+            @*<a href="~/">
+                <button class="buttonMenu" type="button">Withdraw</button>
+            </a>*@
+    </div>
+</body>
+</html>
+

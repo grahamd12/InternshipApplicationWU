@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Interactive_Internship_Application.Controllers
 {
     [Authorize(Roles = "Admin,Student")]
+
     public class StudentDynController : Controller
     {
         public Models.ApplicationDbContext _dataContext { get; set; }
@@ -34,11 +35,11 @@ namespace Interactive_Internship_Application.Controllers
             //returns all entries in the application template table
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
             {
-
                   var getSingleFieldName = context.ApplicationTemplate.ToList();
                 // ViewBag.allFieldNames = getSingleFieldName;
                 // return View(context.ApplicationTemplate.ToList());
                  return View(getSingleFieldName);
+
             }
         }
 
@@ -131,6 +132,7 @@ namespace Interactive_Internship_Application.Controllers
       */
 
     public IActionResult CheckStatus()
+
         {
             return View();
         }

@@ -2,7 +2,6 @@
 <html>
 <meta charset="UTF-8">
 
-
 <head>
     <!-- Link CSS styling code to html page-->
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
@@ -53,11 +52,13 @@
         @if (item.ControlType == "check" && item.Entity == "Student")
         {
             @item.ProperName
+
             <input type="radio" name=@item.Id value="Yes">
 
             if (count == 3)
             {
                 <br /><br />
+
                 count = 0; //reset count
             }
         }
@@ -65,6 +66,7 @@
         {
 
             @item.ProperName
+
             <select name="@item.Id">
                 <option value="select">[Select One]</option>
                 <option value="acct491">ACCT 491</option>
@@ -83,6 +85,7 @@
             if (count == 3)
             {
                 <br /><br />
+
                 count = 0; //reset count
             }
         }
@@ -92,17 +95,21 @@
         {
             @item.ProperName
 
+
             <input type="text" id="name" name="@item.Id" value="" size="15">
 
             if (count == 3)
             {
                 <br />
+
                 <br />
+
                 count = 0; //reset count
             }
         }
 
     }
+
     <br /> <br />
     <h2>Personal Learning Goals</h2>
         <br>
@@ -204,6 +211,7 @@
     <!---  <input type="submit" name ="response" value="Save" formaction=@Url.Action("Save") formmethod="post">
       -->
     <input type="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+
            formmethod="post">
 
 </form>

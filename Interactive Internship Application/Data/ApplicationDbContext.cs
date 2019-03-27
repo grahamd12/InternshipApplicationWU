@@ -7,6 +7,7 @@ namespace Interactive_Internship_Application.Models
 {
     public partial class ApplicationDbContext : IdentityDbContext
     {
+
         public ApplicationDbContext()
         {
         }
@@ -14,6 +15,7 @@ namespace Interactive_Internship_Application.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
 
         public virtual DbSet<ApplicationData> ApplicationData { get; set; }
@@ -31,7 +33,6 @@ namespace Interactive_Internship_Application.Models
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True");
             }
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
