@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,12 @@ namespace Interactive_Internship_Application.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
         {
+
+            //PUT CODE TO SEND EMAIL AFTER STUDENT'S INFO IS SAVED TO DB; HERE FOR NOW FOR TESTING
+            //send email to employer
+            NewEmail("milojkovicm2@mailbox.winthrop.edu", "password", "mateamilojkovic@yahoo.com", "Winthrop University Internship Application", "Body Text");
+
+
             int count = 0;
             var context = new Models.ApplicationDbContext();
             int numStudentFieldCount = (from x in context.ApplicationTemplate
@@ -93,45 +100,42 @@ namespace Interactive_Internship_Application.Controllers
                     count++;
                 }
             }
+
             
-
-
-
             return View("Index");
 
         }
 
-
-    
-
-    /*
-
-      //attempt at using the same controller method to process the data
-      [HttpGet]
-    public IActionResult ApplicationDynamic()
-    {
-        if (Request.HttpContext == POST) //doesn't compile
-         {
-              return View("Index");
-          }
-      else
-      { 
-            //returns all entries in the application template table
-            using (var context = new Interactive_Internship_Application.Models.IIPContext())
+        //email function
+        public void NewEmail(string fromEmail, string password, string toAddress, string subject, string body)
+        {
+            using (System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage())
             {
+                //create a new blank email
+                myMail.From = new MailAddress(fromEmail);
 
-                var getSingleFieldName = context.ApplicationTemplate.ToList();
-                ViewBag.allFieldNames = getSingleFieldName;
-                return View();
+                //fill email with correct receiver address, subject, and body message
+                myMail.To.Add(toAddress);
+                myMail.Subject = subject;
+                myMail.IsBodyHtml = true;
+                myMail.Body = body;
+
+                //send email
+                using (System.Net.Mail.SmtpClient s = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
+                {
+                    s.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    s.UseDefaultCredentials = false;
+                    s.Credentials = new System.Net.NetworkCredential(myMail.From.ToString(), password);
+                    s.EnableSsl = true;
+                    s.Send(myMail);
+                }
             }
         }
-     }
 
-       //using a separate controller method named the formaction value from the form
 
-      */
 
-    public IActionResult CheckStatus()
+
+        public IActionResult CheckStatus()
 
         {
             return View();
