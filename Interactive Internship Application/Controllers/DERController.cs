@@ -9,9 +9,13 @@ using System.IO;
 namespace Interactive_Internship_Application.Controllers
 {
     [Authorize(Roles = "Admin")]
+    public class entityInfo
+    {
+        public string entityName;
+    }
+
     public class DERController : Controller
     {
-
         public Models.ApplicationDbContext applicationDbContext { get; set; }
         public DERController(Models.ApplicationDbContext dbContext)
         {
@@ -27,11 +31,119 @@ namespace Interactive_Internship_Application.Controllers
             return View();
         }
 
-        public IActionResult EditAppTempEntity()
+        // the name of the entity's template being edited is passed in so that the code knows which
+        // data to pull from the database
+        public IActionResult EditAppTempEntity(string eName)
         {
+            var entity = new entityInfo();
+            entity.entityName = eName;
+            var disabledFields = new List<string>();
+            var enabledFields = new List<string>();
+            using (var context = new Models.ApplicationDbContext())
+            {
+                
+                disabledFields = (from temp in context.ApplicationTemplate
+                                  where temp.Entity == entity.entityName &&
+                                  temp.Deleted == true
+                                  select temp.ProperName).ToList();
+
+                enabledFields = (from temp in context.ApplicationTemplate
+                                where temp.Entity == entity.entityName
+                                select temp.ProperName).ToList();
+            }
+
+            ViewBag.entity = entity.entityName;
+            ViewBag.enabledFields = enabledFields;
+            ViewBag.disabledFields = disabledFields;
             return View();
         }
 
+        public IActionResult EnableFieldInDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            if (dict["disabledFieldType"] == "select")
+            {
+                //need some exception handling/warning to user
+
+            }
+
+            else
+            {
+                using (var context = new Models.ApplicationDbContext())
+                {
+                    var fieldToEnable = (from temp in context.ApplicationTemplate
+                                         where temp.ProperName == dict["disabledFieldType"] &&
+                                               temp.Entity == entity
+                                         select temp).FirstOrDefault();
+
+                    fieldToEnable.Deleted = false;
+
+                    context.SaveChanges();
+                }
+            }
+            return View("EditAppTemp");
+        }
+
+        public IActionResult SaveFieldToDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            string fieldType = dict["fieldType"];
+            string fieldDesc = dict["fieldDesc"];
+            string propName = dict["fieldName"];
+            bool del = false;
+            string fieldName = propName.ToLower();
+            fieldName = fieldName.Replace(" ", "_");
+
+            if (fieldType == "select" || fieldDesc == "" || propName == "")
+            {
+
+            }
+
+            else
+            {
+                var newTemplateField = new Models.ApplicationTemplate
+                {
+                    FieldName = fieldName,
+                    FieldDescription = fieldDesc,
+                    Entity = entity,
+                    ControlType = fieldType,
+                    ProperName = propName,
+                    Deleted = del
+                };
+
+                applicationDbContext.ApplicationTemplate.Add(newTemplateField);
+                applicationDbContext.SaveChanges();
+            }
+            return View("EditAppTemp");
+        }
+
+        public IActionResult DisableFieldInDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            if (dict["deleteFieldType"] == "select")
+            {
+                //need some exception handling/warning to user
+
+            }
+
+            else
+            {
+                using (var context = new Models.ApplicationDbContext())
+                {
+                    var fieldToEnable = (from temp in context.ApplicationTemplate
+                                         where temp.ProperName == dict["deleteFieldType"] &&
+                                               temp.Entity == entity
+                                         select temp).FirstOrDefault();
+
+                    fieldToEnable.Deleted = true;
+
+                    context.SaveChanges();
+                }
+            }
+            return View("EditAppTemp");
+        }
 
         public IActionResult EditWebsite()
         {
@@ -138,7 +250,7 @@ namespace Interactive_Internship_Application.Controllers
                 return View("Index");
             }
         }
-
+       
         public IActionResult ManagePreviousApps()
         {
             return View();
