@@ -10,7 +10,7 @@ namespace Interactive_Internship_Application.Controllers
 {
     public class StudentController : Controller
     {
-
+        
         [Authorize(Roles = "Admin,Student")]
         public IActionResult Index()
         {

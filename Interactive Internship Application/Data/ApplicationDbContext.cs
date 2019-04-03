@@ -5,14 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Interactive_Internship_Application.Models
 {
-    public partial class ApplicationDbContext : IdentityDbContext
+    public partial class ApplicationDbContext : IdentityDbContext 
     {
-
         public ApplicationDbContext()
         {
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(DbContextOptions<Models.ApplicationDbContext> options)
             : base(options)
         {
 
@@ -33,14 +32,15 @@ namespace Interactive_Internship_Application.Models
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True");
             }
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ApplicationData>(entity =>
             {
                 entity.HasKey(e => new { e.RecordId, e.DataKeyId })
-                    .HasName("PK__APPLICAT__71F78C45C99DF837");
+                    .HasName("PK__APPLICAT__71F78C45E8B8751E");
 
                 entity.ToTable("APPLICATION_DATA");
 
@@ -54,13 +54,13 @@ namespace Interactive_Internship_Application.Models
                     .WithMany(p => p.ApplicationData)
                     .HasForeignKey(d => d.DataKeyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__APPLICATI__data___15A53433");
+                    .HasConstraintName("FK__APPLICATI__data___74444068");
 
                 entity.HasOne(d => d.Record)
                     .WithMany(p => p.ApplicationData)
                     .HasForeignKey(d => d.RecordId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__APPLICATI__recor__14B10FFA");
+                    .HasConstraintName("FK__APPLICATI__recor__73501C2F");
             });
 
             modelBuilder.Entity<ApplicationTemplate>(entity =>
@@ -96,6 +96,8 @@ namespace Interactive_Internship_Application.Models
                     .HasColumnName("proper_name")
                     .HasMaxLength(255)
                     .IsUnicode(false);
+
+                entity.Property(e => e.RequiredField).HasColumnName("required_field");
             });
 
             modelBuilder.Entity<EmployerLogin>(entity =>
@@ -103,7 +105,7 @@ namespace Interactive_Internship_Application.Models
                 entity.ToTable("EMPLOYER_LOGIN");
 
                 entity.HasIndex(e => e.Email)
-                    .HasName("UQ__EMPLOYER__AB6E61645BD5E885")
+                    .HasName("UQ__EMPLOYER__AB6E616435EDF541")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -126,13 +128,13 @@ namespace Interactive_Internship_Application.Models
                     .HasPrincipalKey(p => p.Email)
                     .HasForeignKey(d => d.StudentEmail)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__EMPLOYER___stude__0A338187");
+                    .HasConstraintName("FK__EMPLOYER___stude__68D28DBC");
             });
 
             modelBuilder.Entity<FacultyInformation>(entity =>
             {
                 entity.HasKey(e => e.CourseName)
-                    .HasName("PK__FACULTY___B5B2A66BAA3BC5D0");
+                    .HasName("PK__FACULTY___B5B2A66B3DD0B8FC");
 
                 entity.ToTable("FACULTY_INFORMATION");
 
@@ -161,6 +163,11 @@ namespace Interactive_Internship_Application.Models
 
                 entity.Property(e => e.EmployerId).HasColumnName("employer_id");
 
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasMaxLength(512)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.StudentEmail)
                     .IsRequired()
                     .HasColumnName("student_email")
@@ -171,14 +178,14 @@ namespace Interactive_Internship_Application.Models
                     .WithMany(p => p.StudentAppNum)
                     .HasForeignKey(d => d.EmployerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__STUDENT_A__emplo__0E04126B");
+                    .HasConstraintName("FK__STUDENT_A__emplo__6CA31EA0");
 
                 entity.HasOne(d => d.StudentEmailNavigation)
                     .WithMany(p => p.StudentAppNum)
                     .HasPrincipalKey(p => p.Email)
                     .HasForeignKey(d => d.StudentEmail)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__STUDENT_A__stude__0D0FEE32");
+                    .HasConstraintName("FK__STUDENT_A__stude__6BAEFA67");
             });
 
             modelBuilder.Entity<StudentInformation>(entity =>
@@ -186,7 +193,7 @@ namespace Interactive_Internship_Application.Models
                 entity.ToTable("STUDENT_INFORMATION");
 
                 entity.HasIndex(e => e.Email)
-                    .HasName("UQ__STUDENT___AB6E616419DFCDDD")
+                    .HasName("UQ__STUDENT___AB6E616469C03EAF")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");

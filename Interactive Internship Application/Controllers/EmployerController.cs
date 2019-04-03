@@ -68,17 +68,24 @@ namespace Interactive_Internship_Application.Controllers
             //below gets the student's ID that the employer is tied to for input in to application 
 
 
-            var employersStudentEmail = (from employer in context.EmployerLogin
+            var employerCorrelationToStudentEmail = (from employer in context.EmployerLogin
                                          where employer.Email == User.Identity.Name.ToString()
                                          select employer.StudentEmail).FirstOrDefault();
 
-            var employerStudentEmail = from student in context.StudentInformation
-                                       where student.Email == employersStudentEmail.ToString()
-                                       select student.Email;
+            var employersStudentEmailToStudentInformation = (from student in context.StudentInformation
+                                       where student.Email == employerCorrelationToStudentEmail.ToString()
+                                       select student.Email).FirstOrDefault();
+
+            var currentEmployerId = (from employer in context.EmployerLogin
+                                    where employer.Email == User.Identity.Name.ToString()
+                                    && employer.StudentEmail == employersStudentEmailToStudentInformation
+                                    select employer.Id).FirstOrDefault();
 
             var studentUniqueRecordNum = (from studentUniqueNum in context.StudentAppNum
-                                          where studentUniqueNum.StudentEmail == employersStudentEmail
+                                          where studentUniqueNum.StudentEmail == employersStudentEmailToStudentInformation
+                                          && studentUniqueNum.EmployerId == currentEmployerId
                                           select studentUniqueNum.Id).FirstOrDefault();
+        
 
 
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
@@ -103,13 +110,35 @@ namespace Interactive_Internship_Application.Controllers
             //below puts the appsettings into local variables to be passed into the EmailsGenerated.cs file for email deployment
             try
             {
+                //below gets the current class the student is taking so an email can be sent to that respective professor 
+                var classEnrolled = (from appData in context.ApplicationData
+                                              where appData.RecordId  == studentUniqueRecordNum &&
+                                              appData.DataKeyId == 1
+                                              select appData.Value).FirstOrDefault().ToString();
+
+                        var studentName = (from appData in context.ApplicationData
+                                               where appData.RecordId == studentUniqueRecordNum 
+                                               && appData.DataKeyId == 3
+                                               select appData.Value).FirstOrDefault();
+
+                var employerCompanyName = (from appData in context.ApplicationData
+                                   where appData.RecordId == studentUniqueRecordNum
+                                   && appData.DataKeyId == 11
+                                   select appData.Value).FirstOrDefault();
+
+                //below gets the professor's email for the student 
+
+                var professorEmail = (from facultyData in context.FacultyInformation
+                                     where facultyData.CourseName == classEnrolled
+                                     select facultyData.ProfEmail).FirstOrDefault();
+
                 string emailHost = configuration["Email:Smtp:Host"];
                 string emailPort = configuration["Email:Smtp:Port"];
                 string emailUsername = configuration["Email:Smtp:Username"];
                 string emailPassword = configuration["Email:Smtp:Password"];
 
                 Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
-                emailsGenerated.EmployerToProfessorEmail(emailHost, emailPort, emailUsername, emailPassword);
+                emailsGenerated.EmployerToProfessorEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, professorEmail, employerCompanyName, classEnrolled);
 
 
             }

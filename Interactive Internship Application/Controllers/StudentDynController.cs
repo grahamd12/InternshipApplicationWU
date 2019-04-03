@@ -58,10 +58,11 @@ namespace Interactive_Internship_Application.Controllers
         public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
         {
             int count = 0;
-            var context = new Models.ApplicationDbContext();
+            var context = new ApplicationDbContext();
             int numStudentFieldCount = (from x in context.ApplicationTemplate
                                          where x.Entity == "Student"
                                          select x).Count();
+            
 
             //below gets the student's record id using queries
 
