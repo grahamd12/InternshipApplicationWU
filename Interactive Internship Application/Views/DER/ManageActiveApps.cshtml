@@ -35,36 +35,35 @@
     <div style="text-align: center">
         <table border="1" cellpadding="10" align="center">
             <tr>
-                <!--FROM STUDENT'S APPLICATION -->
-                <th>Class Enrolled</th>
-                <th>Semester Enrolled</th>
-                <th>Student Name</th>
-                <th>Grad Year</th>
-                <th>Major/Concentration</th>
-                <th>Organization Name</th>
-                <!--end FROM STUDENT'S APPLICATION -->
-                <!--SEARCH FACULTY INFO TABLE AND MATCH PROFESSOR WITH CLASS ENROLLED -->
-                <th>Faculty Member</th>
-                @*<th>View</th>*@ <!--NEED TO ADD A LINE FOR HER TO SIGN IT; EITHER ANOTHER BUTTON OR APPEND TO STUDENT'S APP-->
-                @*<th>Signed</th>*@
-                <th>Last Student Login</th>
-                @*<th>Select</th>*@ <!--For withdrawing or creating excel reports -->
-                @*<th>Status</th>*@
-            </tr>
-            @*<Interactive_Internship_Application.Models.StudentInformation>*@
+                @foreach (var column in ViewBag.colNames)
+                {
+                    <th>@column</th>
+                }
 
-                @model string[,]
-                
-                    @for (int row = 1; row <= Model.GetUpperBound(0); row++)
+                <th>View App</th>
+                <th>Signed</th>
+                <th>Select?</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                @{
+                    int colCount = 0;
+                    foreach (var item in ViewBag.appArray)
                     {
-                        <tr>
-                            @for (int column = 0; column <= Model.GetUpperBound(1); column++)
-                            {
-                                    <td>@Model[row, column] </td>
-                            }
-                        </tr>
+
+                        <th>@item</th>
+                        colCount++;
                     }
-        </table>
+
+                    <td colspan="7">hey</td>
+                    <td colspan="7">&nbsp;</td>
+                    <td colspan="7">&nbsp;</td>
+                    <td colspan="7">&nbsp;</td>
+                }
+
+
+            </tr>
+            </table>
     </div>
 
     <!-- Withdraw and Excel Report Buttons-->

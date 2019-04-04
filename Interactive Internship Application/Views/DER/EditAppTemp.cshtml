@@ -29,8 +29,6 @@ SAME PAGE FILLS WITH WHAT'S CURRENTLY IN EDITAPPTEMPENTITY.CSHTML??-->
             <tr>
                 <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
             </tr>
-
-
         </table>
 
         <h1><i>Edit Application Template</i></h1>
@@ -40,6 +38,33 @@ SAME PAGE FILLS WITH WHAT'S CURRENTLY IN EDITAPPTEMPENTITY.CSHTML??-->
 <body>
 
     <div style="text-align: center">
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Student" formaction=@Url.Action("EditAppTempEntity", new { eName = "Student" }) ;
+                   formmethod="post">
+        </form>
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Employer" formaction=@Url.Action("EditAppTempEntity", new { eName = "Employer" }) ;
+                   formmethod="post">
+        </form>
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Professor" formaction=@Url.Action("EditAppTempEntity", new { eName = "Professor" }) ;
+                   formmethod="post">
+        </form>
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="CBA Student Services" formaction=@Url.Action("EditAppTempEntity", new { eName = "CBA Student Services" }) ;
+                   formmethod="post">
+        </form>
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Department Representative" formaction=@Url.Action("EditAppTempEntity", new { eName = "Department Representative" }) ;
+                   formmethod="post">
+        </form>
+        <form asp-action="EditAppTempEntity" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="D.E.R." formaction=@Url.Action("EditAppTempEntity", new { eName = "D.E.R." }) ;
+                   formmethod="post">
+        </form>
+    </div>
+
+    @*<div style="text-align: center">
         <a href="/DER/EditAppTempEntity">
             <button class="buttonMenu" type="button">Student</button>
         </a>
@@ -73,8 +98,8 @@ SAME PAGE FILLS WITH WHAT'S CURRENTLY IN EDITAPPTEMPENTITY.CSHTML??-->
         <a href="/DER/EditAppTempEntity">
             <button class="buttonMenu" type="button">D.E.R.</button>
         </a>
-S
-        </div>
- 
+        S
+    </div>*@
+
 </body>
 </html>
