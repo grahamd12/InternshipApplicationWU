@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace Interactive_Internship_Application.Models
 {
@@ -28,6 +29,21 @@ namespace Interactive_Internship_Application.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+                var environmentName =
+                Environment.GetEnvironmentVariable(
+                "Hosting:Environment");
+
+              //  var basePath = "~";
+                var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+               // .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{environmentName}.json", true)
+                .AddEnvironmentVariables();
+
+                var config = builder.Build();
+
+
+               // var connectionString = config.GetConnectionString("LocalServer");
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True");
             }
