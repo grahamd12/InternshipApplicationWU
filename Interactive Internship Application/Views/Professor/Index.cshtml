@@ -14,14 +14,15 @@
     <body>
         <div style="text-align: center">
             <h1>Professor Example's Active Applications</h1>
+            <form asp-action="ProfViewApplication" asp-controller="Professor" asp-antiforgery="true" method="post">
             <table border="1" cellpadding="10" align="center">
                 <thead>
                     <tr>
                         <th>Student Name</th>
-                        <th>Semester Enrolled</th>
+                        <th>Graduation Year</th>
                         <th>Major</th>
                         <th>Organization Name</th>
-                        <th>Graduation Year</th>
+                        <th>Semester Start</th>
                         <th>Signed</th>
                         <th>Date Signed</th>
                     </tr>
@@ -35,14 +36,14 @@
                             // the professor teaches, grab that record ID. Then, use it to make
                             // entries into the table.
 
-                            if (item.Value == "CSCI 471")
+                            if (item.Value == "csci492")
                             {
                                 recordIds.Add(item.RecordId);
                             }
                         }
                         @foreach (int x in recordIds)
                         {
-                        <tr style="font-size:12px" class="clickable-row" data-href=''>
+                        <tr> 
                             @foreach (var datum in (List<ApplicationData>)Model)
                             {
                                 <!-- Name-->
@@ -52,19 +53,11 @@
                                     <td>
                                         @datum.Value
                                     </td>
+                                    continue;
                                 }
 
 
                                 <!-- Semester Enrolled-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 19)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Grad Year-->
                                 @if (datum.RecordId == x && datum.DataKeyId == 7)
                                 {
                                     <td>
@@ -73,7 +66,7 @@
                                 }
 
 
-                                <!-- Major-->
+                                <!-- Grad Year-->
                                 @if (datum.RecordId == x && datum.DataKeyId == 8)
                                 {
                                     <td>
@@ -82,7 +75,7 @@
                                 }
 
 
-                                <!-- Company Name-->
+                                <!-- Major-->
                                 @if (datum.RecordId == x && datum.DataKeyId == 11)
                                 {
                                     <td>
@@ -91,8 +84,17 @@
                                 }
 
 
+                                <!-- Company Name-->
+                                @if (datum.RecordId == x && datum.DataKeyId == 19)
+                                {
+                                    <td>
+                                        @datum.Value
+                                    </td>
+                                }
+
+
                                 <!-- Date Assigned-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 41)
+                                @if (datum.RecordId == x && datum.DataKeyId == 38)
                                 {
                                     <td>
                                         @datum.Value
@@ -101,7 +103,7 @@
 
 
                                 <!-- Signed?-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 40)
+                                @if (datum.RecordId == x && datum.DataKeyId == 39)
                                 {
                                     bool signo = false;
                                     <td>
@@ -114,20 +116,27 @@
                                     </td>
                                 }
                             }
+                            <td><input type ="submit" 
+                                       class="buttonMenu" 
+                                       name="response" 
+                                       value="Details" 
+                                       formaction="@Url.Action("ProfViewApplication", "Professor", new {y=x})"
+                                        onmouseover=""style="cursor: pointer;"></td>
                         </tr>
                         }
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
-                    <tr><td colspan="7">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
+                    <tr><td colspan="8">&nbsp;</td></tr>
                 </tbody>
             </table>
+                </form>
         </div>
     </body>
 </html>
