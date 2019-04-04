@@ -46,12 +46,12 @@ namespace Interactive_Internship_Application.Controllers
 
                 foreach (int id in currStudentRecordId)
                 {
-                
-                    
+
+
                     var classNameCurr = (from appData in context.ApplicationData
-                                         where appData.RecordId == id 
+                                         where appData.RecordId == id
                                          where appData.DataKeyId == 1
-                                         select appData.Value).FirstOrDefault().ToString();
+                                         select appData.Value).First().ToString();
                     classNames.Add(classNameCurr); 
                  
 
@@ -139,7 +139,7 @@ namespace Interactive_Internship_Application.Controllers
                 }
             }
 
-            
+
             return View("Index");
 
         }
