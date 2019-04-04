@@ -7,6 +7,7 @@ namespace Interactive_Internship_Application.Models
 {
     public partial class ApplicationDbContext : IdentityDbContext
     {
+        internal readonly int RecordId;
 
         public ApplicationDbContext()
         {
