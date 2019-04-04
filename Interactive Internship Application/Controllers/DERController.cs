@@ -162,53 +162,38 @@ namespace Interactive_Internship_Application.Controllers
 
         [HttpGet]
         public IActionResult ManageActiveApps()
-        {                                                                                                       
+        {
+            //var applicationArray = new List<string>();
             using (var context = new Models.ApplicationDbContext())
             {
                 // get current number of records in database
-                int records = (from actives in context.ApplicationData
-                               select actives.RecordId).Distinct().Count();
+                //int records = (from actives in context.ApplicationData
+                //               select actives.RecordId).Distinct().Count();
+
+                var applicationTable = (from data in context.ApplicationData
+                                        join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                        where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                           temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                           temp.FieldName == "org_name"
+                                        select new { prop = temp.ProperName, field = temp.FieldName, val = data.Value})
+                                        .ToList();
+
+                var applicationArray = (from app in applicationTable
+                                        
+                                        select app.val).ToList();
+
+                var colNames = (from cols in applicationTable
+                                select cols.prop).ToList();
+
+                int tableColumns = (from table in applicationTable
+                                    select table.prop).Distinct().Count();
 
 
-                //var applicationTable = (from actives in context.ApplicationData
-                //                        )
+                ViewBag.colNames = colNames;
+                ViewBag.tableCols = tableColumns;
+                ViewBag.appArray = applicationArray;
 
-
-
-
-                // make 2d array with amount of records and columns
-                string[,] tableArray = new string[records+1,8];
-
-                // the string numbers are the values we want from 
-                // our database for our table 
-                tableArray[0, 0] = "1";
-                tableArray[0, 1] = "2";
-                tableArray[0, 2] = "3";
-                tableArray[0, 3] = "7";
-                tableArray[0, 4] = "8";
-                tableArray[0, 5] = "11";
-                tableArray[0, 6] = "14";
-                tableArray[0, 7] = "20";
-
-                // get everything from ApplicationData and sort by record_id
-                var activeAppsQuery = (from actives in context.ApplicationData
-                                      orderby actives.RecordId
-                                      select actives)
-                                      .ToList();
-
-                // go through all records, pull out the data_key_ids we want and
-                // insert them into the 2d array, row by row
-                int currentDataID = 0;
-                foreach(var item in activeAppsQuery)
-                {
-                    if((currentDataID <8 ) && (item.DataKeyId).ToString() == tableArray[0, currentDataID])
-                    {
-                        tableArray[item.RecordId, currentDataID] = item.Value;
-                        currentDataID++;
-
-                    }
-                }
-                return View(tableArray);
+                return View();
 
             }
         }
