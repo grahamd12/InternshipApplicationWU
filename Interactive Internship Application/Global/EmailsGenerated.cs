@@ -46,9 +46,9 @@ namespace Interactive_Internship_Application.Global
                 };
                 using (var message = new MailMessage(username, profEmail)
                 {
-                   
-                Subject = "Winthrop University College of Business Administration: Internship Application",
-                    Body = "Hello Professor, " +
+
+                    Subject = "Winthrop University College of Business Administration: Internship Application",
+                    Body = "Hello Professor, " + "\n \n" + 
                     "" +
                     "Your student " + studentName + " is applying to take " + course + ". " 
                     + studentName + " will be interning at " + companyName + " and needs your approval for this job to take place. Please review the information " +
