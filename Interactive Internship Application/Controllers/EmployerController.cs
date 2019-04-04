@@ -49,7 +49,6 @@ namespace Interactive_Internship_Application.Controllers
 
                 return View(context.ApplicationTemplate.ToList());
             }
-            return View();
 
 
         }
@@ -147,9 +146,14 @@ namespace Interactive_Internship_Application.Controllers
                 
                 return View();
             }
+            return View("~/Views/Employer/ThankYouLogout.cshtml");
+        }
 
+        
+
+        public IActionResult ThankYouLogout()
+        {
             return View();
-
         }
 
     }

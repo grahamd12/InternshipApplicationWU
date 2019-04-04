@@ -51,7 +51,8 @@ namespace Interactive_Internship_Application.Global
                     Body = "Hello Professor, " +
                     "" +
                     "Your student " + studentName + " is applying to take " + course + ". " 
-                    + studentName + " will be interning at " + companyName + " and needs your approval for this job to take place."
+                    + studentName + " will be interning at " + companyName + " and needs your approval for this job to take place. Please review the information " +
+                    "that has been listed and approve/deny the request at here."
                 })
                 {
                     smtpClient.Send(message);
