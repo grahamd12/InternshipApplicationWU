@@ -78,6 +78,7 @@ namespace Interactive_Internship_Application.Controllers
                                          select temp).FirstOrDefault();
 
                     fieldToEnable.Deleted = false;
+                    fieldToEnable.RequiredField = true;
 
                     context.SaveChanges();
                 }
@@ -92,8 +93,15 @@ namespace Interactive_Internship_Application.Controllers
             string fieldDesc = dict["fieldDesc"];
             string propName = dict["fieldName"];
             bool del = false;
+            bool req = false;
             string fieldName = propName.ToLower();
             fieldName = fieldName.Replace(" ", "_");
+
+            if((dict.ContainsKey("required")) && dict["required"] == "1")
+            {
+                req = true;
+            }
+
 
             if (fieldType == "select" || fieldDesc == "" || propName == "")
             {
@@ -109,7 +117,8 @@ namespace Interactive_Internship_Application.Controllers
                     Entity = entity,
                     ControlType = fieldType,
                     ProperName = propName,
-                    Deleted = del
+                    Deleted = del,
+                    RequiredField = req,
                 };
 
                 applicationDbContext.ApplicationTemplate.Add(newTemplateField);
@@ -138,6 +147,7 @@ namespace Interactive_Internship_Application.Controllers
                                          select temp).FirstOrDefault();
 
                     fieldToEnable.Deleted = true;
+                    fieldToEnable.RequiredField = false;
 
                     context.SaveChanges();
                 }
@@ -158,6 +168,13 @@ namespace Interactive_Internship_Application.Controllers
                 // get current number of records in database
                 int records = (from actives in context.ApplicationData
                                select actives.RecordId).Distinct().Count();
+
+
+                //var applicationTable = (from actives in context.ApplicationData
+                //                        )
+
+
+
 
                 // make 2d array with amount of records and columns
                 string[,] tableArray = new string[records+1,8];

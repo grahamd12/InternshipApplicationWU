@@ -17,6 +17,7 @@ namespace Interactive_Internship_Application.Models
         public string ControlType { get; set; }
         public string ProperName { get; set; }
         public bool? Deleted { get; set; }
+        public bool? RequiredField { get; set; }
 
         public virtual ICollection<ApplicationData> ApplicationData { get; set; }
     }
