@@ -145,7 +145,7 @@ namespace Interactive_Internship_Application
             }
 
             //the below gives people roles, for testing and should be changed with winthrop authentication as well
-            IdentityUser userStudent = await UserManager.FindByEmailAsync("milokjovicm2@mailbox.winthrop.edu");
+            IdentityUser userStudent = await UserManager.FindByEmailAsync("milojkovicm2@mailbox.winthrop.edu");
             var UserStudent = new IdentityUser();
             await UserManager.AddToRoleAsync(userStudent, "Student");
 

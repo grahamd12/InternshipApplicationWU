@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,43 @@ namespace Interactive_Internship_Application.Controllers
 
         public IActionResult ViewApplications()
         {
+            var context = new Models.ApplicationDbContext();
+
+            //get current user's email and ID
+            var studentsEmail = (from student in context.StudentInformation
+                                 where student.Email == User.Identity.Name.ToString()
+                                 select student.Email).FirstOrDefault();
+
+            //check inside Student App Num if that ID exists
+            var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+                                       where stuAppNum.StudentEmail == studentsEmail
+                                       select stuAppNum.Id).ToList();
+
+            //if yes, grab class descriptor(s)
+           
+            if (currStudentRecordId.Count > 0)
+            {
+                List<string> classNames = new List<string>();
+
+                foreach (int id in currStudentRecordId)
+                {
+                
+                    
+                    var classNameCurr = (from appData in context.ApplicationData
+                                         where appData.RecordId == id 
+                                         where appData.DataKeyId == 1
+                                         select appData.Value).FirstOrDefault().ToString();
+                    classNames.Add(classNameCurr); 
+                 
+
+                }
+                
+            }
+            //no else needed
+
+            //show create new application
+
+
             return View();
         }
 
@@ -57,6 +95,12 @@ namespace Interactive_Internship_Application.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
         {
+
+            //PUT CODE TO SEND EMAIL AFTER STUDENT'S INFO IS SAVED TO DB; HERE FOR NOW FOR TESTING
+            //send email to employer
+            NewEmail("milojkovicm2@mailbox.winthrop.edu", "password", "mateamilojkovic@yahoo.com", "Winthrop University Internship Application", "Body Text");
+
+
             int count = 0;
             var context = new ApplicationDbContext();
             int numStudentFieldCount = (from x in context.ApplicationTemplate
@@ -94,45 +138,42 @@ namespace Interactive_Internship_Application.Controllers
                     count++;
                 }
             }
+
             
-
-
-
             return View("Index");
 
         }
 
-
-    
-
-    /*
-
-      //attempt at using the same controller method to process the data
-      [HttpGet]
-    public IActionResult ApplicationDynamic()
-    {
-        if (Request.HttpContext == POST) //doesn't compile
-         {
-              return View("Index");
-          }
-      else
-      { 
-            //returns all entries in the application template table
-            using (var context = new Interactive_Internship_Application.Models.IIPContext())
+        //email function
+        public void NewEmail(string fromEmail, string password, string toAddress, string subject, string body)
+        {
+            using (System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage())
             {
+                //create a new blank email
+                myMail.From = new MailAddress(fromEmail);
 
-                var getSingleFieldName = context.ApplicationTemplate.ToList();
-                ViewBag.allFieldNames = getSingleFieldName;
-                return View();
+                //fill email with correct receiver address, subject, and body message
+                myMail.To.Add(toAddress);
+                myMail.Subject = subject;
+                myMail.IsBodyHtml = true;
+                myMail.Body = body;
+
+                //send email
+                using (System.Net.Mail.SmtpClient s = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
+                {
+                    s.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    s.UseDefaultCredentials = false;
+                    s.Credentials = new System.Net.NetworkCredential(myMail.From.ToString(), password);
+                    s.EnableSsl = true;
+                    s.Send(myMail);
+                }
             }
         }
-     }
 
-       //using a separate controller method named the formaction value from the form
 
-      */
 
-    public IActionResult CheckStatus()
+
+        public IActionResult CheckStatus()
 
         {
             return View();

@@ -30,37 +30,63 @@ INSTEAD OF HAVING A DIFFERENT WEBPAGE PER ENTITY?-->
 
         </table>
 
-        <h1><i>Edit Application Template</i></h1>
+        <h1><i>Editing @ViewBag.entity Template</i></h1>
         <br /><br />
 
 </head>
 <body>
-    <div style="text-align: center">
-        <!--STATIC; INFORMATION GOES INTO DB-->
-        <h2>Add a Field</h2>
-        <table border="1" cellpadding="10" align="center">
-            <thead>
-                <tr>
-                    <th>Field Name</th>
-                    <th></th>
+    <form asp-action="EnableFieldInDB" asp-controller="DER" asp-antiforgery="true" method="post">
+        <div style="text-align: center">
+            <h3>Add a Field</h3>
+            <table border="1" cellpadding="10" align="center">
+                <tbody>
+                    <tr style="font-size:12px" class="clickable-row" data-href=''>
+                        <th>Field Name</th>
+                        <td>
+                            <select name="disabledFieldType">
+                                <option value="select">[Select One]</option>
+                                @if (ViewBag.disabledFields.Count == 0)
+                                {
+                                    <option> No Disabled Fields!</option>
+                                }
+                                @foreach (var field in ViewBag.disabledFields)
+                                {
+                                    <option value="@field">@field</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center">
+                <input type="submit" class="buttonMenu" name="response" value="Enabled Field" formaction=@Url.Action("EnableFieldInDB", new { entity = ViewBag.entity })
+                       formmethod="post">
+            </div>
+        </div>
+    </form>
 
-                </tr>
-            </thead>
+    <br />
+    <h3>OR</h3>
+    <br />
+    <form asp-action="SaveFieldToDB" asp-controller="DER" asp-antiforgery="true" method="post">
+
+        <h3>Create a New Field</h3>
+        <table border="1" cellpadding="10" align="center">
             <tbody>
-                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                <tr style="font-size:12px;" class="clickable-row" data-href=''>
                     <td>Field Name</td>
-                    <td><input type="text" name="fieldname" value="" size="15"></td>
+                    <td><input type="text" name="fieldName" value="" size="15"></td>
                 </tr>
 
                 <tr style="font-size:12px" class="clickable-row" data-href=''>
                     <td>Field Description</td>
-                    <td><input type="text" name="fieldname" value="" size="15"></td>
+                    <td><textarea name="fieldDesc" value="" size="15" rows="10" cols="30" maxlength="1000"></textarea></td>
                 </tr>
 
                 <tr style="font-size:12px" class="clickable-row" data-href=''>
                     <td>Type</td>
                     <td>
-                        <select name="class">
+                        <select name="fieldType">
                             <option value="select">[Select One]</option>
                             <option value="checkbox">Check Box</option>
                             <option value="number">Number</option>
@@ -71,69 +97,51 @@ INSTEAD OF HAVING A DIFFERENT WEBPAGE PER ENTITY?-->
 
                 <tr style="font-size:12px" class="clickable-row" data-href=''>
                     <td>Required</td>
-                    <td><input type="checkbox" value="1" /></td>
+                    <td><input name="required" type="checkbox" value="1" /></td>
                 </tr>
-
-                <tr style="font-size:12px" class="clickable-row" data-href=''>
-                    <td>Validation</td>
-                    <td>
-                        <select name="class">
-                            <option value="select">[Select One]</option>
-                            <option value="none">None</option>
-                            <option value="numbers">Numbers</option>
-                            <option value="text">Text</option>
-                        </select>
-                    </td></td>
-                </tr>
-
-
             </tbody>
         </table>
+
         <!-- Add Button-->
         <div style="text-align: center">
-            <a href="~/">
-                <button class="buttonMenu" type="button">Add</button>
-            </a>
+            <input type="submit" class="buttonMenu" name="response" value="Add Field" formaction=@Url.Action("SaveFieldToDB", new { entity = ViewBag.entity }) ;
+                   formmethod="post">
         </div>
+    </form>
 
-    </div>
+
     <br><br>
 
-    <!--DYNAMIC SINCE WE NEED TO KNOW THE SPECIFIC FIELDS FOR AN ENTITY IN ORDER TO KNOW WHICH SHE CAN DELETE IN THE FIRST PLACE-->
-    <h2>Delete A Field</h2>
-    <table border="1" cellpadding="10" align="center">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Field Name</th>
+    <form asp-action="DisableFieldInDB" asp-controller="DER" asp-antiforgery="true" method="post">
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="font-size:12px" class="clickable-row" data-href=''>
-                <td><input type="checkbox" value="1" /></td>
-                <td>Student Name</td>
-            </tr>
+        <h3>Disable A Field</h3>
+        <table border="1" cellpadding="10" align="center">
+            <tbody>
+                <tr style="font-size:12px" class="clickable-row" data-href=''>
+                    <th>Field Name</th>
+                    <td>
+                        <select name="deleteFieldType">
+                            <option value="select">[Select One]</option>
+                            @if (ViewBag.enabledFields.Count == 0)
+                            {
+                                <option> No Enabled fields to disabled!</option>
+                            }
+                            @foreach (var field in ViewBag.enabledFields)
+                            {
+                                <option value="@field">@field</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <tr style="font-size:12px" class="clickable-row" data-href=''>
-                <td><input type="checkbox" value="1" /></td>
-                <td>Student Phone Number</td>
-            </tr>
-
-            <tr style="font-size:12px" class="clickable-row" data-href=''>
-                <td><input type="checkbox" value="1" /></td>
-                <td>Student Email</td>
-            </tr>
-
-        </tbody>
-    </table>
-
-    <!-- Delete Button-->
-    <div style="text-align: center">
-        <a href="~/">
-            <button class="buttonMenu" type="button">Delete</button>
-        </a>
-    </div>
+        <!-- Delete Button-->
+        <div style="text-align: center">
+                <input type="submit" class="buttonMenu" name="response" value="Disable Field" formaction=@Url.Action("DisableFieldInDB", new { entity = ViewBag.entity }) ;
+                       formmethod="post">
+        </div>
+    </form>
 
     </div>
 
