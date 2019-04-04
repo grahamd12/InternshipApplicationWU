@@ -9,9 +9,13 @@ using System.IO;
 namespace Interactive_Internship_Application.Controllers
 {
     [Authorize(Roles = "Admin")]
+    public class entityInfo
+    {
+        public string entityName;
+    }
+
     public class DERController : Controller
     {
-
         public Models.ApplicationDbContext applicationDbContext { get; set; }
         public DERController(Models.ApplicationDbContext dbContext)
         {
@@ -27,11 +31,129 @@ namespace Interactive_Internship_Application.Controllers
             return View();
         }
 
-        public IActionResult EditAppTempEntity()
+        // the name of the entity's template being edited is passed in so that the code knows which
+        // data to pull from the database
+        public IActionResult EditAppTempEntity(string eName)
         {
+            var entity = new entityInfo();
+            entity.entityName = eName;
+            var disabledFields = new List<string>();
+            var enabledFields = new List<string>();
+            using (var context = new Models.ApplicationDbContext())
+            {
+                
+                disabledFields = (from temp in context.ApplicationTemplate
+                                  where temp.Entity == entity.entityName &&
+                                  temp.Deleted == true
+                                  select temp.ProperName).ToList();
+
+                enabledFields = (from temp in context.ApplicationTemplate
+                                where temp.Entity == entity.entityName
+                                select temp.ProperName).ToList();
+            }
+
+            ViewBag.entity = entity.entityName;
+            ViewBag.enabledFields = enabledFields;
+            ViewBag.disabledFields = disabledFields;
             return View();
         }
 
+        public IActionResult EnableFieldInDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            if (dict["disabledFieldType"] == "select")
+            {
+                //need some exception handling/warning to user
+
+            }
+
+            else
+            {
+                using (var context = new Models.ApplicationDbContext())
+                {
+                    var fieldToEnable = (from temp in context.ApplicationTemplate
+                                         where temp.ProperName == dict["disabledFieldType"] &&
+                                               temp.Entity == entity
+                                         select temp).FirstOrDefault();
+
+                    fieldToEnable.Deleted = false;
+                    fieldToEnable.RequiredField = true;
+
+                    context.SaveChanges();
+                }
+            }
+            return View("EditAppTemp");
+        }
+
+        public IActionResult SaveFieldToDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            string fieldType = dict["fieldType"];
+            string fieldDesc = dict["fieldDesc"];
+            string propName = dict["fieldName"];
+            bool del = false;
+            bool req = false;
+            string fieldName = propName.ToLower();
+            fieldName = fieldName.Replace(" ", "_");
+
+            if((dict.ContainsKey("required")) && dict["required"] == "1")
+            {
+                req = true;
+            }
+
+
+            if (fieldType == "select" || fieldDesc == "" || propName == "")
+            {
+
+            }
+
+            else
+            {
+                var newTemplateField = new Models.ApplicationTemplate
+                {
+                    FieldName = fieldName,
+                    FieldDescription = fieldDesc,
+                    Entity = entity,
+                    ControlType = fieldType,
+                    ProperName = propName,
+                    Deleted = del,
+                    RequiredField = req,
+                };
+
+                applicationDbContext.ApplicationTemplate.Add(newTemplateField);
+                applicationDbContext.SaveChanges();
+            }
+            return View("EditAppTemp");
+        }
+
+        public IActionResult DisableFieldInDB(string entity)
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            if (dict["deleteFieldType"] == "select")
+            {
+                //need some exception handling/warning to user
+
+            }
+
+            else
+            {
+                using (var context = new Models.ApplicationDbContext())
+                {
+                    var fieldToEnable = (from temp in context.ApplicationTemplate
+                                         where temp.ProperName == dict["deleteFieldType"] &&
+                                               temp.Entity == entity
+                                         select temp).FirstOrDefault();
+
+                    fieldToEnable.Deleted = true;
+                    fieldToEnable.RequiredField = false;
+
+                    context.SaveChanges();
+                }
+            }
+            return View("EditAppTemp");
+        }
 
         public IActionResult EditWebsite()
         {
@@ -40,46 +162,38 @@ namespace Interactive_Internship_Application.Controllers
 
         [HttpGet]
         public IActionResult ManageActiveApps()
-        {                                                                                                       
+        {
+            //var applicationArray = new List<string>();
             using (var context = new Models.ApplicationDbContext())
             {
                 // get current number of records in database
-                int records = (from actives in context.ApplicationData
-                               select actives.RecordId).Distinct().Count();
+                //int records = (from actives in context.ApplicationData
+                //               select actives.RecordId).Distinct().Count();
 
-                // make 2d array with amount of records and columns
-                string[,] tableArray = new string[records+1,8];
+                var applicationTable = (from data in context.ApplicationData
+                                        join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                        where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                           temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                           temp.FieldName == "org_name"
+                                        select new { prop = temp.ProperName, field = temp.FieldName, val = data.Value})
+                                        .ToList();
 
-                // the string numbers are the values we want from 
-                // our database for our table 
-                tableArray[0, 0] = "1";
-                tableArray[0, 1] = "2";
-                tableArray[0, 2] = "3";
-                tableArray[0, 3] = "7";
-                tableArray[0, 4] = "8";
-                tableArray[0, 5] = "11";
-                tableArray[0, 6] = "14";
-                tableArray[0, 7] = "20";
+                var applicationArray = (from app in applicationTable
+                                        
+                                        select app.val).ToList();
 
-                // get everything from ApplicationData and sort by record_id
-                var activeAppsQuery = (from actives in context.ApplicationData
-                                      orderby actives.RecordId
-                                      select actives)
-                                      .ToList();
+                var colNames = (from cols in applicationTable
+                                select cols.prop).ToList();
 
-                // go through all records, pull out the data_key_ids we want and
-                // insert them into the 2d array, row by row
-                int currentDataID = 0;
-                foreach(var item in activeAppsQuery)
-                {
-                    if((currentDataID <8 ) && (item.DataKeyId).ToString() == tableArray[0, currentDataID])
-                    {
-                        tableArray[item.RecordId, currentDataID] = item.Value;
-                        currentDataID++;
+                int tableColumns = (from table in applicationTable
+                                    select table.prop).Distinct().Count();
 
-                    }
-                }
-                return View(tableArray);
+
+                ViewBag.colNames = colNames;
+                ViewBag.tableCols = tableColumns;
+                ViewBag.appArray = applicationArray;
+
+                return View();
 
             }
         }
@@ -138,7 +252,7 @@ namespace Interactive_Internship_Application.Controllers
                 return View("Index");
             }
         }
-
+       
         public IActionResult ManagePreviousApps()
         {
             return View();
