@@ -26,6 +26,43 @@ namespace Interactive_Internship_Application.Controllers
 
         public IActionResult ViewApplications()
         {
+            var context = new Models.ApplicationDbContext();
+
+            //get current user's email and ID
+            var studentsEmail = (from student in context.StudentInformation
+                                 where student.Email == User.Identity.Name.ToString()
+                                 select student.Email).FirstOrDefault();
+
+            //check inside Student App Num if that ID exists
+            var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+                                       where stuAppNum.StudentEmail == studentsEmail
+                                       select stuAppNum.Id).ToList();
+
+            //if yes, grab class descriptor(s)
+           
+            if (currStudentRecordId.Count > 0)
+            {
+                List<string> classNames = new List<string>();
+
+                foreach (int id in currStudentRecordId)
+                {
+                
+                    
+                    var classNameCurr = (from appData in context.ApplicationData
+                                         where appData.RecordId == id 
+                                         where appData.DataKeyId == 1
+                                         select appData.Value).FirstOrDefault().ToString();
+                    classNames.Add(classNameCurr); 
+                 
+
+                }
+                
+            }
+            //no else needed
+
+            //show create new application
+
+
             return View();
         }
 
