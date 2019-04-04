@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <Content Remove="Views\Employer\CompanyInformation.cshtml" />
+      <Content Remove="Views\Employer\ThankYouLogout.cshtml" />
     </ItemGroup>
 
 
@@ -39,6 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Include="Views\Employer\ThankYouLogout.cshtml" />
       <None Include="Views\Employer\CompanyInformation.cshtml" />
     </ItemGroup>
 

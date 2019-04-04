@@ -1,35 +1,32 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using Interactive_Internship_Application.Global;
 using Microsoft.AspNetCore.Mvc;
 using Interactive_Internship_Application.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using System.Net.Mail;
 
 namespace Interactive_Internship_Application.Controllers
 {
     [Authorize(Roles = "Admin, Employer")]
     public class EmployerController : Controller
     {
-
-
+        IConfiguration configuration;
         //create this to have a local variable to manipulate the database
         //below takes in the database (the data from the view ) and puts it local for this
         //controller to decide what to do to the data. 
         public Models.ApplicationDbContext applicationDbContext { get; set; }
-        public EmployerController(Models.ApplicationDbContext dbContext)
+        public EmployerController(Models.ApplicationDbContext dbContext, IConfiguration iconfiguration)
         {
             applicationDbContext = dbContext;
+            configuration = iconfiguration;
+
         }
 
         //look in database to see count of entries for Employer entity 
-
-
-
-
-
 
         public IActionResult Index()
         {
@@ -52,24 +49,15 @@ namespace Interactive_Internship_Application.Controllers
 
                 return View(context.ApplicationTemplate.ToList());
             }
-            return View();
 
 
         }
-        //unsure what the bit below does, Dysean had Matea add this. 
+        //Below takes the employer's submitted data and puts it into the database
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
         {
-            /* string name = User.Identity.Name;
 
-             var studentId = from e in applicationDbContext.EmployerLogin
-                             where e.Email == name
-                             && e.StudentEmail == 
-
-
-                                 select e.Id;
-                                 */
             int count = 0;
             ApplicationDbContext context = new Models.ApplicationDbContext();
             int numEmployerFieldCount = (from x in context.ApplicationTemplate
@@ -79,17 +67,24 @@ namespace Interactive_Internship_Application.Controllers
             //below gets the student's ID that the employer is tied to for input in to application 
 
 
-            var employersStudentEmail = (from employer in context.EmployerLogin
+            var employerCorrelationToStudentEmail = (from employer in context.EmployerLogin
                                          where employer.Email == User.Identity.Name.ToString()
                                          select employer.StudentEmail).FirstOrDefault();
 
-            var employerStudentEmail = from student in context.StudentInformation
-                                       where student.Email == employersStudentEmail.ToString()
-                                       select student.Email;
+            var employersStudentEmailToStudentInformation = (from student in context.StudentInformation
+                                       where student.Email == employerCorrelationToStudentEmail.ToString()
+                                       select student.Email).FirstOrDefault();
+
+            var currentEmployerId = (from employer in context.EmployerLogin
+                                    where employer.Email == User.Identity.Name.ToString()
+                                    && employer.StudentEmail == employersStudentEmailToStudentInformation
+                                    select employer.Id).FirstOrDefault();
 
             var studentUniqueRecordNum = (from studentUniqueNum in context.StudentAppNum
-                                          where studentUniqueNum.StudentEmail == employersStudentEmail
+                                          where studentUniqueNum.StudentEmail == employersStudentEmailToStudentInformation
+                                          && studentUniqueNum.EmployerId == currentEmployerId
                                           select studentUniqueNum.Id).FirstOrDefault();
+        
 
 
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
@@ -111,10 +106,56 @@ namespace Interactive_Internship_Application.Controllers
             }
 
 
+            //below puts the appsettings into local variables to be passed into the EmailsGenerated.cs file for email deployment
+            try
+            {
+                //below gets the current class the student is taking so an email can be sent to that respective professor 
+                var classEnrolled = (from appData in context.ApplicationData
+                                              where appData.RecordId  == studentUniqueRecordNum &&
+                                              appData.DataKeyId == 1
+                                              select appData.Value).FirstOrDefault().ToString();
 
-            return View("Index");
+                        var studentName = (from appData in context.ApplicationData
+                                               where appData.RecordId == studentUniqueRecordNum 
+                                               && appData.DataKeyId == 3
+                                               select appData.Value).FirstOrDefault();
 
+                var employerCompanyName = (from appData in context.ApplicationData
+                                   where appData.RecordId == studentUniqueRecordNum
+                                   && appData.DataKeyId == 11
+                                   select appData.Value).FirstOrDefault();
+
+                //below gets the professor's email for the student 
+
+                var professorEmail = (from facultyData in context.FacultyInformation
+                                     where facultyData.CourseName == classEnrolled
+                                     select facultyData.ProfEmail).FirstOrDefault();
+
+                string emailHost = configuration["Email:Smtp:Host"];
+                string emailPort = configuration["Email:Smtp:Port"];
+                string emailUsername = configuration["Email:Smtp:Username"];
+                string emailPassword = configuration["Email:Smtp:Password"];
+
+                Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+                emailsGenerated.EmployerToProfessorEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, professorEmail, employerCompanyName, classEnrolled);
+
+
+            }
+            catch
+            {
+                
+                return View();
+            }
+            return View("~/Views/Employer/ThankYouLogout.cshtml");
         }
+
+        
+
+        public IActionResult ThankYouLogout()
+        {
+            return View();
+        }
+
     }
 
 }

@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace Interactive_Internship_Application.Models
 {
-    public partial class ApplicationDbContext : IdentityDbContext
+    public partial class ApplicationDbContext : IdentityDbContext 
     {
         public ApplicationDbContext()
         {
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(DbContextOptions<Models.ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -27,6 +28,21 @@ namespace Interactive_Internship_Application.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+                var environmentName =
+                Environment.GetEnvironmentVariable(
+                "Hosting:Environment");
+
+              //  var basePath = "~";
+                var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+               // .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{environmentName}.json", true)
+                .AddEnvironmentVariables();
+
+                var config = builder.Build();
+
+
+               // var connectionString = config.GetConnectionString("LocalServer");
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             }
@@ -34,12 +50,14 @@ namespace Interactive_Internship_Application.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
 
             modelBuilder.Entity<ApplicationData>(entity =>
             {
                 entity.HasKey(e => new { e.RecordId, e.DataKeyId })
+
                     .HasName("PK__APPLICAT__71F78C459BE1EFDE");
 
                 entity.ToTable("APPLICATION_DATA");
@@ -60,6 +78,7 @@ namespace Interactive_Internship_Application.Models
                     .WithMany(p => p.ApplicationData)
                     .HasForeignKey(d => d.RecordId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
+
                     .HasConstraintName("FK__APPLICATI__recor__2665ABE1");
             });
 
@@ -105,6 +124,7 @@ namespace Interactive_Internship_Application.Models
                 entity.ToTable("EMPLOYER_LOGIN");
 
                 entity.HasIndex(e => e.Email)
+
                     .HasName("UQ__EMPLOYER__AB6E6164B0FD1D1F")
                     .IsUnique();
 
@@ -128,12 +148,14 @@ namespace Interactive_Internship_Application.Models
                     .HasPrincipalKey(p => p.Email)
                     .HasForeignKey(d => d.StudentEmail)
                     .OnDelete(DeleteBehavior.Cascade)
+
                     .HasConstraintName("FK__EMPLOYER___stude__1BE81D6E");
             });
 
             modelBuilder.Entity<FacultyInformation>(entity =>
             {
                 entity.HasKey(e => e.CourseName)
+
                     .HasName("PK__FACULTY___B5B2A66B8381A0F4");
 
                 entity.ToTable("FACULTY_INFORMATION");
@@ -178,6 +200,7 @@ namespace Interactive_Internship_Application.Models
                     .WithMany(p => p.StudentAppNum)
                     .HasForeignKey(d => d.EmployerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
+
                     .HasConstraintName("FK__STUDENT_A__emplo__1FB8AE52");
 
                 entity.HasOne(d => d.StudentEmailNavigation)
@@ -185,7 +208,9 @@ namespace Interactive_Internship_Application.Models
                     .HasPrincipalKey(p => p.Email)
                     .HasForeignKey(d => d.StudentEmail)
                     .OnDelete(DeleteBehavior.ClientSetNull)
+
                     .HasConstraintName("FK__STUDENT_A__stude__1EC48A19");
+
             });
 
             modelBuilder.Entity<StudentInformation>(entity =>
@@ -193,7 +218,9 @@ namespace Interactive_Internship_Application.Models
                 entity.ToTable("STUDENT_INFORMATION");
 
                 entity.HasIndex(e => e.Email)
+
                     .HasName("UQ__STUDENT___AB6E6164073E76EB")
+
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
