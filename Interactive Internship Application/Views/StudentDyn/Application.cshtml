@@ -25,7 +25,18 @@
 
         </table>
 
-        <h1><i>CSCI 471 Internship Application</i></h1>
+        <!--display correct header, depending on if application is already started 
+            vs creating a new application-->
+        @if (ViewBag.className == "createNew")
+        {
+            <h1><i>New Internship Application</i></h1>
+
+        }
+        else
+        {
+            <h1><i>@ViewBag.className Internship Application</i></h1>
+
+        }
 
     </div>
 
@@ -35,7 +46,6 @@
 
 </head>
 <!--display data from Controller-->
-@*List<Interactive_Internship_Application.Models.ApplicationTemplate>*@
 <!-- Iterates through every piece in the list and displays it-->
 <!--NEED TO ADD DROP DOWN MENU TO DB-->
 <!--variable to determine where to put breaks-->
@@ -45,7 +55,7 @@
 <form asp-action="Submitted" asp-controller="StudentDynamic" asp-antiforgery="true" method="post">
     @Html.AntiForgeryToken()
 
-    @foreach (var item in (List<ApplicationTemplate>)Model)
+    @foreach (var item in ViewBag.fieldNames)
     {
         count++;
 

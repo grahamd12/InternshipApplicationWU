@@ -39,10 +39,10 @@ namespace Interactive_Internship_Application.Controllers
                                        select stuAppNum.Id).ToList();
 
             //if yes, grab class descriptor(s)
-           
+            List<string> classNames = new List<string>();
+
             if (currStudentRecordId.Count > 0)
             {
-                List<string> classNames = new List<string>();
 
                 foreach (int id in currStudentRecordId)
                 {
@@ -52,34 +52,108 @@ namespace Interactive_Internship_Application.Controllers
                                          where appData.RecordId == id
                                          where appData.DataKeyId == 1
                                          select appData.Value).First().ToString();
-                    classNames.Add(classNameCurr); 
-                 
+                    classNames.Add(classNameCurr);
+
 
                 }
-                
+
             }
             //no else needed
 
             //show create new application
 
+            ViewBag.classNames = classNames;
 
             return View();
         }
 
         /*Displays current application template fields onto web page  */
-        [HttpGet]
-        public IActionResult Application()
+        public IActionResult Application(string eName)
         {
+            var entity = new entityInfo();
+            entity.entityName = eName;
+
+            
+          
+
+            //determine if new StudentAppNum needs to be created
+            if (eName == "createNew")
+            {
+             /*   using (var context = new Models.ApplicationDbContext())
+                {
+
+                    var studentsEmail = (from student in context.StudentInformation
+                                         where student.Email == User.Identity.Name.ToString()
+                                         select student.Email).FirstOrDefault();
+
+                    string employerID = "3";
+                    var status = "Incomplete";
+
+                    List<string> newAppNum = new List<string>();
+                    newAppNum.Add(studentsEmail);
+                    newAppNum.Add(employerID);
+                    newAppNum.Add(status);
+
+
+                    // Add the new object to the Orders collection.
+                    context.SaveChanges(newAppNum);                  
+
+                }
+
+            */
+            }
+
             //returns all entries in the application template table
+            //and data filled out by student to date
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
             {
-                  var getSingleFieldName = context.ApplicationTemplate.ToList();
-                // ViewBag.allFieldNames = getSingleFieldName;
-                // return View(context.ApplicationTemplate.ToList());
-                 return View(getSingleFieldName);
+                var getSingleFieldName = context.ApplicationTemplate.ToList();
+              
+                //if previously saved application, grab data that was saved
+                if (eName != "createNew")
+                {
+                    //get current user's email and ID for class
+                    var studentEmail = (from student in context.StudentInformation
+                                        where student.Email == User.Identity.Name.ToString()
+                                        select student.Email).FirstOrDefault();
+
+                    //get all application IDs for student 
+                    var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+                                               where stuAppNum.StudentEmail == studentEmail
+                                               select stuAppNum.Id).ToList();
+
+                    //get applicationID for particular class
+                    int correctID = 0;
+                    foreach (var currID in currStudentRecordId)
+                    {
+                        var classNameCurr = (from appData in context.ApplicationData
+                                             where appData.RecordId == currID
+                                             where appData.DataKeyId == 1
+                                             select appData.Value).First().ToString();
+
+                        if (classNameCurr == eName)
+                            correctID = currID;
+                    }
+
+                    //get applicationData for particular class's application
+                    var filledOut = (from appData in context.ApplicationData
+                                     where appData.RecordId == correctID
+                                     select new { key = appData.DataKeyId, value = appData.Value })
+                                     .ToList();
+
+                    ViewBag.appID = correctID;
+                    ViewBag.appData = filledOut;
+
+                }
+                
+                ViewBag.className = eName;
+                ViewBag.fieldNames = getSingleFieldName;
+
+                return View();
 
             }
         }
+    
 
         //using a separate controller method with the same name as the default controller 
         //method but contains parameters
