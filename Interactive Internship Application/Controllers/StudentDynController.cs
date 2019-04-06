@@ -142,7 +142,7 @@ namespace Interactive_Internship_Application.Controllers
                                      .ToList();
 
                     ViewBag.appID = correctID;
-                    ViewBag.appData = filledOut;
+                    ViewBag.savedData = filledOut;
 
                 }
                 
