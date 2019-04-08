@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Interactive_Internship_Application.Global;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Configuration;
 
 namespace Interactive_Internship_Application.Controllers
 {
@@ -15,9 +16,12 @@ namespace Interactive_Internship_Application.Controllers
     public class StudentDynController : Controller
     {
         public Models.ApplicationDbContext _dataContext { get; set; }
-        public StudentDynController(Models.ApplicationDbContext dataContext)
+        IConfiguration configuration;
+        public StudentDynController(Models.ApplicationDbContext dataContext, IConfiguration iconfiguration)
         {
             _dataContext = dataContext;
+            configuration = iconfiguration;
+
         }
         public IActionResult Index()
         {
@@ -171,8 +175,6 @@ namespace Interactive_Internship_Application.Controllers
 
             //PUT CODE TO SEND EMAIL AFTER STUDENT'S INFO IS SAVED TO DB; HERE FOR NOW FOR TESTING
             //send email to employer
-            NewEmail("milojkovicm2@mailbox.winthrop.edu", "password", "mateamilojkovic@yahoo.com", "Winthrop University Internship Application", "Body Text");
-
 
             int count = 0;
             var context = new ApplicationDbContext();
@@ -212,37 +214,63 @@ namespace Interactive_Internship_Application.Controllers
                 }
             }
 
+            //connect student's email with employer ID; inside employer Login, grab employer's email
+            int employerID = (from application in context.StudentAppNum
+                              where application.StudentEmail == studentsEmail
+                              select application.EmployerId).FirstOrDefault();
 
+            var employerEmail = (from appData in context.ApplicationData
+                                 where appData.RecordId == currStudentRecordId &&
+                                 appData.DataKeyId == 17
+                                 select appData.Value).FirstOrDefault();
+
+
+            //get employer's name
+            var employerName = (from appData in context.ApplicationData
+                                where appData.RecordId == currStudentRecordId
+                                && appData.DataKeyId == 14
+                                select appData.Value).FirstOrDefault();
+
+            //get employer's title
+            var employerTitle = (from appData in context.ApplicationData
+                                 where appData.RecordId == currStudentRecordId
+                                 && appData.DataKeyId == 15
+                                 select appData.Value).FirstOrDefault();
+
+            //get employer's Company name
+            var employerCompanyName = (from appData in context.ApplicationData
+                                       where appData.RecordId == currStudentRecordId
+                                       && appData.DataKeyId == 11
+                                       select appData.Value).FirstOrDefault();
+
+            //get student's name
+            var studentName = (from appData in context.ApplicationData
+                               where appData.RecordId == currStudentRecordId
+                               && appData.DataKeyId == 3
+                               select appData.Value).FirstOrDefault();
+
+            //get class student is trying to enroll in
+            var classEnrolled = (from appData in context.ApplicationData
+                                 where appData.RecordId == currStudentRecordId &&
+                                 appData.DataKeyId == 1
+                                 select appData.Value).FirstOrDefault().ToString();
+
+
+            //generate random number pin (4 digits) for employer
+            Random rnd = new Random();
+            int pin = rnd.Next(0000, 9999);
+
+            string emailHost = configuration["Email:Smtp:Host"];
+            string emailPort = configuration["Email:Smtp:Port"];
+            string emailUsername = configuration["Email:Smtp:Username"];
+            string emailPassword = configuration["Email:Smtp:Password"];
+
+
+            Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerName, employerTitle, employerCompanyName, classEnrolled, pin);
             return View("Index");
 
         }
-
-        //email function
-        public void NewEmail(string fromEmail, string password, string toAddress, string subject, string body)
-        {
-            using (System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage())
-            {
-                //create a new blank email
-                myMail.From = new MailAddress(fromEmail);
-
-                //fill email with correct receiver address, subject, and body message
-                myMail.To.Add(toAddress);
-                myMail.Subject = subject;
-                myMail.IsBodyHtml = true;
-                myMail.Body = body;
-
-                //send email
-                using (System.Net.Mail.SmtpClient s = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
-                {
-                    s.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    s.UseDefaultCredentials = false;
-                    s.Credentials = new System.Net.NetworkCredential(myMail.From.ToString(), password);
-                    s.EnableSsl = true;
-                    s.Send(myMail);
-                }
-            }
-        }
-
 
 
 

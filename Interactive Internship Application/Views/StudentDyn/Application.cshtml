@@ -108,7 +108,7 @@
         {
             @item.ProperName
             @model Dictionary<int, string>
-             @foreach (var fieldData in Model)
+          /*   @foreach (var fieldData in Model)
               {
                    if (fieldData.Key == item.Id) //that field was previously saved by student
                    {
@@ -116,14 +116,14 @@
 
                    }
                    else //not previously saved
-                   {
+                   {*/
                    
             <input type="text" id="name" name="@item.Id" value="" size="15">
 
             
-             }
+          //   }
 
-        }
+       // }
 
         if (count == 3)
         {

@@ -1,23 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net.Mail;
-using System.Threading.Tasks;
-using System.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Microsoft.AspNetCore.Rewrite.Internal.UrlActions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Diagnostics;
-using Interactive_Internship_Application.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Interactive_Internship_Application.Global
 {
@@ -26,6 +8,52 @@ namespace Interactive_Internship_Application.Global
         public EmailsGenerated()
         {
         }
+
+
+    //function to send employer email after student has completed their part
+    public void StudentToEmployerEmail(string host, string port, string username, string password, string studentName, string empEmail, string empName, string empTitle, string companyName, string course, int pin)
+    {
+
+        //SmtpClient smtpClient = ConfigureEmailServices();
+
+
+        try
+        {
+            SmtpClient smtpClient = new SmtpClient
+            {
+                Host = host,
+                Port = Convert.ToInt32(port),
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new System.Net.NetworkCredential(username, password)
+            };
+            using (var message = new MailMessage(username, empEmail)
+            {
+
+                Subject = "Winthrop University College of Business Administration: Internship Application",
+                Body = "Hello " + empTitle + " " + empName + "\n \n" +
+                "" +
+                "Your intern " + studentName + " is applying to take " + course +
+                ", which would allow " + studentName + " to get class credit for the internship " +
+                studentName + " will be " +
+                "completing for you at your company, " + companyName +
+                " and needs your approval for this internship to be taken for class credit." +
+                "Please complete the form at this link: ." + "\n \n"+
+                "To login, use your email address and this four digit pin: " + pin + ".\n \n" + "If you have any questions, please don't hesitate to reach out to Mrs. Celeste Tiller " +
+             "at tillerc at winthrop dot edu \n\n"
+
+            })
+            {
+                smtpClient.Send(message);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
 
         //email function
         public void EmployerToProfessorEmail(string host, string port, string username, string password, string studentName, string profEmail, string companyName, string course)
