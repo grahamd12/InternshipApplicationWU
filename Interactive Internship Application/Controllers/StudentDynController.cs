@@ -108,7 +108,7 @@ namespace Interactive_Internship_Application.Controllers
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
             {
                 var getSingleFieldName = context.ApplicationTemplate.ToList();
-              
+                var filledOutGood = new Dictionary<int, string>();
                 //if previously saved application, grab data that was saved
                 if (eName != "createNew")
                 {
@@ -136,20 +136,19 @@ namespace Interactive_Internship_Application.Controllers
                     }
 
                     //get applicationData for particular class's application
-                    var filledOut = (from appData in context.ApplicationData
+                    var filledOut = from appData in context.ApplicationData
                                      where appData.RecordId == correctID
-                                     select new { key = appData.DataKeyId, value = appData.Value })
-                                     .ToList();
+                                     select appData;
 
+
+                     filledOutGood = filledOut.ToDictionary(what => what.DataKeyId, who=>who.Value);
                     ViewBag.appID = correctID;
-                    ViewBag.savedData = filledOut;
-
                 }
                 
                 ViewBag.className = eName;
                 ViewBag.fieldNames = getSingleFieldName;
 
-                return View();
+                return View(filledOutGood);
 
             }
         }

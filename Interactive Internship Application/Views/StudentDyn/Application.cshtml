@@ -101,38 +101,39 @@
                 count = 0; //reset count
             }
         }
-       
+
 
         else if (item.Entity == "Student" && item.Id != 32 && item.Id != 34 && item.Id != 45
             && item.Id != 46 && item.Id != 52 && item.Id != 53)
         {
             @item.ProperName
-          /*  @foreach (var fieldData in ViewBag.savedData)
-            {
-                 if (fieldData.key == item.Id) //that field was previously saved by student
-                 {
-                 <input type="text" id="name" name="@item.Id" value="@fieldData" size="15">
+            @model Dictionary<int, string>
+             @foreach (var fieldData in Model)
+              {
+                   if (fieldData.Key == item.Id) //that field was previously saved by student
+                   {
+                   <input type="text" id="name" name="@item.Id" value="@fieldData" size="15">
 
-                 }
-                 else //not previously saved 
-                 { 
-                 */
-                 <input type="text" id="name" name="@item.Id" value="" size="15">
+                   }
+                   else //not previously saved
+                   {
+                   
+            <input type="text" id="name" name="@item.Id" value="" size="15">
 
-                /*
-                 }
- */                 
-            }
+            
+             }
 
-            if (count == 3)
-            {
-                <br />
-
-                <br />
-
-                count = 0; //reset count
-            }
         }
+
+        if (count == 3)
+        {
+            <br />
+
+            <br />
+
+            count = 0; //reset count
+        }
+    }
 
 
     }
