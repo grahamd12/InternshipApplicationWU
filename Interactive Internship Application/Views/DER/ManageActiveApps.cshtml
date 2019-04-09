@@ -31,39 +31,32 @@
 
 </head>
 
-<body>       
+<body>     
+    @model Dictionary<int, List<string>>
     <div style="text-align: center">
         <table border="1" cellpadding="10" align="center">
             <tr>
-                @foreach (var column in ViewBag.colNames)
+                <th>App ID</th>
+                @foreach (var column in ViewBag.tableCols)
                 {
                     <th>@column</th>
                 }
-
-                <th>View App</th>
-                <th>Signed</th>
-                <th>Select?</th>
-                <th>Status</th>
             </tr>
-            <tr>
-                @{
-                    int colCount = 0;
-                    foreach (var item in ViewBag.appArray)
+
+            @{
+                foreach(var row in Model)
+                {
+                <tr>
+                    @foreach (var item in row.Value)
                     {
-
-                        <th>@item</th>
-                        colCount++;
+                        <td>@item</td>
                     }
-
-                    <td colspan="7">hey</td>
-                    <td colspan="7">&nbsp;</td>
-                    <td colspan="7">&nbsp;</td>
-                    <td colspan="7">&nbsp;</td>
+                        <td><input name="approve" type="checkbox" /> </td>
+                        <td><input name="details" type="button" class="buttonMenu" value="Details" /></td>
+                </tr>
                 }
-
-
-            </tr>
-            </table>
+            }
+        </table>
     </div>
 
     <!-- Withdraw and Excel Report Buttons-->

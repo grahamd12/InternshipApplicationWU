@@ -163,38 +163,58 @@ namespace Interactive_Internship_Application.Controllers
         [HttpGet]
         public IActionResult ManageActiveApps()
         {
-            //var applicationArray = new List<string>();
+            List<string> tableData = new List<string>();
+            Dictionary<int, List<string>> wholeTable = new Dictionary<int, List<string>>();
+
             using (var context = new Models.ApplicationDbContext())
             {
-                // get current number of records in database
-                //int records = (from actives in context.ApplicationData
-                //               select actives.RecordId).Distinct().Count();
 
-                var applicationTable = (from data in context.ApplicationData
-                                        join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
-                                        where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                // get amount of active applications
+                var tableRowSize = (from apps in context.StudentAppNum
+                                    where apps.Status != "Complete"
+                                    select apps.Id).ToList();
+
+                // get proper column names that we want to display in table
+                var tableColumns = (from temp in context.ApplicationTemplate
+                                    where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
                                            temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
                                            temp.FieldName == "org_name"
-                                        select new { prop = temp.ProperName, field = temp.FieldName, val = data.Value})
-                                        .ToList();
+                                    select temp.ProperName).ToList();
 
-                var applicationArray = (from app in applicationTable
-                                        
-                                        select app.val).ToList();
+                tableColumns.Add("Status");
+                tableColumns.Add("Signed");
+                tableColumns.Add("View App");
 
-                var colNames = (from cols in applicationTable
-                                select cols.prop).ToList();
+                // get data on each active application
+                var columnData = (from num in context.StudentAppNum
+                                   join data in context.ApplicationData on num.Id equals data.RecordId
+                                   join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                   where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                      temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                      temp.FieldName == "org_name" && num.Status != "Complete"
+                                   select new { id = num.Id, field = temp.FieldName, value = data.Value })
+                                   .ToList();
 
-                int tableColumns = (from table in applicationTable
-                                    select table.prop).Distinct().Count();
+                foreach (var id in tableRowSize)
+                {
+                    // add each columns data to list
+                    tableData = (from data in columnData
+                                 where data.id == id
+                                 select data.value).ToList();
 
+                    // add status of each app to list
+                    tableData.Add((from num in context.StudentAppNum
+                                  where num.Id == id && num.Status != "Complete"
+                                  select num.Status).First().ToString());
 
-                ViewBag.colNames = colNames;
+                    tableData.Insert(0, id.ToString());
+
+                    //add data for each application to dictionary
+                    wholeTable.Add(id, tableData);
+                }
+
                 ViewBag.tableCols = tableColumns;
-                ViewBag.appArray = applicationArray;
-
-                return View();
-
+                return View(wholeTable);
             }
         }
 
@@ -252,11 +272,64 @@ namespace Interactive_Internship_Application.Controllers
                 return View("Index");
             }
         }
-       
+
         public IActionResult ManagePreviousApps()
+        {
+            List<string> tableData = new List<string>();
+            Dictionary<int, List<string>> wholeTable = new Dictionary<int, List<string>>();
+
+            using (var context = new Models.ApplicationDbContext())
+            {
+
+                // get amount of active applications
+                var tableRowSize = (from apps in context.StudentAppNum
+                                    where apps.Status == "Complete"
+                                    select apps.Id).ToList();
+
+                // get proper column names that we want to display in table
+                var tableColumns = (from temp in context.ApplicationTemplate
+                                    where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                           temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                           temp.FieldName == "org_name"
+                                    select temp.ProperName).ToList();
+
+                tableColumns.Add("View App");
+
+                // get data on each active application
+                var columnData = (from num in context.StudentAppNum
+                                  join data in context.ApplicationData on num.Id equals data.RecordId
+                                  join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                  where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                     temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                     temp.FieldName == "org_name" && num.Status != "Complete"
+                                  select new { id = num.Id, field = temp.FieldName, value = data.Value })
+                                  .ToList();
+
+                foreach (var id in tableRowSize)
+                {
+                    // add data from each application to list
+                    tableData = (from data in columnData
+                                 where data.id == id
+                                 select data.value).ToList();
+
+                    tableData.Insert(0, id.ToString());
+                    // add "complete" status to each of the applications
+                    tableData.Add("Complete");
+
+                    //add data for each application to dictionary
+                    wholeTable.Add(id, tableData);
+                }
+
+                ViewBag.tableCols = tableColumns;
+                return View(wholeTable);
+            }
+        }
+
+        public IActionResult ApplicationDetails()
         {
             return View();
         }
+
         public IActionResult ManageUsers()
         {
             return View();

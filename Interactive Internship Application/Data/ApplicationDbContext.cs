@@ -39,7 +39,7 @@ namespace Interactive_Internship_Application.Models
                 .AddJsonFile($"appsettings.{environmentName}.json", true)
                 .AddEnvironmentVariables();
 
-                var config = builder.Build();
+                //var config = builder.Build();
 
 
                // var connectionString = config.GetConnectionString("LocalServer");

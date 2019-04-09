@@ -33,50 +33,34 @@
 
 </head>
 <body>
+    @model Dictionary<int, List<string>>
     <div style="text-align: center">
         <table border="1" cellpadding="10" align="center">
-            <thead>
-                <tr>
-                    <!--FROM STUDENT'S APPLICATION -->
-                    <th>Student Name</th>
-                    <th>Class Enrolled</th>
-                    <th>Semester Enrolled</th>
-                    <th>Grad Year</th>
-                    <th>Major/Concentration</th>
-                    <th>Organization Name</th>
-                    <!--end FROM STUDENT'S APPLICATION -->
-                    <!--email? since faculty table may have been updated since so prof may have changed-->
-                    <th>Faculty Member</th>
-                    <th>View</th> <!--NEEDS TO INCLUDE HER SIGNATURE AND/OR REASON FOR DENIAL -->
-                    <th>Signed</th>
-                    <th>Select</th> <!--For deleting or creating excel reports -->
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <!--EACH ROW ATER HEADER IN TABLE IS DYNAMIC-->
-            <tbody>
-                <tr style="font-size:12px" class="clickable-row" data-href=''>
-                    <td>Dummy Student</td>
-                    <td>CSCI 493</td>
-                    <td>Spring 2019</td>
-                    <td>Spring 2020</td>
-                    <td>Computer Science</td>
-                    <td>CoolCompany 1000</td>
-                    <td>Steven Dannelly</td>
-                    <td><a href="/student/Application">View</a></td>
-                    <td>Yes</td>
-                    <td><input type="checkbox" value="1" /></td>
-                    <td>Approved</td>
-                </tr>
+            <tr>
+                <th>App ID</th>
+                @foreach (var column in ViewBag.tableCols)
+                {
+                    <th>@column</th>
+                }
+            </tr>
 
-
-            </tbody>
-            <!--END DYNAMIC PORTION-->
+            @{
+                foreach (var row in Model)
+                {
+                    <tr>
+                        @foreach (var item in row.Value)
+                        {
+                            <td>@item</td>
+                        }
+                        <td><input name="details" type="button" class="buttonMenu" value="Details" /></td>
+                    </tr>
+                }
+            }
         </table>
     </div>
 
     <!-- Withdraw and Excel Report Buttons-->
-    <div style="text-align: right">
+    <div style="text-align: center">
         <a href="~/">
             <button class="buttonMenu" type="button">Excel Report</button>
         </a>
