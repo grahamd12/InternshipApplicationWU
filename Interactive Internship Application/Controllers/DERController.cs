@@ -183,7 +183,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 tableColumns.Add("Status");
                 tableColumns.Add("Signed");
-                tableColumns.Add("View App");
+                tableColumns.Add("View Application Details");
 
                 // get data on each active application
                 var columnData = (from num in context.StudentAppNum
@@ -293,7 +293,8 @@ namespace Interactive_Internship_Application.Controllers
                                            temp.FieldName == "org_name"
                                     select temp.ProperName).ToList();
 
-                tableColumns.Add("View App");
+                tableColumns.Add("View Application Details");
+
 
                 // get data on each active application
                 var columnData = (from num in context.StudentAppNum
@@ -325,9 +326,31 @@ namespace Interactive_Internship_Application.Controllers
             }
         }
 
-        public IActionResult ApplicationDetails()
+        public IActionResult ApplicationDetails(int appID)
         {
-            return View();
+            Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
+            string studName, className;
+            using (var context = new Models.ApplicationDbContext())
+            {
+                var combined = from data in context.ApplicationData
+                               join fields in context.ApplicationTemplate on data.DataKeyId equals fields.Id
+                               where data.RecordId == appID
+                               select new { data, fields };
+
+                studName = (from data in context.ApplicationData
+                            where data.RecordId == appID && data.DataKeyId == 3
+                            select data.Value).FirstOrDefault();
+
+                className = (from data in context.ApplicationData
+                             where data.RecordId == appID && data.DataKeyId == 1
+                             select data.Value).FirstOrDefault();
+
+                appDetails = combined.ToDictionary(t => t.fields, t => t.data); 
+            }
+
+            ViewBag.studName = studName;
+            ViewBag.className = className;
+            return View(appDetails);
         }
 
         public IActionResult ManageUsers()

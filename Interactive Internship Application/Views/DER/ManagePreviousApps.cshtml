@@ -47,12 +47,19 @@
             @{
                 foreach (var row in Model)
                 {
+                    int id = 0;
+                    int count = 0;
                     <tr>
                         @foreach (var item in row.Value)
                         {
+                            if (count == 0)
+                            {
+                                id = Convert.ToInt32(item);
+                            }
                             <td>@item</td>
+                            count++;
                         }
-                        <td><input name="details" type="button" class="buttonMenu" value="Details" /></td>
+                        <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("ApplicationDetails", "DER", new { appID = id })'"></td>
                     </tr>
                 }
             }
