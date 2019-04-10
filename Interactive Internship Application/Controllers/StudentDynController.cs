@@ -11,6 +11,17 @@ using Microsoft.Extensions.Configuration;
 
 namespace Interactive_Internship_Application.Controllers
 {
+
+    //struct used for saving a new employer login row to Employer_Login table
+  /*  public struct empLogin
+    {
+        public int empPin;
+        public string empEmail, studEmail;
+
+    }
+
+        */
+
     [Authorize(Roles = "Admin,Student")]
 
     public class StudentDynController : Controller
@@ -77,36 +88,6 @@ namespace Interactive_Internship_Application.Controllers
             var entity = new entityInfo();
             entity.entityName = eName;
 
-            
-          
-
-            //determine if new StudentAppNum needs to be created
-            if (eName == "createNew")
-            {
-             /*   using (var context = new Models.ApplicationDbContext())
-                {
-
-                    var studentsEmail = (from student in context.StudentInformation
-                                         where student.Email == User.Identity.Name.ToString()
-                                         select student.Email).FirstOrDefault();
-
-                    string employerID = "3";
-                    var status = "Incomplete";
-
-                    List<string> newAppNum = new List<string>();
-                    newAppNum.Add(studentsEmail);
-                    newAppNum.Add(employerID);
-                    newAppNum.Add(status);
-
-
-                    // Add the new object to the Orders collection.
-                    context.SaveChanges(newAppNum);                  
-
-                }
-
-            */
-            }
-
             //returns all entries in the application template table
             //and data filled out by student to date
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
@@ -158,71 +139,133 @@ namespace Interactive_Internship_Application.Controllers
         }
     
 
-        //using a separate controller method with the same name as the default controller 
-        //method but contains parameters
-        /*After user submits form, this method stores form data into database*/
-        /*[HttpPost]
-        public IActionResult ApplicationDynamic(string name)
-          {
-            Console.WriteLine("Submitted ", name);
-            return View("Index");
-        }
-        */
+     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
+        public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel, string response)
         {
 
-            //PUT CODE TO SEND EMAIL AFTER STUDENT'S INFO IS SAVED TO DB; HERE FOR NOW FOR TESTING
-            //send email to employer
-
-            int count = 0;
+            string result = response;  //used to determine if a new Student App Num needs to be created
             var context = new ApplicationDbContext();
-            int numStudentFieldCount = (from x in context.ApplicationTemplate
-                                         where x.Entity == "Student"
-                                         select x).Count();
-            
-
-            //below gets the student's record id using queries
-
+    
+            //below gets the student's email using queries
             var studentsEmail = (from student in context.StudentInformation
                                  where student.Email == User.Identity.Name.ToString()
                                  select student.Email).FirstOrDefault();
 
+     
+            //save submitted information into a dictionary
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            //get employer email from submitted information (will need to be used whether or 
+            //not a new application is created
+            var employerEmail = dict["17"];
+
+            //determine if new StudentAppNum needs to be created
+            if (response == "Submit New Application" || response == "Save New Application")
+            {
+
+                //generate random number pin (4 digits) for employer
+                Random rnd = new Random();
+                int pin = rnd.Next(0000, 9999);
+
+                //save employer email, pin, and student email to Employer Login Table
+                EmployerLogin newEmployerLogin = new EmployerLogin();
+                newEmployerLogin.StudentEmail = studentsEmail;
+                newEmployerLogin.Email = employerEmail;
+                newEmployerLogin.Pin = Convert.ToInt16(pin);
+
+                context.EmployerLogin.Add(newEmployerLogin);
+                context.SaveChanges();
+
+                //save student email, employer ID, and application status to Student App Num Table
+                StudentAppNum newApp = new StudentAppNum();
+                newApp.StudentEmail = studentsEmail;
+                newApp.EmployerId = (from application in context.EmployerLogin
+                                     where application.StudentEmail == studentsEmail &&
+                                     application.Email == employerEmail
+                                     select application.Id).FirstOrDefault(); 
+
+                /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * NEED TO CHANGE THIS IN THE CASE THEY SUBMIT IT ALL IN ONE GO
+                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
+                 * */
+                newApp.Status = "Incomplete";
+
+                context.StudentAppNum.Add(newApp);
+                context.SaveChanges();
+                
+            }
+
+            //get students record ID 
             var currStudentRecordId = (from stuAppNum in context.StudentAppNum
                                        where stuAppNum.StudentEmail == studentsEmail
                                        select stuAppNum.Id).FirstOrDefault();
 
-            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-            foreach (var item in dict)
+            //get number of fields student enters
+            int numStudentFieldCount = (from x in context.ApplicationTemplate
+                                        where x.Entity == "Student"
+                                        select x).Count();
+
+            int count = 0; //used to determine if all input data has been saved
+
+            //determine if student wants to submit or save application
+
+            //if saving application, doesn't matter if everything was input; just make sure 
+              //class enrolled and employer email is input
+            if(response.Contains("Save"))
             {
 
-                if (count < (numStudentFieldCount-3)) //don't count submitted button response
-                                                      //in field count
+                //saves students input information to database
+                foreach (var item in dict)
                 {
-                    int intKey = Int32.Parse(item.Key.ToString());
 
-                    //changed the recordId to not be a foreign key on StudentInformation just to see if it was working. 
-                    //Change AppData DB back the right way later
-                    //Had to take out the FK's of the AppData table to make it work too
+                    if (count < (numStudentFieldCount - 3)) //don't count submitted button response
+                                                            //in field count
+                    {
+                        int intKey = Int32.Parse(item.Key.ToString());
+                        var appDataCurrent = new ApplicationData { RecordId = currStudentRecordId, DataKeyId = intKey, Value = item.Value };
+
+                        //determine if recordID and dataKeyID already exist in ApplicationData
+                        var prevSaved = (from record in _dataContext.ApplicationData
+                                      where record.DataKeyId == intKey &&
+                                      record.RecordId == currStudentRecordId
+                                      select record).SingleOrDefault();
+
+                        if (prevSaved != null) //record was previously saved
+                        {
+                            prevSaved.Value = appDataCurrent.Value;
+                        }
+                        else //record was not previously saved
+                        {
+                            _dataContext.ApplicationData.Add(appDataCurrent);
+                        }
+
+                        /*
+                         CHECK IF THAT RECORDID AND DATAKEYID PAIR HAVE ALREADY BEEN ENTERED
+                         IF YES, DELETE THAT ROW
+
+                          NO ELSE
 
 
-                    var appDataCurrent = new ApplicationData { RecordId = currStudentRecordId, DataKeyId = intKey, Value = item.Value };
-                    _dataContext.ApplicationData.Add(appDataCurrent);
-                    _dataContext.SaveChanges();
-                    count++;
+                          INSERT/REINSERT ROW
+
+                        ALTER TABLE IN SQL
+                        MODIFY IN LINQ?
+
+
+                         */
+
+
+                        _dataContext.SaveChanges();
+                        count++;
+                    }
                 }
+
             }
 
-            //connect student's email with employer ID; inside employer Login, grab employer's email
-            int employerID = (from application in context.StudentAppNum
-                              where application.StudentEmail == studentsEmail
-                              select application.EmployerId).FirstOrDefault();
 
-            var employerEmail = (from appData in context.ApplicationData
-                                 where appData.RecordId == currStudentRecordId &&
-                                 appData.DataKeyId == 17
-                                 select appData.Value).FirstOrDefault();
+            //if submitting application, ensure everything is saved in database
 
 
             //get employer's name
@@ -236,6 +279,13 @@ namespace Interactive_Internship_Application.Controllers
                                  where appData.RecordId == currStudentRecordId
                                  && appData.DataKeyId == 15
                                  select appData.Value).FirstOrDefault();
+
+            //get employer's pin
+            var empPin = (from empData in context.EmployerLogin
+                          where empData.Email == employerEmail
+                          select empData.Pin).FirstOrDefault();
+
+            short employerPin = Convert.ToInt16(empPin);
 
             //get employer's Company name
             var employerCompanyName = (from appData in context.ApplicationData
@@ -256,9 +306,7 @@ namespace Interactive_Internship_Application.Controllers
                                  select appData.Value).FirstOrDefault().ToString();
 
 
-            //generate random number pin (4 digits) for employer
-            Random rnd = new Random();
-            int pin = rnd.Next(0000, 9999);
+           
 
             string emailHost = configuration["Email:Smtp:Host"];
             string emailPort = configuration["Email:Smtp:Port"];
@@ -267,7 +315,7 @@ namespace Interactive_Internship_Application.Controllers
 
 
             Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
-            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerName, employerTitle, employerCompanyName, classEnrolled, pin);
+            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerName, employerTitle, employerCompanyName,employerPin,classEnrolled);
             return View("Index");
 
         }

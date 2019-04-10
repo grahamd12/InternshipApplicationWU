@@ -44,7 +44,7 @@
 
         <!--display option for student to create a new application-->
         <form asp-action="Application" asp-controller="StudentDyn" method="post">
-            <input type="submit" class="buttonMenu" name="response" value="CREATE NEW APPLICATION" formaction=@Url.Action("Application", new { eName = "createNew" }) ;
+            <input type="submit" class="buttonMenu" name="response" value="CREATE NEW APPLICATION" formaction=@Url.Action("Application", new { eName = "New" }) ;
                    formmethod="post">
         </form>
 

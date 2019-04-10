@@ -11,7 +11,7 @@ namespace Interactive_Internship_Application.Global
 
 
     //function to send employer email after student has completed their part
-    public void StudentToEmployerEmail(string host, string port, string username, string password, string studentName, string empEmail, string empName, string empTitle, string companyName, string course, int pin)
+    public void StudentToEmployerEmail(string host, string port, string username, string password, string studentName, string empEmail, string empName, string empTitle, string companyName,short pin, string course)
     {
 
         //SmtpClient smtpClient = ConfigureEmailServices();
@@ -41,7 +41,7 @@ namespace Interactive_Internship_Application.Global
                 " and needs your approval for this internship to be taken for class credit." +
                 "Please complete the form at this link: ." + "\n \n"+
                 "To login, use your email address and this four digit pin: " + pin + ".\n \n" + "If you have any questions, please don't hesitate to reach out to Mrs. Celeste Tiller " +
-             "at tillerc at winthrop dot edu \n\n"
+                "at tillerc@winthrop.edu \n\n"
 
             })
             {

@@ -77,7 +77,7 @@
         }
         else if (item.FieldName == "class_enrolled" && item.Entity == "Student")
         {
-
+            <!--ONCE THEY SUBMIT/SAVE IT, JUST SHOW GREYED OUT BOX WITH CLASS ENROLLED-->
             @item.ProperName
 
             <select name="@item.Id">
@@ -108,32 +108,33 @@
         {
             @item.ProperName
             @model Dictionary<int, string>
-          /*   @foreach (var fieldData in Model)
-              {
-                   if (fieldData.Key == item.Id) //that field was previously saved by student
-                   {
-                   <input type="text" id="name" name="@item.Id" value="@fieldData" size="15">
+            bool prevSaved = false; //used to determine which textbox value to output
+            @foreach (var fieldData in Model)
 
-                   }
-                   else //not previously saved
-                   {*/
-                   
-            <input type="text" id="name" name="@item.Id" value="" size="15">
+            {
+                if (fieldData.Key == item.Id) //that field was previously saved by student
+                {
+                    <input type="text" id="name" name="@item.Id" value="@fieldData.Value" size="15">
+                    prevSaved = true;
+                }
 
-            
-          //   }
+            }
+            if (!prevSaved)
+            {
+                <input type="text" id="name" name="@item.Id" value="" size="15">
 
-       // }
+            }
 
-        if (count == 3)
-        {
-            <br />
 
-            <br />
+            if (count == 3)
+            {
+                <br />
 
-            count = 0; //reset count
+                <br />
+
+                count = 0; //reset count
+            }
         }
-    }
 
 
     }
@@ -269,9 +270,19 @@
     <input type="text" name="53" value="">
 
     <br><br>
-    <!---  <input type="submit" name ="response" value="Save" formaction=@Url.Action("Save") formmethod="post">
-      -->
-    <input type="submit" class="buttonMenu" name="response" value="Submit" formaction=@Url.Action("Submitted")
+
+    <!--  !!!!!!!!!!!!IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        TO SAVE OR SUBMIT, STUDENT MUST ENTER AT LEAST CLASS NAME, EMPLOYER EMAIL
+
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+  
+    <!--Value passed to controller is className to allow controller to determine if a new
+        StudentAppNum needs to be created-->
+    <input type="submit" class="buttonMenu" name="response" value="Save @ViewBag.className Application" formaction=@Url.Action("Submitted")
+           formmethod="post">
+
+    <input type="submit" class="buttonMenu" name="response" value="Submit @ViewBag.className Application" formaction=@Url.Action("Submitted")
            formmethod="post">
 
 </form>
