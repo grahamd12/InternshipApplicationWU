@@ -1,0 +1,35 @@
+﻿@*@{var count = 0;}*@
+
+@model Dictionary<ApplicationTemplate, ApplicationData>
+
+
+<h1><i>Viewing @ViewBag.studName's Application (@ViewBag.className)</i></h1>
+@*<form asp-action="SaveChanges" asp-controller="DER" asp-antiforgery="true" method="post" />*@
+<div style="text-align: center">
+    <table border="1" cellpadding="10" align="center">
+        <thead>
+            <tr>
+                <th>Field Name</th>
+                <th>Answer</th>
+            </tr>
+        </thead>
+        <tbody style="display:block;overflow-y:auto;overflow-x:hidden;max-height:500px;">
+            @foreach (var field in Model)
+            {
+                <tr>
+                    <td>@field.Key.ProperName</td>
+                    <td>@field.Value.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+
