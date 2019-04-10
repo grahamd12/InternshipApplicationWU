@@ -12,131 +12,51 @@
         </style>
     </head>
     <body>
+        @model Dictionary<int, List<string>>
         <div style="text-align: center">
-            <h1>Professor Example's Active Applications</h1>
-            <form asp-action="ProfViewApplication" asp-controller="Professor" asp-antiforgery="true" method="post">
+            <h1>Active Applications</h1>
             <table border="1" cellpadding="10" align="center">
                 <thead>
                     <tr>
-                        <th>Student Name</th>
-                        <th>Graduation Year</th>
-                        <th>Major</th>
-                        <th>Organization Name</th>
-                        <th>Semester Start</th>
-                        <th>Signed</th>
-                        <th>Date Signed</th>
+                        <th>App ID</th>
+                        @foreach (var column in ViewBag.tableCols)
+                        {
+                            <th>@column</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
                     @{List<int> recordIds = new List<int>(); }
-                        @foreach (var item in (List<ApplicationData>)Model)
-                        {
+                    @{ var professorClass = ViewBag.Professor;}
 
-                            // whenever the Value from Application Data is equal to the course name
-                            // the professor teaches, grab that record ID. Then, use it to make
-                            // entries into the table.
+                    @foreach (var row in Model)
+                    {
 
-                            if (item.Value == "csci492")
+                        // whenever the Value from Application Data is equal to the course name
+                        // the professor teaches, grab that record ID. Then, use it to make
+                        // entries into the table.
+
+                        int id = 0;
+                        int count = 0;
+                        <tr>
+                            @foreach (var item in row.Value)
                             {
-                                recordIds.Add(item.RecordId);
+                                if (count == 0)
+                                {
+                                    id = Convert.ToInt32(item);
+                                }
+                                <td>@item</td>
+                                count++;
                             }
-                        }
-                        @foreach (int x in recordIds)
-                        {
-                        <tr> 
-                            @foreach (var datum in (List<ApplicationData>)Model)
-                            {
-                                <!-- Name-->
-
-                                @if (datum.RecordId == x && datum.DataKeyId == 3)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                    continue;
-                                }
-
-
-                                <!-- Semester Enrolled-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 7)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Grad Year-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 8)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Major-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 11)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Company Name-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 19)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Date Assigned-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 38)
-                                {
-                                    <td>
-                                        @datum.Value
-                                    </td>
-                                }
-
-
-                                <!-- Signed?-->
-                                @if (datum.RecordId == x && datum.DataKeyId == 39)
-                                {
-                                    bool signo = false;
-                                    <td>
-                                        @if (datum.Value != null)
-                                        {
-                                            signo = true;
-
-                                        }
-                                        <input type="checkbox" value=@signo />
-                                    </td>
-                                }
-                            }
-                            <td><input type ="submit" 
-                                       class="buttonMenu" 
-                                       name="response" 
-                                       value="Details" 
-                                       formaction="@Url.Action("ProfViewApplication", "Professor", new {y=x})"
-                                        onmouseover=""style="cursor: pointer;"></td>
+                            <td><input name="approve" type="checkbox" /></td>
+                            <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("ProfViewApplication", "Professor", new { appID = id })'"></td>
                         </tr>
-                        }
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
-                    <tr><td colspan="8">&nbsp;</td></tr>
+                    }
                 </tbody>
             </table>
-                </form>
         </div>
+        <form asp-action="ProfViewApplication" asp-controller="Professor" asp-antiforgery="true" method="post">
+        
+        </form>   
     </body>
 </html>
