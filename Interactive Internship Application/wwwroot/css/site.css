@@ -76,6 +76,20 @@ button.accept-policy {
 
 }
 
+.buttonMenuDisabled {
+    background-color: #838383;
+    border: none;
+    color: white;
+    padding: 10px 40px;
+    text-align: right;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 25px; /* for rounded corners */
+}
+
 
 /*div {
     padding: 5px;

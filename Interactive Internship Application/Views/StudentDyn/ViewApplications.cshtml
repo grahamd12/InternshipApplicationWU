@@ -35,11 +35,23 @@
         <!--display applications student is currently working on-->
         @foreach (var item in ViewBag.classNames)
         {
-            <form asp-action="Application" asp-controller="StudentDyn" method="post">
-                <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("Application", new { eName = @item }) ;
-                       formmethod="post">
-            </form>
-            <br />
+            if (ViewBag.classStatus[@item] == "Incomplete")
+            {
+                <form asp-action="Application" asp-controller="StudentDyn" method="post">
+                    <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("Application", new { eName = @item }) ;
+                           formmethod="post">
+                </form>
+                <br />
+            }
+            else
+            {
+                <form asp-action="Application" asp-controller="StudentDyn" method="post">
+                    <input type="submit" class="buttonMenuDisabled" name="response" disabled="disabled" value=@item formaction=@Url.Action("Application", new { eName = @item }) ;
+                           formmethod="post">
+                </form>
+                <br />
+            }
+
         }
 
         <!--display option for student to create a new application-->

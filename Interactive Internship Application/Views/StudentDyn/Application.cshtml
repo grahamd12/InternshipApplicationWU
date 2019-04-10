@@ -25,7 +25,7 @@
 
         </table>
 
-        <!--display correct header, depending on if application is already started 
+        <!--display correct header, depending on if application is already started
             vs creating a new application-->
         @if (ViewBag.className == "createNew")
         {
@@ -49,8 +49,14 @@
 <!-- Iterates through every piece in the list and displays it-->
 <!--NEED TO ADD DROP DOWN MENU TO DB-->
 <!--variable to determine where to put breaks-->
+<!-- determine if student tried to save/submit without entering class
+    enrolled and/or employer email-->
+
 @{
     var count = 0; //used for html spacing
+
+    //used for collecting already submitted data
+    @model Dictionary<int, string> 
 
 }
 
@@ -80,19 +86,31 @@
             <!--ONCE THEY SUBMIT/SAVE IT, JUST SHOW GREYED OUT BOX WITH CLASS ENROLLED-->
             @item.ProperName
 
-            <select name="@item.Id">
+            //determine if field was already submitted
+            @if (Model.ContainsKey(item.Id))
+            {
+                      <select name="@item.Id">
+                          <option value=@Model[item.Id]>@Model[@item.Id]</option>
+                         
+                      </select>
+            }
+            else
+            {
+
+              <select name="@item.Id">
                 <option value="select">[Select One]</option>
                 <option value="CSCI 491">CSCI 491</option>
-                <option value="badm491">BADM 491</option>
-                <option value="badm492">BADM 492</option>
-                <option value="badm694">BADM 694</option>
-                <option value="csci492">CSCI 492</option>
-                <option value="econ491">ECON 491</option>
-                <option value="entr491">ENTR 491</option>
-                <option value="finc491">FINC 491</option>
-                <option value="mgmt491">MGMT 491</option>
-                <option value="mktg491">MKTG 491</option>
-            </select>
+                <option value="BADM 491">BADM 491</option>
+                <option value="BADM 492">BADM 492</option>
+                <option value="BADM 694">BADM 694</option>
+                <option value="CSCI 492">CSCI 492</option>
+                <option value="ECON 491">ECON 491</option>
+                <option value="ENTR 491">ENTR 491</option>
+                <option value="FINC 491">FINC 491</option>
+                <option value="MGMT 491">MGMT 491</option>
+                <option value="MKTG 491">MKTG 491</option>
+              </select>
+            }
 
             if (count == 3)
             {
@@ -107,7 +125,6 @@
             && item.Id != 46 && item.Id != 52 && item.Id != 53)
         {
             @item.ProperName
-            @model Dictionary<int, string>
             bool prevSaved = false; //used to determine which textbox value to output
             @foreach (var fieldData in Model)
 
@@ -121,7 +138,7 @@
             }
             if (!prevSaved)
             {
-                <input type="text" id="name" name="@item.Id" value="" size="15">
+                <input type="text" id="name" name="@item.Id" size="15">
 
             }
 
@@ -276,9 +293,14 @@
         TO SAVE OR SUBMIT, STUDENT MUST ENTER AT LEAST CLASS NAME, EMPLOYER EMAIL
 
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-  
     <!--Value passed to controller is className to allow controller to determine if a new
         StudentAppNum needs to be created-->
+    <b>
+        WARNING: In order to save an application, "class enrolled" and "employer email"
+        MUST be input. In order to submit an application, ALL fields must be entered. If not,
+        all your data will be lost.
+    </b>
+    <br />
     <input type="submit" class="buttonMenu" name="response" value="Save @ViewBag.className Application" formaction=@Url.Action("Submitted")
            formmethod="post">
 
