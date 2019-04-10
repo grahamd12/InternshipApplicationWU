@@ -68,13 +68,10 @@
 
     <!-- Withdraw and Excel Report Buttons-->
     <div style="text-align: center">
-        <a href="~/">
-            <button class="buttonMenu" type="button">Excel Report</button>
-        </a>
-
-        <a href="~/">
-            <button class="buttonMenu" type="button">Delete</button>
-        </a>
+        <form asp-action="Report" asp-controller="DER" method="post">
+            <input type="submit" class="buttonMenu" name="response" value="Excel Report" formaction=@Url.Action("Report", new { actInact = "Inactive" })
+                   formmethod="post">
+        </form>
     </div>
 </body>
 </html>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using excel = Microsoft.Office.Interop.Excel;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Interactive_Internship_Application.Controllers
 {
@@ -41,17 +42,20 @@ namespace Interactive_Internship_Application.Controllers
             var enabledFields = new List<string>();
             using (var context = new Models.ApplicationDbContext())
             {
-                
+                // get any disabled fields
                 disabledFields = (from temp in context.ApplicationTemplate
                                   where temp.Entity == entity.entityName &&
                                   temp.Deleted == true
                                   select temp.ProperName).ToList();
 
+                // get all enabled fields
                 enabledFields = (from temp in context.ApplicationTemplate
                                 where temp.Entity == entity.entityName
                                 select temp.ProperName).ToList();
             }
 
+            // entity being changed as well as a list of enabled and disabled fields
+            // are returned to the view
             ViewBag.entity = entity.entityName;
             ViewBag.enabledFields = enabledFields;
             ViewBag.disabledFields = disabledFields;
@@ -77,9 +81,11 @@ namespace Interactive_Internship_Application.Controllers
                                                temp.Entity == entity
                                          select temp).FirstOrDefault();
 
+                    // change appropriate fields
                     fieldToEnable.Deleted = false;
                     fieldToEnable.RequiredField = true;
 
+                    //save to DB
                     context.SaveChanges();
                 }
             }
@@ -88,6 +94,7 @@ namespace Interactive_Internship_Application.Controllers
 
         public IActionResult SaveFieldToDB(string entity)
         {
+            //get everything from the form into variables
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
             string fieldType = dict["fieldType"];
             string fieldDesc = dict["fieldDesc"];
@@ -99,17 +106,19 @@ namespace Interactive_Internship_Application.Controllers
 
             if((dict.ContainsKey("required")) && dict["required"] == "1")
             {
+                // if the field is required, set variable to true for later use in model
                 req = true;
             }
 
 
             if (fieldType == "select" || fieldDesc == "" || propName == "")
             {
-
+                //if any of the fields empty, don't do anything
             }
 
             else
             {
+                // create new model for inputted data
                 var newTemplateField = new Models.ApplicationTemplate
                 {
                     FieldName = fieldName,
@@ -121,6 +130,7 @@ namespace Interactive_Internship_Application.Controllers
                     RequiredField = req,
                 };
 
+                // save to DB
                 applicationDbContext.ApplicationTemplate.Add(newTemplateField);
                 applicationDbContext.SaveChanges();
             }
@@ -146,9 +156,9 @@ namespace Interactive_Internship_Application.Controllers
                                                temp.Entity == entity
                                          select temp).FirstOrDefault();
 
+                    // change appropriate fields and save to DB
                     fieldToEnable.Deleted = true;
                     fieldToEnable.RequiredField = false;
-
                     context.SaveChanges();
                 }
             }
@@ -218,61 +228,6 @@ namespace Interactive_Internship_Application.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult Report()
-        {
-            using (var context = new Models.ApplicationDbContext())
-            {
-                // get column names for report
-                var reportDataColumns = (from temp in context.ApplicationTemplate
-                                        orderby temp.Id
-                                        select temp)
-                                        .ToList();
-
-                // get actual data to be fitted under each column
-                var reportData = (from data in context.ApplicationData
-                                  orderby data.RecordId
-                                  select data)
-                                  .ToList();
-
-                // make excel object
-                excel.Application excelApp = new excel.Application();
-                excel.Workbook wrkBook = excelApp.Workbooks.Add(System.Reflection.Missing.Value);
-                excel.Worksheet workSheet = (excel.Worksheet)wrkBook.ActiveSheet;
-
-                // attempt to write columns to excel file...
-                int colNum = 0;
-                foreach(var columns in reportDataColumns)
-                {
-                    var dummy = columns.ProperName;
-                    workSheet.Cells[1, colNum] = columns.ProperName;
-                    colNum++;
-                }
-
-                // attempt to write data to excel file...
-                int currID = 2;
-                int dataID = 1;
-                foreach(var item in reportData)
-                {
-                    if(currID-1 != item.RecordId)
-                    {
-                        currID++;
-                    }
-                    var otherDummy = item.Value;
-                    workSheet.Cells[currID, dataID] = item.Value;
-                    dataID++;
-                }
-
-                // get current time and save workbook as following
-                DateTime currTime = DateTime.Today;
-                wrkBook.SaveAs("Active_Applications_Generated_Report_" + currTime.ToString("MM-dd-yyy") + ".xlsx");
-                wrkBook.Close();
-                excelApp.Quit();
-                
-                return View("Index");
-            }
-        }
-
         public IActionResult ManagePreviousApps()
         {
             List<string> tableData = new List<string>();
@@ -330,27 +285,110 @@ namespace Interactive_Internship_Application.Controllers
         {
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             string studName, className;
+
             using (var context = new Models.ApplicationDbContext())
             {
+                // get fields and their data
                 var combined = from data in context.ApplicationData
                                join fields in context.ApplicationTemplate on data.DataKeyId equals fields.Id
                                where data.RecordId == appID
                                select new { data, fields };
 
+                // get the student's name
                 studName = (from data in context.ApplicationData
                             where data.RecordId == appID && data.DataKeyId == 3
                             select data.Value).FirstOrDefault();
 
+                // get the class the student is applying for
                 className = (from data in context.ApplicationData
                              where data.RecordId == appID && data.DataKeyId == 1
                              select data.Value).FirstOrDefault();
 
+                // fancy lambda functions for combining the two lists into a dictionary
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data); 
             }
 
+            // student and class name returned in viewbag, dictionary returned as model for frontend
             ViewBag.studName = studName;
             ViewBag.className = className;
             return View(appDetails);
+        }
+
+
+        [HttpPost]
+        public ActionResult Report(string actInact)
+        { 
+
+            //var columnData = new List();
+            using (var context = new Models.ApplicationDbContext())
+            {
+                dynamic columnData = "filler...";
+
+                //if active applications excel report button was pressed
+                if(actInact == "Active")
+                {
+                    columnData = (from num in context.StudentAppNum
+                                      join data in context.ApplicationData on num.Id equals data.RecordId
+                                      join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                      where num.Status != "Complete"
+                                      select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
+                                      .ToList();
+                }
+
+                //if inactive applications excel report button was pressed
+                else if (actInact == "Inactive")
+                {
+                    columnData = (from num in context.StudentAppNum
+                                      join data in context.ApplicationData on num.Id equals data.RecordId
+                                      join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                      where num.Status == "Complete"
+                                      select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
+                                      .ToList();
+                }
+
+                // get current time and decide name for generated csv filed
+                DateTime currTime = DateTime.Today;
+                string filePath = @"C:\Users\Daniel Branham\Desktop\" + actInact + "_Applications_Generated_Report_" + currTime.ToString("MM - dd - yyy") + ".csv";
+                string delimiter = ",";
+                string columnString = "";
+                string dataString = "";
+                var csv = new StringBuilder();
+            
+                // write columns to csv object
+                int first = columnData[0].id;
+                int column = 0;
+                while(column < columnData.Count && first == columnData[column].id)
+                {
+                    // accounts for commas in any of them field names
+                    columnString += "\"" + columnData[column].prop + "\"" + " (" + columnData[column].ent + ")" + delimiter;
+                    column++;
+                }
+                csv.AppendLine(columnString);
+
+                // write data to csv object
+                int recID = columnData[0].id;
+                foreach (var item in columnData)
+                {
+                    // if the current record id is different from the one we've been using
+                    // write to the object, clear the string, and start a new one for the next line
+                    if (recID != item.id)
+                    {
+                        csv.AppendLine(dataString);
+                        dataString = "";
+                        recID = item.id;
+                    }
+                    dataString += "\"" + item.value + "\"" + delimiter;
+                }
+                csv.AppendLine(dataString);
+
+                // write all data in csv object to csv file
+                try { System.IO.File.WriteAllText(filePath, csv.ToString()); }
+                catch (System.IO.IOException)
+                { // don't do anything if the file is currently open for some reason
+                }
+                    
+            }
+            return View("Index");
         }
 
         public IActionResult ManageUsers()

@@ -62,19 +62,16 @@
                             <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("ApplicationDetails", "DER", new { appID = id })'" ></td>
                         </tr>
                 }
-                            }
+            }
         </table>
     </div>
 
     <!-- Withdraw and Excel Report Buttons-->
     <div style="text-align: center">
         <form asp-action="Report" asp-controller="DER" method="post">
-            <input type="submit" class="buttonMenu" name="response" value="Excel Report" formaction=@Url.Action("Report")
+            <input type="submit" class="buttonMenu" name="response" value="Excel Report" formaction=@Url.Action("Report", new { actInact = "Active" })
                    formmethod="post">
         </form>
-            @*<a href="~/">
-                <button class="buttonMenu" type="button">Withdraw</button>
-            </a>*@
     </div>
 </body>
 </html>
