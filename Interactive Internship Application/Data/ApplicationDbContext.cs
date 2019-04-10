@@ -41,13 +41,11 @@ namespace Interactive_Internship_Application.Models
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("LocalServer"));
 
-
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
 
@@ -56,6 +54,7 @@ namespace Interactive_Internship_Application.Models
                 entity.HasKey(e => new { e.RecordId, e.DataKeyId })
 
                     .HasName("PK__APPLICAT__71F78C459BE1EFDE");
+
 
                 entity.ToTable("APPLICATION_DATA");
 
@@ -77,6 +76,7 @@ namespace Interactive_Internship_Application.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
 
                     .HasConstraintName("FK__APPLICATI__recor__2665ABE1");
+
             });
 
             modelBuilder.Entity<ApplicationTemplate>(entity =>
@@ -123,6 +123,7 @@ namespace Interactive_Internship_Application.Models
                 entity.HasIndex(e => e.Email)
 
                     .HasName("UQ__EMPLOYER__AB6E6164B0FD1D1F")
+
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -150,6 +151,7 @@ namespace Interactive_Internship_Application.Models
                     .OnDelete(DeleteBehavior.Cascade)
 
                     .HasConstraintName("FK__EMPLOYER___stude__1BE81D6E");
+
             });
 
             modelBuilder.Entity<FacultyInformation>(entity =>
@@ -203,6 +205,7 @@ namespace Interactive_Internship_Application.Models
 
                     .HasConstraintName("FK__STUDENT_A__emplo__1FB8AE52");
 
+
                 entity.HasOne(d => d.StudentEmailNavigation)
                     .WithMany(p => p.StudentAppNum)
                     .HasPrincipalKey(p => p.Email)
@@ -210,6 +213,7 @@ namespace Interactive_Internship_Application.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
 
                     .HasConstraintName("FK__STUDENT_A__stude__1EC48A19");
+
 
             });
 

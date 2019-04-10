@@ -119,7 +119,6 @@ namespace Interactive_Internship_Application.Controllers
                 return View(context.ApplicationTemplate.ToList());
             }
 
-
         }
         //Below takes the employer's submitted data and puts it into the database
         [HttpPost]
