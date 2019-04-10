@@ -47,7 +47,7 @@ namespace Interactive_Internship_Application.Controllers
 
             //if it exists, grab class descriptor(s)
             List<string> classNames = new List<string>();
-            Dictionary<string,string> classStatus = new Dictionary<string, string>();
+            Dictionary<string, string> classStatus = new Dictionary<string, string>();
 
             if (currStudentRecordId.Count > 0)
             {
@@ -64,8 +64,8 @@ namespace Interactive_Internship_Application.Controllers
 
 
                     var classStatusCurr = (from appData in context.StudentAppNum
-                                         where appData.Id == id
-                                         select appData.Status).First().ToString();
+                                           where appData.Id == id
+                                           select appData.Status).First().ToString();
 
                     classStatus.Add(classNameCurr, classStatusCurr);
 
@@ -85,7 +85,7 @@ namespace Interactive_Internship_Application.Controllers
         {
             var entity = new entityInfo();
             entity.entityName = eName;
-             
+
 
             //returns all entries in the application template table
             //and data filled out by student to date
@@ -121,14 +121,14 @@ namespace Interactive_Internship_Application.Controllers
 
                     //get applicationData for particular class's application
                     var filledOut = from appData in context.ApplicationData
-                                     where appData.RecordId == correctID
-                                     select appData;
+                                    where appData.RecordId == correctID
+                                    select appData;
 
 
-                     filledOutGood = filledOut.ToDictionary(what => what.DataKeyId, who=>who.Value);
+                    filledOutGood = filledOut.ToDictionary(what => what.DataKeyId, who => who.Value);
                     ViewBag.appID = correctID;
                 }
-                
+
                 ViewBag.className = eName;
                 ViewBag.fieldNames = getSingleFieldName;
 
@@ -136,7 +136,7 @@ namespace Interactive_Internship_Application.Controllers
 
             }
         }
-    
+
 
         //called when student presses "Save" or "Submit"
         [HttpPost]
@@ -146,19 +146,19 @@ namespace Interactive_Internship_Application.Controllers
 
             string result = response;  //used to determine if a new Student App Num needs to be created
             var context = new ApplicationDbContext();
-    
+
             //below gets the student's email using queries
             var studentsEmail = (from student in context.StudentInformation
                                  where student.Email == User.Identity.Name.ToString()
                                  select student.Email).FirstOrDefault();
 
-     
+
             //save submitted information into a dictionary
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
 
             //class enrolled and employer email must be entered
             //show error message if not entered
-            if(dict["1"].Length <= 0 || dict["17"].Length <= 0)
+            if (dict["1"].Length <= 0 || dict["17"].Length <= 0)
             {
                 ViewBag.error = "Class enrolled and employer email must be entered in order to save or submit";
                 return RedirectToAction("Application");
@@ -173,7 +173,7 @@ namespace Interactive_Internship_Application.Controllers
             //determine if new StudentAppNum needs to be created
             if (response == "Submit New Application" || response == "Save New Application")
             {
-                
+
                 //generate random number pin (4 digits) for employer
                 Random rnd = new Random();
                 int pin = rnd.Next(0000, 9999);
@@ -201,9 +201,9 @@ namespace Interactive_Internship_Application.Controllers
 
                 context.StudentAppNum.Add(newApp);
                 context.SaveChanges();
-                
+
             }
-           
+
             //get students record ID 
             var currStudentRecordId = (from stuAppNum in context.StudentAppNum
                                        where stuAppNum.StudentEmail == studentsEmail &&
@@ -231,7 +231,7 @@ namespace Interactive_Internship_Application.Controllers
             //if submitting application, ensure everything is entered by student
             else if (response.Contains("Submit"))
             {
-                foreach (var rec in dict) 
+                foreach (var rec in dict)
                 {
                     if (rec.Value.Length <= 0)
                     {
@@ -244,25 +244,25 @@ namespace Interactive_Internship_Application.Controllers
 
                 //send email to employer
 
-            //if submitting application, ensure everything is saved in database
+                //if submitting application, ensure everything is saved in database
 
 
-            //get employer's name
-            var employerName = (from appData in context.ApplicationData
-                                where appData.RecordId == currStudentRecordId
-                                && appData.DataKeyId == 14
-                                select appData.Value).FirstOrDefault();
+                //get employer's name
+                var employerName = (from appData in context.ApplicationData
+                                    where appData.RecordId == currStudentRecordId
+                                    && appData.DataKeyId == 14
+                                    select appData.Value).FirstOrDefault();
 
-            //get employer's title
-            var employerTitle = (from appData in context.ApplicationData
-                                 where appData.RecordId == currStudentRecordId
-                                 && appData.DataKeyId == 15
-                                 select appData.Value).FirstOrDefault();
+                //get employer's title
+                var employerTitle = (from appData in context.ApplicationData
+                                     where appData.RecordId == currStudentRecordId
+                                     && appData.DataKeyId == 15
+                                     select appData.Value).FirstOrDefault();
 
-            //get employer's pin
-            var empPin = (from empData in context.EmployerLogin
-                          where empData.Email == employerEmail
-                          select empData.Pin).FirstOrDefault();
+                //get employer's pin
+                var empPin = (from empData in context.EmployerLogin
+                              where empData.Email == employerEmail
+                              select empData.Pin).FirstOrDefault();
 
                 short employerPin = Convert.ToInt16(empPin);
 
@@ -293,25 +293,67 @@ namespace Interactive_Internship_Application.Controllers
                 string emailPassword = configuration["Email:Smtp:Password"];
 
 
-            Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
-            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerName, employerTitle, employerCompanyName,employerPin,classEnrolled);
+                Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+                emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerCompanyName, employerPin, classEnrolled);
+                return View("Index");
+
+            }
             return View("Index");
-
         }
 
-
-
-        public IActionResult CheckStatus()
-
+        //function to save student's information to database
+        public IActionResult Save(Dictionary<string, string> dict, int currId, int numFields)
         {
-            return View();
+            int count = 0; //used to determine if all input data has been saved
+
+
+            //saves students input information to database
+            foreach (var item in dict)
+            {
+
+                if (count < (numFields - 3)) //don't count submitted button response
+                                             //in field count
+                {
+                    if (item.Value.Length > 0) //only saves input information (no empty info)
+                    {
+                        int intKey = Int32.Parse(item.Key.ToString());
+                        var appDataCurrent = new ApplicationData { RecordId = currId, DataKeyId = intKey, Value = item.Value };
+
+                        //determine if recordID and dataKeyID already exist in ApplicationData
+                        var prevSaved = (from record in _dataContext.ApplicationData
+                                         where record.DataKeyId == intKey &&
+                                         record.RecordId == currId
+                                         select record).SingleOrDefault();
+
+                        if (prevSaved != null) //record was previously saved
+                        {
+                            prevSaved.Value = appDataCurrent.Value;
+                        }
+                        else //record was not previously saved
+                        {
+                            _dataContext.ApplicationData.Add(appDataCurrent);
+                        }
+
+                        _dataContext.SaveChanges();
+                    }
+                    count++;
+                }
+            }
+            return View("Index");
         }
 
-        public IActionResult SignJobDescription()
-        {
-            return View();
+            public IActionResult CheckStatus()
+
+            {
+                return View();
+            }
+
+            public IActionResult SignJobDescription()
+            {
+                return View();
+            }
         }
-    }
+    
 }
 
 /*InvalidOperationException: The view 'Index' was not found.The following locations were searched:
