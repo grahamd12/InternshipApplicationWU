@@ -138,6 +138,9 @@ namespace Interactive_Internship_Application.Models
                     .HasColumnName("student_email")
                     .HasMaxLength(512)
                     .IsUnicode(false);
+                
+                entity.Property(e => e.LastLogin).HasColumnName("last_login");
+
 
                 entity.HasOne(d => d.StudentEmailNavigation)
                     .WithMany(p => p.EmployerLogin)

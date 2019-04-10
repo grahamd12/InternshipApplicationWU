@@ -135,7 +135,7 @@ namespace Interactive_Internship_Application
                 //create the roles and seed them to the database 
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Dept"));
             }
-
+/*
             //Adding Employer Role 
             var roleCheckEmployer = await RoleManager.RoleExistsAsync("Employer");
             if (!roleCheckEmployer)
@@ -143,7 +143,7 @@ namespace Interactive_Internship_Application
                 //create the roles and seed them to the database 
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Employer"));
             }
-
+*/
             //the below gives people roles, for testing and should be changed with winthrop authentication as well
             IdentityUser userStudent = await UserManager.FindByEmailAsync("milokjovicm2@mailbox.winthrop.edu");
             var UserStudent = new IdentityUser();
@@ -157,10 +157,14 @@ namespace Interactive_Internship_Application
             var UserDept = new IdentityUser();
             await UserManager.AddToRoleAsync(userDept, "Dept");
 
-            IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
+ /*           IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
             var UserEmployer = new IdentityUser();
             await UserManager.AddToRoleAsync(userEmployer, "Employer");
 
+            IdentityUser userEmployer2 = await UserManager.FindByEmailAsync("brandonadill1@gmail.com");
+            var UserEmployer2 = new IdentityUser();
+            await UserManager.AddToRoleAsync(userEmployer2, "Employer");
+*/
 
             //Assign Admin role to the main User here we have given our newly registered  
             //login id for Admin management 

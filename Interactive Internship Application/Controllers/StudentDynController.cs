@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Interactive_Internship_Application.Global;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -164,7 +165,7 @@ namespace Interactive_Internship_Application.Controllers
             //determine if new StudentAppNum needs to be created
             if (response == "Submit New Application" || response == "Save New Application")
             {
-
+                
                 //generate random number pin (4 digits) for employer
                 Random rnd = new Random();
                 int pin = rnd.Next(0000, 9999);
@@ -174,7 +175,7 @@ namespace Interactive_Internship_Application.Controllers
                 newEmployerLogin.StudentEmail = studentsEmail;
                 newEmployerLogin.Email = employerEmail;
                 newEmployerLogin.Pin = Convert.ToInt16(pin);
-
+                newEmployerLogin.LastLogin = DateTime.Now;
                 context.EmployerLogin.Add(newEmployerLogin);
                 context.SaveChanges();
 
@@ -268,7 +269,7 @@ namespace Interactive_Internship_Application.Controllers
             //if submitting application, ensure everything is saved in database
 
 
-            //get employer's name
+       /*     //get employer's name
             var employerName = (from appData in context.ApplicationData
                                 where appData.RecordId == currStudentRecordId
                                 && appData.DataKeyId == 14
@@ -279,7 +280,7 @@ namespace Interactive_Internship_Application.Controllers
                                  where appData.RecordId == currStudentRecordId
                                  && appData.DataKeyId == 15
                                  select appData.Value).FirstOrDefault();
-
+*/
             //get employer's pin
             var empPin = (from empData in context.EmployerLogin
                           where empData.Email == employerEmail
@@ -315,12 +316,10 @@ namespace Interactive_Internship_Application.Controllers
 
 
             Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
-            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerName, employerTitle, employerCompanyName,employerPin,classEnrolled);
+            emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerCompanyName,employerPin,classEnrolled);
             return View("Index");
 
         }
-
-
 
         public IActionResult CheckStatus()
 
