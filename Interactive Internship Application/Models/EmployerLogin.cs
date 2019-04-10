@@ -14,6 +14,7 @@ namespace Interactive_Internship_Application.Models
         public string Email { get; set; }
         public short? Pin { get; set; }
         public string StudentEmail { get; set; }
+        public DateTime LastLogin { get; set; }
 
         public virtual StudentInformation StudentEmailNavigation { get; set; }
         public virtual ICollection<StudentAppNum> StudentAppNum { get; set; }

@@ -19,17 +19,21 @@
 
         <body>
             <!-- Login Buttons-->
-            Email: <br>
-            <input type="text" id="emailBox" autocomplete="off" name="email"><br>
-            Pin: <br>
-            <input type="password" id="passBox" autocomplete="off" name="pass"><br> <br>
+            <form asp-action="Login" asp-controller="Employer" asp-antiforgery="true" method="post">
+                @Html.AntiForgeryToken()
+                Email: <br>
+                <input type="text" id="emailBox" autocomplete="off" name="email"><br>
+                Pin: <br>
+                <input type="password" id="passBox" autocomplete="off" name="pass"><br> <br>
+                <!-- NEEDS TO BE CHANGED IN THE FUTURE-->
+                <!-- validate() determines if valid login; if valid, send to appropriate page-->
+                <input type="submit" class="buttonMenu" name="response" value="Login Application" formaction=@Url.Action("Login")
+                       formmethod="post">
+                <br><br>
 
-            <!-- NEEDS TO BE CHANGED IN THE FUTURE-->
-            <!-- validate() determines if valid login; if valid, send to appropriate page-->
-             <a href="~/student"><button class="button" type="button" id="logButton" onclick="validate();">Login</button></a>
+                <font size=".75em">*Login using the credentials emailed to you. Click here to be emailed a new pin</font>
 
-             <br><br>
-             <font size=".75em">*Login using the credentials emailed to you. Click here to be emailed a new pin</font>
+            </form>
 
         </body>
     </div>

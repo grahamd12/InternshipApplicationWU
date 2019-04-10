@@ -13,6 +13,7 @@ namespace Interactive_Internship_Application.Models
         public int Id { get; set; }
         public string StudentEmail { get; set; }
         public int EmployerId { get; set; }
+        public string Status { get; set; }
 
         public virtual EmployerLogin Employer { get; set; }
         public virtual StudentInformation StudentEmailNavigation { get; set; }

@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Data.SqlTypes;
+using Microsoft.Extensions.Configuration;
+using Interactive_Internship_Application.Global;
 
 namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
 {
@@ -17,11 +20,14 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public Models.ApplicationDbContext _dataContext { get; set; }
+        IConfiguration configuration;
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, Models.ApplicationDbContext dataContext, IConfiguration iconfiguration)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _dataContext = dataContext;
+            configuration = iconfiguration;
         }
 
         [BindProperty]
@@ -95,11 +101,17 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
                     {
                         return LocalRedirect("/StudentDyn");
                     }
-                    else if (getCurrentRole[0] == "Employer")
+       /*             else if (getCurrentRole[0] == "Employer")
                     {
-                        return LocalRedirect("/Employer/CompanyInformation");
-                    }
+                      
 
+                        }
+                       else
+                        {
+                            return LocalRedirect("/Employer/CompanyInformation");
+                        }
+                    }
+*/
                     //yo we gotta change this in the future when we get a department controller
                     else if (getCurrentRole[0] == "Dept")
                     {

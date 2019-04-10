@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Interactive_Internship_Application.Controllers
 {
-    public class AdminController : Controller
+    public class GlobalController : Controller
     {
-        [Authorize(Roles = "Admin")]
         public IActionResult Index()
+        {            
+            return View("Login");
+        }
+
+
+        public IActionResult ErrorRegeneratePin()
         {
             return View();
         }

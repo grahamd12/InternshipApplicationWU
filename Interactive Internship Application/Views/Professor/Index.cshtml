@@ -1,57 +1,62 @@
-﻿<!DOCTYPE html>
-<meta charset="UTF-8">
-<html>
-<head>
-    <style>
-        table {
-            display:block;
-            overflow-y:auto;
-            height: 200px;
-            border-collapse: collapse;
-        }
-    </style>
-</head>
-<body>
-    <div style="text-align: center">
-        <h1>Professor Example's Active Applications</h1>
-        <table border="1" cellpadding="10" align="center">
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Class Enrolled</th>
-                    <th>Semester Enrolled</th>
-                    <th>Grad Year</th>
-                    <th>Major</th>
-                    <th>Organization Name</th>
-                    <th>Date Assigned</th>
-                    <th>Sign</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="font-size:12px" class="clickable-row" data-href=''>
-                    <td>Dummy Student</td>
-                    <td>CSCI 493</td>
-                    <td>Spring 2019</td>
-                    <td>Spring 2020</td>
-                    <td>Computer Science</td>
-                    <td>CoolCompany 1000</td>
-                    <td>Oct. 17, 2018</td>
-                    <td><input type="checkbox" value="1" /></td>
-                </tr>
+﻿    <!DOCTYPE html>
+    <meta charset="UTF-8">
+    <html>
+    <head>
+        <style>
+            table {
+                display: inline-block;
+                overflow-y: auto;
+                height: 200px;
+                width: inherit;
+            }
+        </style>
+    </head>
+    <body>
+        @model Dictionary<int, List<string>>
+        <div style="text-align: center">
+            <h1>Active Applications</h1>
+            <table border="1" cellpadding="10" align="center">
+                <thead>
+                    <tr>
+                        <th>App ID</th>
+                        @foreach (var column in ViewBag.tableCols)
+                        {
+                            <th>@column</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{List<int> recordIds = new List<int>(); }
+                    @{ var professorClass = ViewBag.Professor;}
 
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-                <tr><td colspan="8">&nbsp;</td></tr>
-            </tbody>
-        </table>
-    </div>
-</body>
+                    @foreach (var row in Model)
+                    {
+
+                        // whenever the Value from Application Data is equal to the course name
+                        // the professor teaches, grab that record ID. Then, use it to make
+                        // entries into the table.
+
+                        int id = 0;
+                        int count = 0;
+                        <tr>
+                            @foreach (var item in row.Value)
+                            {
+                                if (count == 0)
+                                {
+                                    id = Convert.ToInt32(item);
+                                }
+                                <td>@item</td>
+                                count++;
+                            }
+                            <td><input name="approve" type="checkbox" /></td>
+                            <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("ProfViewApplication", "Professor", new { appID = id })'"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <form asp-action="ProfViewApplication" asp-controller="Professor" asp-antiforgery="true" method="post">
+        
+        </form>   
+    </body>
 </html>
-

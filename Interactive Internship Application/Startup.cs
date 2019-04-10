@@ -29,13 +29,16 @@ namespace Interactive_Internship_Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //below statement is added to access the appsettings.json file for email purposes
+        //    services.Configure<Global.AppSettings>(Configuration.GetSection("Email"));
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-         
+            });    
+
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("LocalServer")));
 
@@ -57,8 +60,9 @@ namespace Interactive_Internship_Application
             .AddDefaultUI(UIFramework.Bootstrap4)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddSingleton<IConfiguration>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,7 +92,6 @@ namespace Interactive_Internship_Application
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-           
             CreateUserRoles(services).Wait();
         }
 
@@ -132,7 +135,7 @@ namespace Interactive_Internship_Application
                 //create the roles and seed them to the database 
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Dept"));
             }
-
+/*
             //Adding Employer Role 
             var roleCheckEmployer = await RoleManager.RoleExistsAsync("Employer");
             if (!roleCheckEmployer)
@@ -140,7 +143,7 @@ namespace Interactive_Internship_Application
                 //create the roles and seed them to the database 
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Employer"));
             }
-
+*/
             //the below gives people roles, for testing and should be changed with winthrop authentication as well
             IdentityUser userStudent = await UserManager.FindByEmailAsync("milokjovicm2@mailbox.winthrop.edu");
             var UserStudent = new IdentityUser();
@@ -154,10 +157,14 @@ namespace Interactive_Internship_Application
             var UserDept = new IdentityUser();
             await UserManager.AddToRoleAsync(userDept, "Dept");
 
-            IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
+ /*           IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
             var UserEmployer = new IdentityUser();
             await UserManager.AddToRoleAsync(userEmployer, "Employer");
 
+            IdentityUser userEmployer2 = await UserManager.FindByEmailAsync("brandonadill1@gmail.com");
+            var UserEmployer2 = new IdentityUser();
+            await UserManager.AddToRoleAsync(userEmployer2, "Employer");
+*/
 
             //Assign Admin role to the main User here we have given our newly registered  
             //login id for Admin management 
