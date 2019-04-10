@@ -3,21 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Interactive_Internship_Application.Global;
 using Interactive_Internship_Application.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Configuration;
 
 namespace Interactive_Internship_Application.Controllers
 {
+
+
     [Authorize(Roles = "Admin,Student")]
 
     public class StudentDynController : Controller
     {
         public Models.ApplicationDbContext _dataContext { get; set; }
-        public StudentDynController(Models.ApplicationDbContext dataContext)
+        IConfiguration configuration;
+        public StudentDynController(Models.ApplicationDbContext dataContext, IConfiguration iconfiguration)
         {
             _dataContext = dataContext;
+            configuration = iconfiguration;
+
         }
         public IActionResult Index()
         {
@@ -38,152 +45,315 @@ namespace Interactive_Internship_Application.Controllers
                                        where stuAppNum.StudentEmail == studentsEmail
                                        select stuAppNum.Id).ToList();
 
-            //if yes, grab class descriptor(s)
-           
+            //if it exists, grab class descriptor(s)
+            List<string> classNames = new List<string>();
+            Dictionary<string, string> classStatus = new Dictionary<string, string>();
+
             if (currStudentRecordId.Count > 0)
             {
-                List<string> classNames = new List<string>();
 
                 foreach (int id in currStudentRecordId)
                 {
-                
-                    
+
+
                     var classNameCurr = (from appData in context.ApplicationData
-                                         where appData.RecordId == id 
+                                         where appData.RecordId == id
                                          where appData.DataKeyId == 1
-                                         select appData.Value).FirstOrDefault().ToString();
-                    classNames.Add(classNameCurr); 
-                 
+                                         select appData.Value).First().ToString();
+                    classNames.Add(classNameCurr);
+
+
+                    var classStatusCurr = (from appData in context.StudentAppNum
+                                           where appData.Id == id
+                                           select appData.Status).First().ToString();
+
+                    classStatus.Add(classNameCurr, classStatusCurr);
 
                 }
-                
+
             }
             //no else needed
 
-            //show create new application
-
+            ViewBag.classNames = classNames;
+            ViewBag.classStatus = classStatus;
 
             return View();
         }
 
         /*Displays current application template fields onto web page  */
-        [HttpGet]
-        public IActionResult Application()
+        public IActionResult Application(string eName)
         {
+            var entity = new entityInfo();
+            entity.entityName = eName;
+
+
             //returns all entries in the application template table
+            //and data filled out by student to date
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
             {
-                  var getSingleFieldName = context.ApplicationTemplate.ToList();
-                // ViewBag.allFieldNames = getSingleFieldName;
-                // return View(context.ApplicationTemplate.ToList());
-                 return View(getSingleFieldName);
+                var getSingleFieldName = context.ApplicationTemplate.ToList();
+                var filledOutGood = new Dictionary<int, string>();
+                //if previously saved application, grab data that was saved
+                if (eName != "createNew")
+                {
+                    //get current user's email and ID for class
+                    var studentEmail = (from student in context.StudentInformation
+                                        where student.Email == User.Identity.Name.ToString()
+                                        select student.Email).FirstOrDefault();
+
+                    //get all application IDs for student 
+                    var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+                                               where stuAppNum.StudentEmail == studentEmail
+                                               select stuAppNum.Id).ToList();
+
+                    //get applicationID for particular class
+                    int correctID = 0;
+                    foreach (var currID in currStudentRecordId)
+                    {
+                        var classNameCurr = (from appData in context.ApplicationData
+                                             where appData.RecordId == currID
+                                             where appData.DataKeyId == 1
+                                             select appData.Value).First().ToString();
+
+                        if (classNameCurr == eName)
+                            correctID = currID;
+                    }
+
+                    //get applicationData for particular class's application
+                    var filledOut = from appData in context.ApplicationData
+                                    where appData.RecordId == correctID
+                                    select appData;
+
+
+                    filledOutGood = filledOut.ToDictionary(what => what.DataKeyId, who => who.Value);
+                    ViewBag.appID = correctID;
+                }
+
+                ViewBag.className = eName;
+                ViewBag.fieldNames = getSingleFieldName;
+
+                return View(filledOutGood);
 
             }
         }
 
-        //using a separate controller method with the same name as the default controller 
-        //method but contains parameters
-        /*After user submits form, this method stores form data into database*/
-        /*[HttpPost]
-        public IActionResult ApplicationDynamic(string name)
-          {
-            Console.WriteLine("Submitted ", name);
-            return View("Index");
-        }
-        */
+
+        //called when student presses "Save" or "Submit"
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
+        public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel, string response)
         {
 
-            //PUT CODE TO SEND EMAIL AFTER STUDENT'S INFO IS SAVED TO DB; HERE FOR NOW FOR TESTING
-            //send email to employer
-            NewEmail("milojkovicm2@mailbox.winthrop.edu", "password", "mateamilojkovic@yahoo.com", "Winthrop University Internship Application", "Body Text");
-
-
-            int count = 0;
+            string result = response;  //used to determine if a new Student App Num needs to be created
             var context = new ApplicationDbContext();
-            int numStudentFieldCount = (from x in context.ApplicationTemplate
-                                         where x.Entity == "Student"
-                                         select x).Count();
-            
 
-            //below gets the student's record id using queries
-
+            //below gets the student's email using queries
             var studentsEmail = (from student in context.StudentInformation
                                  where student.Email == User.Identity.Name.ToString()
                                  select student.Email).FirstOrDefault();
 
+
+            //save submitted information into a dictionary
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            //class enrolled and employer email must be entered
+            //show error message if not entered
+            if (dict["1"].Length <= 0 || dict["17"].Length <= 0)
+            {
+                ViewBag.error = "Class enrolled and employer email must be entered in order to save or submit";
+                return RedirectToAction("Application");
+            }
+
+            //get employer email from submitted information (will need to be used whether or 
+            //not a new application is created
+            var employerEmail = dict["17"];
+
+            int empId = 0; //used to determine which Student App Num ID to use
+
+            //determine if new StudentAppNum needs to be created
+            if (response == "Submit New Application" || response == "Save New Application")
+            {
+
+                //generate random number pin (4 digits) for employer
+                Random rnd = new Random();
+                int pin = rnd.Next(0000, 9999);
+
+                //save employer email, pin, and student email to Employer Login Table
+                EmployerLogin newEmployerLogin = new EmployerLogin();
+                newEmployerLogin.StudentEmail = studentsEmail;
+                newEmployerLogin.Email = employerEmail;
+                newEmployerLogin.Pin = Convert.ToInt16(pin);
+                newEmployerLogin.LastLogin = DateTime.Now;
+                context.EmployerLogin.Add(newEmployerLogin);
+                context.SaveChanges();
+
+                //save student email, employer ID, and application status to Student App Num Table
+                StudentAppNum newApp = new StudentAppNum();
+                newApp.StudentEmail = studentsEmail;
+                newApp.EmployerId = (from application in context.EmployerLogin
+                                     where application.StudentEmail == studentsEmail &&
+                                     application.Email == employerEmail
+                                     select application.Id).FirstOrDefault();
+
+                empId = newApp.EmployerId;
+
+                newApp.Status = "Incomplete";
+
+                context.StudentAppNum.Add(newApp);
+                context.SaveChanges();
+
+            }
+
+            //get students record ID 
             var currStudentRecordId = (from stuAppNum in context.StudentAppNum
-                                       where stuAppNum.StudentEmail == studentsEmail
+                                       where stuAppNum.StudentEmail == studentsEmail &&
+                                       stuAppNum.EmployerId == empId
                                        select stuAppNum.Id).FirstOrDefault();
 
-            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            //get number of fields student enters
+            int numStudentFieldCount = (from x in context.ApplicationTemplate
+                                        where x.Entity == "Student"
+                                        select x).Count();
+
+
+
+            //determine if student wants to submit or save application
+
+            //if saving application, doesn't matter if everything was input; just make sure 
+            //class enrolled and employer email is input
+            if (response.Contains("Save"))
+            {
+
+                Save(dict, currStudentRecordId, numStudentFieldCount);
+
+            }
+
+            //if submitting application, ensure everything is entered by student
+            else if (response.Contains("Submit"))
+            {
+                foreach (var rec in dict)
+                {
+                    if (rec.Value.Length <= 0)
+                    {
+                        return View("Application");
+                    }
+                }
+
+                //if program reaches here, all data has been entered and student wants to submit application
+                Save(dict, currStudentRecordId, numStudentFieldCount);
+
+                //send email to employer
+
+                //if submitting application, ensure everything is saved in database
+
+
+                //get employer's name
+                var employerName = (from appData in context.ApplicationData
+                                    where appData.RecordId == currStudentRecordId
+                                    && appData.DataKeyId == 14
+                                    select appData.Value).FirstOrDefault();
+
+                //get employer's title
+                var employerTitle = (from appData in context.ApplicationData
+                                     where appData.RecordId == currStudentRecordId
+                                     && appData.DataKeyId == 15
+                                     select appData.Value).FirstOrDefault();
+
+                //get employer's pin
+                var empPin = (from empData in context.EmployerLogin
+                              where empData.Email == employerEmail
+                              select empData.Pin).FirstOrDefault();
+
+                short employerPin = Convert.ToInt16(empPin);
+
+                //get employer's Company name
+                var employerCompanyName = (from appData in context.ApplicationData
+                                           where appData.RecordId == currStudentRecordId
+                                           && appData.DataKeyId == 11
+                                           select appData.Value).FirstOrDefault();
+
+                //get student's name
+                var studentName = (from appData in context.ApplicationData
+                                   where appData.RecordId == currStudentRecordId
+                                   && appData.DataKeyId == 3
+                                   select appData.Value).FirstOrDefault();
+
+                //get class student is trying to enroll in
+                var classEnrolled = (from appData in context.ApplicationData
+                                     where appData.RecordId == currStudentRecordId &&
+                                     appData.DataKeyId == 1
+                                     select appData.Value).FirstOrDefault().ToString();
+
+
+
+
+                string emailHost = configuration["Email:Smtp:Host"];
+                string emailPort = configuration["Email:Smtp:Port"];
+                string emailUsername = configuration["Email:Smtp:Username"];
+                string emailPassword = configuration["Email:Smtp:Password"];
+
+
+                Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+                emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerCompanyName, employerPin, classEnrolled);
+                return View("Index");
+
+            }
+            return View("Index");
+        }
+
+        //function to save student's information to database
+        public IActionResult Save(Dictionary<string, string> dict, int currId, int numFields)
+        {
+            int count = 0; //used to determine if all input data has been saved
+
+
+            //saves students input information to database
             foreach (var item in dict)
             {
 
-                if (count < (numStudentFieldCount-3)) //don't count submitted button response
-                                                      //in field count
+                if (count < (numFields - 3)) //don't count submitted button response
+                                             //in field count
                 {
-                    int intKey = Int32.Parse(item.Key.ToString());
+                    if (item.Value.Length > 0) //only saves input information (no empty info)
+                    {
+                        int intKey = Int32.Parse(item.Key.ToString());
+                        var appDataCurrent = new ApplicationData { RecordId = currId, DataKeyId = intKey, Value = item.Value };
 
-                    //changed the recordId to not be a foreign key on StudentInformation just to see if it was working. 
-                    //Change AppData DB back the right way later
-                    //Had to take out the FK's of the AppData table to make it work too
+                        //determine if recordID and dataKeyID already exist in ApplicationData
+                        var prevSaved = (from record in _dataContext.ApplicationData
+                                         where record.DataKeyId == intKey &&
+                                         record.RecordId == currId
+                                         select record).SingleOrDefault();
 
+                        if (prevSaved != null) //record was previously saved
+                        {
+                            prevSaved.Value = appDataCurrent.Value;
+                        }
+                        else //record was not previously saved
+                        {
+                            _dataContext.ApplicationData.Add(appDataCurrent);
+                        }
 
-                    var appDataCurrent = new ApplicationData { RecordId = currStudentRecordId, DataKeyId = intKey, Value = item.Value };
-                    _dataContext.ApplicationData.Add(appDataCurrent);
-                    _dataContext.SaveChanges();
+                        _dataContext.SaveChanges();
+                    }
                     count++;
                 }
             }
-
-            
             return View("Index");
-
         }
 
-        //email function
-        public void NewEmail(string fromEmail, string password, string toAddress, string subject, string body)
-        {
-            using (System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage())
+            public IActionResult CheckStatus()
+
             {
-                //create a new blank email
-                myMail.From = new MailAddress(fromEmail);
+                return View();
+            }
 
-                //fill email with correct receiver address, subject, and body message
-                myMail.To.Add(toAddress);
-                myMail.Subject = subject;
-                myMail.IsBodyHtml = true;
-                myMail.Body = body;
-
-                //send email
-                using (System.Net.Mail.SmtpClient s = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
-                {
-                    s.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    s.UseDefaultCredentials = false;
-                    s.Credentials = new System.Net.NetworkCredential(myMail.From.ToString(), password);
-                    s.EnableSsl = true;
-                    s.Send(myMail);
-                }
+            public IActionResult SignJobDescription()
+            {
+                return View();
             }
         }
-
-
-
-
-        public IActionResult CheckStatus()
-
-        {
-            return View();
-        }
-
-        public IActionResult SignJobDescription()
-        {
-            return View();
-        }
-    }
+    
 }
 
 /*InvalidOperationException: The view 'Index' was not found.The following locations were searched:

@@ -28,23 +28,20 @@ namespace Interactive_Internship_Application.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var environmentName =
-                Environment.GetEnvironmentVariable(
-                "Hosting:Environment");
+                //keep the below comments, this is how to extract appSettings to get dbconnection out of source code. 
+          /*      string location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string appRoot = System.IO.Path.GetDirectoryName(location);
 
-              //  var basePath = "~";
-                var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
-               // .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{environmentName}.json", true)
-                .AddEnvironmentVariables();
+                var builder = new ConfigurationBuilder()
+                    .SetBasePath(appRoot)
+                    .AddJsonFile("appsettings.Development.json");
 
-                //var config = builder.Build();
+                var config = builder.Build();
+            */
+                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            //    optionsBuilder.UseSqlServer(config.GetConnectionString("LocalServer"));
 
 
-               // var connectionString = config.GetConnectionString("LocalServer");
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             }
         }
 
@@ -142,6 +139,9 @@ namespace Interactive_Internship_Application.Models
                     .HasColumnName("student_email")
                     .HasMaxLength(512)
                     .IsUnicode(false);
+                
+                entity.Property(e => e.LastLogin).HasColumnName("last_login");
+
 
                 entity.HasOne(d => d.StudentEmailNavigation)
                     .WithMany(p => p.EmployerLogin)

@@ -11,9 +11,10 @@ using System.Net.Mail;
 
 namespace Interactive_Internship_Application.Controllers
 {
-    [Authorize(Roles = "Admin, Employer")]
+   // [Authorize(Roles = "Admin, Employer")]
     public class EmployerController : Controller
     {
+        ApplicationDbContext context = new Models.ApplicationDbContext();
         IConfiguration configuration;
         //create this to have a local variable to manipulate the database
         //below takes in the database (the data from the view ) and puts it local for this
@@ -31,6 +32,74 @@ namespace Interactive_Internship_Application.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        //login credentials to look at the Employer_Login table. This is out of scope, so identity cannot be used
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login()
+        {
+            var dictionary = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            var pin = dictionary["pass"];
+            var username = dictionary["email"];
+            var intPin = Convert.ToInt16(pin);
+            var currentEmployerPin = (from employer in context.EmployerLogin
+                                      where employer.Email == username
+                                      select employer.Pin).FirstOrDefault();
+            if (currentEmployerPin == intPin)
+            {
+                var dateTime = DateTime.Now;
+                var lastTimeLoggedIn = (from employer in context.EmployerLogin
+                                        where employer.Email == username
+                                        select employer.LastLogin).First();
+                TimeSpan differenceOfTime = dateTime - lastTimeLoggedIn;
+
+                double secondsSinceLastLoggedIn = differenceOfTime.TotalSeconds;
+
+                if (secondsSinceLastLoggedIn > 120)
+                {
+                    //put error to user here to tell them to log in with the newly generated pin. 
+
+                    //generate the new pin for the user
+                    //generate random number pin (4 digits) for employer to add back to database. 
+                    Random rnd = new Random();
+                    short newPin = Convert.ToInt16(rnd.Next(0000, 9999));
+
+                    //grab the employers current row and save the newly generated pin here. 
+                    var employerLoginRow = (from employer in context.EmployerLogin
+                                            where employer.Email == username
+                                            select employer).First();
+                    employerLoginRow.Pin = newPin;
+
+              //      context.EmployerLogin.d(employerLoginRow);
+                    context.SaveChanges();
+
+                    //call the method that sends the email to the employer with the new pin information 
+
+                    //grab email credentials to pass into the email method
+                    string emailHost = configuration["Email:Smtp:Host"];
+                    string emailPort = configuration["Email:Smtp:Port"];
+                    string emailUsername = configuration["Email:Smtp:Username"];
+                    string emailPassword = configuration["Email:Smtp:Password"];
+
+                    Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+                    emailsGenerated.EmployerRegeneratePinEmail(emailHost, emailPort, emailUsername, emailPassword, username, newPin);
+
+                    return LocalRedirect("/Global/ErrorRegeneratePin");
+                }
+                else
+                {
+                    return LocalRedirect("~/Employer/CompanyInformation");
+
+                }
+
+            }
+            else
+            {
+                //for now redirect to the regenerate pin page just to show we are doing something. Need to figure out error handling
+                return LocalRedirect("/Global/ErrorRegeneratePin");
+            }
         }
 
         [HttpGet]
@@ -59,7 +128,6 @@ namespace Interactive_Internship_Application.Controllers
         {
 
             int count = 0;
-            ApplicationDbContext context = new Models.ApplicationDbContext();
             int numEmployerFieldCount = (from x in context.ApplicationTemplate
                                          where x.Entity == "Employer"
                                          select x).Count();
