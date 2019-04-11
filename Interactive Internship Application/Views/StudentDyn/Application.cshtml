@@ -63,110 +63,137 @@
 <!--CHECK HW 9 FROM CSCI 297-->
 <form asp-action="Submitted" asp-controller="StudentDynamic" asp-antiforgery="true" method="post">
     @Html.AntiForgeryToken()
-
-    @foreach (var item in ViewBag.fieldNames)
-    {
-        count++;
-
-        @if (item.ControlType == "check" && item.Entity == "Student")
-        {
-            @item.ProperName
-
-            <input type="radio" name=@item.Id value="Yes">
-
-            if (count == 3)
+    <table align="center">
+        <tr>
+            @foreach (var item in ViewBag.fieldNames)
             {
-                <br /><br />
+                count++;
 
-                count = 0; //reset count
-            }
-        }
-        else if (item.FieldName == "class_enrolled" && item.Entity == "Student")
-        {
-            <!--ONCE THEY SUBMIT/SAVE IT, JUST SHOW GREYED OUT BOX WITH CLASS ENROLLED-->
-            @item.ProperName
-
-            //determine if field was already submitted
-            @if (Model.ContainsKey(item.Id))
-            {
-                      <select name="@item.Id">
-                          <option value=@Model[item.Id]>@Model[@item.Id]</option>
-                         
-                      </select>
-            }
-            else
-            {
-
-              <select name="@item.Id">
-                <option value="select">[Select One]</option>
-                <option value="CSCI 491">CSCI 491</option>
-                <option value="BADM 491">BADM 491</option>
-                <option value="BADM 492">BADM 492</option>
-                <option value="BADM 694">BADM 694</option>
-                <option value="CSCI 492">CSCI 492</option>
-                <option value="ECON 491">ECON 491</option>
-                <option value="ENTR 491">ENTR 491</option>
-                <option value="FINC 491">FINC 491</option>
-                <option value="MGMT 491">MGMT 491</option>
-                <option value="MKTG 491">MKTG 491</option>
-              </select>
-            }
-
-            if (count == 3)
-            {
-                <br /><br />
-
-                count = 0; //reset count
-            }
-        }
-
-
-        else if (item.Entity == "Student" && item.Id != 32 && item.Id != 34 && item.Id != 45
-            && item.Id != 46 && item.Id != 52 && item.Id != 53)
-        {
-            @item.ProperName
-            bool prevSaved = false; //used to determine which textbox value to output
-            @foreach (var fieldData in Model)
-
-            {
-                if (fieldData.Key == item.Id) //that field was previously saved by student
+                if (count == 2)
                 {
-                    <input type="text" id="name" name="@item.Id" value="@fieldData.Value" size="15">
-                    prevSaved = true;
+                <tr></tr>
+                count = 0;
+            }
+
+            @if (item.ControlType == "check" && item.Entity == "Student")
+            {
+                <td>
+                    @item.ProperName
+                </td>
+                <td>
+                    No <input type="radio" name=@item.Id value="No" checked>
+                    Yes<input type="radio" name=@item.Id value="Yes">
+                </td>
+            }
+            else if (item.FieldName == "class_enrolled" && item.Entity == "Student")
+            {
+                <!--ONCE THEY SUBMIT/SAVE IT, JUST SHOW GREYED OUT BOX WITH CLASS ENROLLED-->
+                <td>
+                    @item.ProperName
+                </td>
+
+                //determine if field was already submitted
+                @if (Model.ContainsKey(item.Id))
+                {
+                    <td>
+                        <select name="@item.Id">
+                            <option value=@Model[item.Id]>@Model[@item.Id]</option>
+                        </select>
+                    </td>
+
+                }
+                else
+                {
+                    <td>
+                        <select name="@item.Id">
+                            <option value="select">[Select One]</option>
+                            <option value="CSCI 491">CSCI 491</option>
+                            <option value="BADM 491">BADM 491</option>
+                            <option value="BADM 492">BADM 492</option>
+                            <option value="BADM 694">BADM 694</option>
+                            <option value="CSCI 492">CSCI 492</option>
+                            <option value="ECON 491">ECON 491</option>
+                            <option value="ENTR 491">ENTR 491</option>
+                            <option value="FINC 491">FINC 491</option>
+                            <option value="MGMT 491">MGMT 491</option>
+                            <option value="MKTG 491">MKTG 491</option>
+                        </select>
+                    </td>
+                }
+            }
+
+
+            else if (item.Entity == "Student" && item.Id != 32 && item.Id != 34 && item.Id != 45
+                && item.Id != 46 && item.Id != 52 && item.Id != 53)
+            {
+                bool prevSaved = false; //used to determine which textbox value to output
+                @foreach (var fieldData in Model)
+
+                {
+                    if (fieldData.Key == item.Id && item.ControlType == "text") //that field was previously saved by student
+                    {
+                        <div class="inner-div">
+                            <td>
+                                @item.ProperName
+                            </td>
+                            <td>
+                                <input type="text" name="@item.Id" value="@fieldData.Value" size="15" rows="1" cols="5">
+                            </td>
+                        </div>
+                        prevSaved = true;
+                    }
+                    else if (fieldData.Key == item.Id && item.ControlType == "textarea") //that field was previously saved by student
+                    {
+
+                        count = 1;
+                        <div class="inner-div">
+                            <td>
+                                @item.ProperName
+                            </td>
+
+                            <td colspan="3">
+                                <textarea id="name" name="@item.Id" value="@fieldData.Value" rows="4" cols="100"></textarea>
+                            <td />
+
+                        </div>
+                        prevSaved = true;
+
+
+                    }
+                }
+
+                if (!prevSaved && item.ControlType == "text")
+                {
+                    <div class="inner-div">
+                        <td>
+                            @item.ProperName
+                        </td>
+                        <td>
+                            <input type="text" name="@item.Id" size="15" rows="1" cols="5">
+                        </td>
+                    </div>
+                }
+                else if (!prevSaved && item.ControlType == "textarea")
+                {
+
+                    count = 1;
+                    <div class="inner-div">
+                        <td>
+                            @item.ProperName
+                        </td>
+
+                        <td colspan="3"><textarea id="name" name="@item.Id" rows="4" cols="100"></textarea>
+                        <td />
+
+                    </div>
                 }
 
             }
-            if (!prevSaved)
-            {
-                <input type="text" id="name" name="@item.Id" size="15">
-
-            }
-
-
-            if (count == 3)
-            {
-                <br />
-
-                <br />
-
-                count = 0; //reset count
-            }
         }
 
-
-    }
-
-    <br /> <br />
-    <h2>Personal Learning Goals</h2>
-    <br>
-    Explain how this internship will add to your educational experience at Winthrop University.
-    <textarea name="36" rows="4" cols="100"></textarea>
-
-    <br><br>
-
-    What professional and personal goals do you hope to achieve while at this internship? (Be specific)
-    <textarea name="37" rows="4" cols="100"></textarea>
-
+            </tr>
+        </table>
+   
     <br><br><br>
     <h2>Internship Program Guidelines</h2>
     <br>

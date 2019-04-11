@@ -11,11 +11,17 @@ using System.Net.Mail;
 
 namespace Interactive_Internship_Application.Controllers
 {
-   // [Authorize(Roles = "Admin, Employer")]
+    // [Authorize(Roles = "Admin, Employer")]
+    static class EmployerEmail
+    {
+        public static string employerEmail;
+    }
     public class EmployerController : Controller
     {
         ApplicationDbContext context = new Models.ApplicationDbContext();
         IConfiguration configuration;
+       
+
         //create this to have a local variable to manipulate the database
         //below takes in the database (the data from the view ) and puts it local for this
         //controller to decide what to do to the data. 
@@ -43,6 +49,7 @@ namespace Interactive_Internship_Application.Controllers
             var dictionary = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
             var pin = dictionary["pass"];
             var username = dictionary["email"];
+            EmployerEmail.employerEmail = username.ToString();
             var intPin = Convert.ToInt16(pin);
             var currentEmployerPin = (from employer in context.EmployerLogin
                                       where employer.Email == username
@@ -57,7 +64,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 double secondsSinceLastLoggedIn = differenceOfTime.TotalSeconds;
 
-                if (secondsSinceLastLoggedIn > 120)
+                if (secondsSinceLastLoggedIn > 10000)
                 {
                     //put error to user here to tell them to log in with the newly generated pin. 
 
@@ -71,7 +78,7 @@ namespace Interactive_Internship_Application.Controllers
                                             where employer.Email == username
                                             select employer).First();
                     employerLoginRow.Pin = newPin;
-
+                    employerLoginRow.LastLogin = DateTime.Now;
               //      context.EmployerLogin.d(employerLoginRow);
                     context.SaveChanges();
 
@@ -135,7 +142,7 @@ namespace Interactive_Internship_Application.Controllers
 
 
             var employerCorrelationToStudentEmail = (from employer in context.EmployerLogin
-                                         where employer.Email == User.Identity.Name.ToString()
+                                         where employer.Email == EmployerEmail.employerEmail
                                          select employer.StudentEmail).FirstOrDefault();
 
             var employersStudentEmailToStudentInformation = (from student in context.StudentInformation
@@ -143,7 +150,7 @@ namespace Interactive_Internship_Application.Controllers
                                        select student.Email).FirstOrDefault();
 
             var currentEmployerId = (from employer in context.EmployerLogin
-                                    where employer.Email == User.Identity.Name.ToString()
+                                    where employer.Email == EmployerEmail.employerEmail
                                     && employer.StudentEmail == employersStudentEmailToStudentInformation
                                     select employer.Id).FirstOrDefault();
 
