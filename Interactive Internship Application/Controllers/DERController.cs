@@ -6,6 +6,7 @@ using excel = Microsoft.Office.Interop.Excel;
 using System;
 using System.IO;
 using System.Text;
+using Interactive_Internship_Application.Models;
 
 namespace Interactive_Internship_Application.Controllers
 {
@@ -304,15 +305,55 @@ namespace Interactive_Internship_Application.Controllers
                              where data.RecordId == appID && data.DataKeyId == 1
                              select data.Value).FirstOrDefault();
 
+
                 // fancy lambda functions for combining the two lists into a dictionary
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data); 
             }
 
             // student and class name returned in viewbag, dictionary returned as model for frontend
+            ViewBag.Id = appID;
             ViewBag.studName = studName;
             ViewBag.className = className;
             return View(appDetails);
         }
+
+        public IActionResult FinishApplication()
+        {
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
+            int appID = Int32.Parse(dict["recordID"]);
+            var context = new ApplicationDbContext();
+
+            foreach (var item in dict)
+            {
+                int count = 0;
+                if (count < (dict.Count - 2))
+                {
+                    if (item.Value.Length > 0)
+                    {
+                        int intKey = Int32.Parse(item.Key.ToString());
+                        var appDataCurrent = new ApplicationData { RecordId = appID, DataKeyId = intKey, Value = item.Value };
+
+                        var prevSaved = (from record in context.ApplicationData
+                                         where record.DataKeyId == intKey && record.RecordId == appID
+                                         select record).SingleOrDefault();
+
+                        if (prevSaved != null)
+                        {
+                            prevSaved.Value = appDataCurrent.Value;
+                        }
+                        else
+                        {
+                            context.ApplicationData.Add(appDataCurrent);
+                        }
+                        context.SaveChanges();
+                    }
+                }
+                count++;
+            }
+
+            return Redirect("ManageActiveApps");
+            }
 
 
         [HttpPost]

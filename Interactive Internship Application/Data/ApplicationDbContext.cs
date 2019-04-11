@@ -38,7 +38,7 @@ namespace Interactive_Internship_Application.Models
 
                 var config = builder.Build();
             */
-                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=IIP;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("LocalServer"));
 
             }
