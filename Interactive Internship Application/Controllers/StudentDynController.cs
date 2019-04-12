@@ -168,8 +168,6 @@ namespace Interactive_Internship_Application.Controllers
             //not a new application is created
             var employerEmail = dict["17"];
 
-            int empId = 0; //used to determine which Student App Num ID to use
-
             //determine if new StudentAppNum needs to be created
             if (response == "Submit New Application" || response == "Save New Application")
             {
@@ -195,14 +193,18 @@ namespace Interactive_Internship_Application.Controllers
                                      application.Email == employerEmail
                                      select application.Id).FirstOrDefault();
 
-                empId = newApp.EmployerId;
-
                 newApp.Status = "Incomplete";
 
                 context.StudentAppNum.Add(newApp);
                 context.SaveChanges();
 
             }
+
+            //used to determine which Student App Num ID to use
+            int empId = (from application in context.EmployerLogin
+                         where application.StudentEmail == studentsEmail &&
+                         application.Email == employerEmail
+                         select application.Id).FirstOrDefault();
 
             //get students record ID 
             var currStudentRecordId = (from stuAppNum in context.StudentAppNum
@@ -295,6 +297,14 @@ namespace Interactive_Internship_Application.Controllers
 
                 Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
                 emailsGenerated.StudentToEmployerEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, employerEmail, employerCompanyName, employerPin, classEnrolled);
+
+                //change student's application status to "Pending Employer Approval"       
+
+                var changeStatusApp = new StudentAppNum { Id = currStudentRecordId,StudentEmail = studentsEmail,EmployerId =empId };
+                changeStatusApp.Status = "Pending Employer Approval";
+            
+                context.SaveChanges();
+
                 return View("Index");
 
             }
@@ -342,16 +352,101 @@ namespace Interactive_Internship_Application.Controllers
             return View("Index");
         }
 
-            public IActionResult CheckStatus()
+        public IActionResult CheckStatus()
+        {
 
+            return View();
+        }
+    
+        //allows a student to view an employer's job description and sign off on it
+         public IActionResult ViewJobDescriptions()
+         {
+
+            //get current user's email and ID
+            var studentsEmail = (from student in _dataContext.StudentInformation
+                                 where student.Email == User.Identity.Name.ToString()
+                                 select student.Email).FirstOrDefault();
+
+            //check inside Student App Num if that ID exists
+            var currStudentRecordId = (from stuAppNum in _dataContext.StudentAppNum
+                                       where stuAppNum.StudentEmail == studentsEmail
+                                       select stuAppNum.Id).ToList();
+
+            //if it exists, grab class descriptor(s)
+            List<string> classNames = new List<string>();
+            Dictionary<string, string> classStatus = new Dictionary<string, string>();
+
+            if (currStudentRecordId.Count > 0)
             {
-                return View();
+
+                foreach (int id in currStudentRecordId)
+                {
+
+                    //class names of classes student has applied for
+                    var classNameCurr = (from appData in _dataContext.ApplicationData
+                                         where appData.RecordId == id
+                                         where appData.DataKeyId == 1
+                                         select appData.Value).First().ToString();
+                    classNames.Add(classNameCurr);
+
+                    //status of application of particular class student has applied for
+                    var classStatusCurr = (from appData in _dataContext.StudentAppNum
+                                           where appData.Id == id
+                                           select appData.Status).First().ToString();
+
+                    classStatus.Add(classNameCurr, classStatusCurr);
+
+                }
+
+            }
+            //no else needed
+
+            ViewBag.classNames = classNames;
+            ViewBag.classStatus = classStatus;
+
+            return View();
+         }
+
+
+        /*Displays current application template fields onto web page  */
+        public IActionResult SignJobDescription(int appId)
+        {
+            int id = appId;
+            string studName, className;
+            List<string> professorInputs = new List<string>();
+            Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails
+                = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
+            using (var context1 = new Models.ApplicationDbContext())
+            {
+                var combined = from data in context1.ApplicationData
+                               join fields in context1.ApplicationTemplate on data.DataKeyId equals fields.Id
+                               where data.RecordId == appId
+                               select new { data, fields };
+
+                studName = (from student in context1.ApplicationData
+                            where student.RecordId == appId && student.DataKeyId == 3
+                            select student.Value).FirstOrDefault();
+
+                className = (from data in context1.ApplicationData
+                             where data.RecordId == appId && data.DataKeyId == 1
+                             select data.Value).FirstOrDefault();
+                appDetails = combined.ToDictionary(t => t.fields, t => t.data);
+
+                var profValues = (from data in context1.ApplicationTemplate
+                                  where data.Entity == "Professor"
+                                  select data.ProperName).ToList();
+
+                professorInputs = profValues;
             }
 
-            public IActionResult SignJobDescription()
-            {
-                return View();
-            }
+            ViewBag.studName = studName;
+            ViewBag.className = className;
+            ViewBag.recordId = appId;
+            ViewBag.profInputs = professorInputs;
+
+            return View(appDetails);
+          }
+
         }
     
 }

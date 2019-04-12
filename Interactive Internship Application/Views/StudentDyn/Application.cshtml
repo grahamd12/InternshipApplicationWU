@@ -60,7 +60,6 @@
 
 }
 
-<!--CHECK HW 9 FROM CSCI 297-->
 <form asp-action="Submitted" asp-controller="StudentDynamic" asp-antiforgery="true" method="post">
     @Html.AntiForgeryToken()
     <table align="center">
@@ -152,7 +151,7 @@
                             </td>
 
                             <td colspan="3">
-                                <textarea id="name" name="@item.Id" value="@fieldData.Value" rows="4" cols="100"></textarea>
+                                <textarea id="name" name="@item.Id" rows="4" cols="100">@fieldData.Value</textarea>
                             <td />
 
                         </div>
