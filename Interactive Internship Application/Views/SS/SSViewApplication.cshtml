@@ -1,0 +1,76 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <h1><u>@ViewBag.className</u></h1>
+    <title>
+        <i>Viewing @ViewBag.studName's Application</i>
+    </title>
+    <h1><i>Viewing @ViewBag.studName's Application</i></h1>
+</head>
+<body>
+
+    @{int count = 0;}
+    @model Dictionary<ApplicationTemplate, ApplicationData>
+
+    <table align="center" width="80%" border="1" cellpadding="3">
+        <tr>
+            <font style:bold>
+                <td>
+                    <b>
+                        Field Name
+                    </b>
+                </td>
+                <td>
+                    <b>
+                        Answer
+                    </b>
+                </td>
+            </font>
+        </tr>
+        @Html.AntiForgeryToken()
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Key.ProperName
+                </td>
+                <td>
+                    @item.Value.Value
+                </td>
+            </tr>
+        }
+    </table>
+    <form asp-action="Submitted" asp-controller="SS" asp-antiforgery="true" method="post">
+        <table align="center" width="80%" cellpadding="3">
+            <tr>
+                @{int id = 47; }
+                @foreach (var item in ViewBag.cbaInputs)
+                {
+                    <td>
+                        @item
+                    </td>
+                    <td>
+                        <input type="text" name="@id" value="" size="15" />
+                        @{id++;}
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                           formmethod="post">
+                    <input type="hidden" id="submit" name="record" value="@ViewBag.recordId"
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
