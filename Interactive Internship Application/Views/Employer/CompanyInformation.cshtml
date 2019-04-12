@@ -1,8 +1,13 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@{ 
+
+    Layout = "~/Views/Shared/_EmployerLayout.cshtml";
+
+}
+
+<!DOCTYPE html>
 <meta charset="UTF-8">
 
-<h2 style="color:red"<b>@ViewBag.errorPopupEmployee</b></h2>
+<h2 style="color:red"><b>@ViewBag.errorPopupEmployee</b></h2>
 <head>
     <!-- Link CSS styling code to html page-->
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
@@ -47,14 +52,6 @@
                             Yes<input type="radio" name=@item.Id value="Yes">
                         </td>
                     }
-
-                    else if (item.ControlType == "file" && item.Entity == "Employer")
-                    {
-                        <td>
-                            <input type="file" name="@item.Id" style="padding:5px;">
-                        </td>
-                    }
-
                     else if (item.ControlType == "textarea" && item.Entity == "Employer")
                     {
                         count = 1;
@@ -88,9 +85,8 @@
             <!--<input type="submit" value="Save">
             <input type="submit" value="Submit">-->
             <!--Dysean code to save data into database-->
-            <input type="submit" name="response" value="Submitted" formaction=@Url.Action("Submitted")
+            <input type="submit" class="buttonMenu" name="response" value="Submit" formaction=@Url.Action("Submitted")
                    formmethod="post">
 
 
         </form>
-</html>

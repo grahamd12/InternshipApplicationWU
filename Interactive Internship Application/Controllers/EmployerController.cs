@@ -230,6 +230,62 @@ namespace Interactive_Internship_Application.Controllers
             return View();
         }
 
+        public IActionResult ClickToEmployerForgotLogin()
+        {
+
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ForgotLogin(string empEmail)
+        {
+            try
+
+            {
+                //checks to see on the forgot login page if the employer has entered a valid email in the database
+                var checkEmailExists = context.EmployerLogin.Where(u => u.Email == empEmail).Select(x => x.Email).FirstOrDefault();
+
+                //if the email doesn't exist, throw an error
+                if (checkEmailExists == null)
+                {
+                    //need to error check here just returning to the login page
+                    return LocalRedirect("~/Employer");
+                }
+
+                //employer's email did exist
+                else
+                {
+                    Random rnd = new Random();
+                    short newPin = Convert.ToInt16(rnd.Next(0000, 9999));
+                    var employerEmail = EmployerEmail.employerEmail;
+                    //grab the employers current row and save the newly generated pin here. 
+                    var employerLoginRow = (from employer in context.EmployerLogin
+                                            where employer.Email == EmployerEmail.employerEmail
+                                            select employer).First();
+                    employerLoginRow.Pin = newPin;
+                    employerLoginRow.LastLogin = DateTime.Now;
+                    //      context.EmployerLogin.d(employerLoginRow);
+                    context.SaveChanges();
+                    string emailHost = configuration["Email:Smtp:Host"];
+                    string emailPort = configuration["Email:Smtp:Port"];
+                    string emailUsername = configuration["Email:Smtp:Username"];
+                    string emailPassword = configuration["Email:Smtp:Password"];
+
+                    Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
+                    emailsGenerated.EmployerForgotPin(emailHost, emailPort, emailUsername, emailPassword, employerEmail, newPin);
+
+                    return LocalRedirect("~/Employer");
+                }
+               
+            }
+            catch
+            {
+                return View();
+            }
+
+
+        }
+
     }
 
 }
