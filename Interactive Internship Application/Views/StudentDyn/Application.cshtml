@@ -104,7 +104,7 @@
                 else
                 {
                     <td>
-                        <select name="@item.Id">
+                        <select name="@item.Id and @item.FieldName">
                             <option value="select">[Select One]</option>
                             <option value="CSCI 491">CSCI 491</option>
                             <option value="BADM 491">BADM 491</option>
@@ -122,7 +122,9 @@
             }
 
 
-            else if (item.Entity == "Student")// && !(ViewBag.studentValues.Contains(item.Id)))
+            else if (item.Entity == "Student" && item.FieldName != "intern_sig2" &&
+                item.FieldName != "intern_date2" && item.FieldName != "intern_sig1"
+                && item.FieldName != "intern_date1")
             {
                 bool prevSaved = false; //used to determine which textbox value to output
                 @foreach (var fieldData in Model)
@@ -135,7 +137,7 @@
                                 @item.ProperName
                             </td>
                             <td>
-                                <input type="text" name="@item.Id" value="@fieldData.Value" size="15" rows="1" cols="5">
+                                <input type="text" name="@item.Id and @item.FieldName" value="@fieldData.Value" size="15" rows="1" cols="5">
                             </td>
                         </div>
                         prevSaved = true;
@@ -150,7 +152,7 @@
                             </td>
 
                             <td colspan="3">
-                                <textarea id="name" name="@item.Id" rows="4" cols="100">@fieldData.Value</textarea>
+                                <textarea id="name" name="@item.Id and @item.FieldName" rows="4" cols="100">@fieldData.Value</textarea>
                             <td />
 
                         </div>
@@ -167,7 +169,7 @@
                             @item.ProperName
                         </td>
                         <td>
-                            <input type="text" name="@item.Id" size="15" rows="1" cols="5">
+                            <input type="text" name="@item.Id and @item.FieldName" size="15" rows="1" cols="5">
                         </td>
                     </div>
                 }
@@ -180,7 +182,7 @@
                             @item.ProperName
                         </td>
 
-                        <td colspan="3"><textarea id="name" name="@item.Id" rows="4" cols="100"></textarea>
+                        <td colspan="3"><textarea id="name" name="@item.Id and @item.FieldName" rows="4" cols="100"></textarea>
                         <td />
 
                     </div>

@@ -57,8 +57,10 @@ namespace Interactive_Internship_Application.Controllers
 
 
                     var classNameCurr = (from appData in context.ApplicationData
+                                         join appTemp in context.ApplicationTemplate 
+                                         on appData.DataKeyId equals appTemp.Id
                                          where appData.RecordId == id
-                                         where appData.DataKeyId == 1
+                                         where appTemp.FieldName == "class_enrolled"
                                          select appData.Value).First().ToString();
                     classNames.Add(classNameCurr);
 
@@ -99,7 +101,7 @@ namespace Interactive_Internship_Application.Controllers
                                     where data.FieldName.Contains("sig")
                                     || data.FieldName.Contains("date")
                                     where data.FieldDescription.Contains("guidelines")
-                                    || data.FieldDescription.Contains("section")
+                                    || data.FieldDescription.Contains("intern_sig2")
                                     select data;
 
                 var filledOutGood = new Dictionary<int, string>();
@@ -121,10 +123,12 @@ namespace Interactive_Internship_Application.Controllers
                     foreach (var currID in currStudentRecordId)
                     {
                         var classNameCurr = (from appData in context.ApplicationData
+                                             join appTemp in context.ApplicationTemplate
+                                             on appData.DataKeyId equals appTemp.Id
                                              where appData.RecordId == currID
-                                             where appData.DataKeyId == 1
+                                             where appTemp.FieldName == "class_enrolled"
                                              select appData.Value).First().ToString();
-
+                     
                         if (classNameCurr == eName)
                             correctID = currID;
                     }
@@ -167,17 +171,32 @@ namespace Interactive_Internship_Application.Controllers
             //save submitted information into a dictionary
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
 
-            //class enrolled and employer email must be entered
-            //show error message if not entered
-            if (dict["1"].Length <= 0 || dict["17"].Length <= 0)
-            {
-                ViewBag.error = "Class enrolled and employer email must be entered in order to save or submit";
-                return RedirectToAction("Application");
-            }
+        
 
             //get employer email from submitted information (will need to be used whether or 
             //not a new application is created
-            var employerEmail = dict["17"];
+            var employerEmail = ""; 
+            foreach(var item in dict)
+            {
+                string key = item.Key;
+                if (key.Contains("class_enrolled") || key.Contains("supervisors_email"))
+                {
+                    if(key.Contains("supervisors_email"))
+                    {
+                        employerEmail = dict[key];
+                    }
+
+                    //class enrolled and employer email must be entered
+                    //show error message if not entered
+                    if (dict[key].Length < 0)
+                    {
+                        ViewBag.error = "Class enrolled and employer email must be entered in order to save or submit";
+                        return RedirectToAction("Application");
+                    }
+                }
+            }
+
+           
 
             //determine if new StudentAppNum needs to be created
             if (response == "Submit New Application" || response == "Save New Application")
@@ -262,14 +281,19 @@ namespace Interactive_Internship_Application.Controllers
 
                 //get employer's name
                 var employerName = (from appData in context.ApplicationData
+                                    join appTemp in context.ApplicationTemplate
+                                    on appData.DataKeyId equals appTemp.Id
                                     where appData.RecordId == currStudentRecordId
-                                    && appData.DataKeyId == 14
+                                    && appTemp.FieldName == "supervisors_name"
                                     select appData.Value).FirstOrDefault();
+
 
                 //get employer's title
                 var employerTitle = (from appData in context.ApplicationData
+                                     join appTemp in context.ApplicationTemplate
+                                     on appData.DataKeyId equals appTemp.Id
                                      where appData.RecordId == currStudentRecordId
-                                     && appData.DataKeyId == 15
+                                     && appTemp.FieldName == "supervisors_title"
                                      select appData.Value).FirstOrDefault();
 
                 //get employer's pin
@@ -281,20 +305,26 @@ namespace Interactive_Internship_Application.Controllers
 
                 //get employer's Company name
                 var employerCompanyName = (from appData in context.ApplicationData
+                                           join appTemp in context.ApplicationTemplate
+                                           on appData.DataKeyId equals appTemp.Id
                                            where appData.RecordId == currStudentRecordId
-                                           && appData.DataKeyId == 11
+                                           && appTemp.FieldName == "org_name"
                                            select appData.Value).FirstOrDefault();
 
                 //get student's name
                 var studentName = (from appData in context.ApplicationData
+                                   join appTemp in context.ApplicationTemplate
+                                   on appData.DataKeyId equals appTemp.Id
                                    where appData.RecordId == currStudentRecordId
-                                   && appData.DataKeyId == 3
+                                   && appTemp.FieldName == "name"
                                    select appData.Value).FirstOrDefault();
 
                 //get class student is trying to enroll in
                 var classEnrolled = (from appData in context.ApplicationData
+                                     join appTemp in context.ApplicationTemplate
+                                     on appData.DataKeyId equals appTemp.Id
                                      where appData.RecordId == currStudentRecordId &&
-                                     appData.DataKeyId == 1
+                                     appTemp.FieldName == "class_enrolled"
                                      select appData.Value).FirstOrDefault().ToString();
 
 
@@ -337,7 +367,8 @@ namespace Interactive_Internship_Application.Controllers
                 {
                     if (item.Value.Length > 0) //only saves input information (no empty info)
                     {
-                        int intKey = Int32.Parse(item.Key.ToString());
+                        var key = item.Key.Substring(0, 2);
+                        int intKey = Int32.Parse(key);
                         var appDataCurrent = new ApplicationData { RecordId = currId, DataKeyId = intKey, Value = item.Value };
 
                         //determine if recordID and dataKeyID already exist in ApplicationData
