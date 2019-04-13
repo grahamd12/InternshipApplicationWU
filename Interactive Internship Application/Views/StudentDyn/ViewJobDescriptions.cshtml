@@ -33,38 +33,23 @@
             <br />
 
 
+
             <!--display applications student applied for and for which employer
-                has added job description-->
+    has added job description-->
             @foreach (var item in ViewBag.classNames)
             {
                 <!--after employer submits their part of application, status
-                    changes to "Pending Professor Approval"-->
-                if (ViewBag.classStatus[@item] == "Pending Professor Approval")
-                {
-                    <form asp-action="SignJobDescription" asp-controller="StudentDyn" method="post">
-                        <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("SignJobDescription", new { appId = @item }) <!--NEED TO CHANGE THIS-->
-                               formmethod="post">
-                    </form>
-                    <br />
-                }
-              
+        changes to "Pending Professor Approval"-->
+                <form asp-action="SignJobDescription" asp-controller="StudentDyn" method="post">
+                    <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("SignJobDescription", new { appId = @ViewBag.classInfo[item] }) 
+                           formmethod="post">
+                </form>
+
+                <br />
+
+
 
             }
-
-            <p>JOB DESCRIPTION INFORMATION</p>
-
-            <br>
-
-            <b>
-                Student Signature (typed)
-                <input type="text" name="studSignGuidelines" value="">
-                Date
-            </b>
-            <input type="text" name="studSignGuidelinesDate" value="">
-
-
-            <input type="submit" value="Submit">
-
 
         </div>
 </head>

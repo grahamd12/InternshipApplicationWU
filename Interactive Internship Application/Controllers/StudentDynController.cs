@@ -91,7 +91,10 @@ namespace Interactive_Internship_Application.Controllers
             //and data filled out by student to date
             using (var context = new Interactive_Internship_Application.Models.ApplicationDbContext())
             {
-                var getSingleFieldName = context.ApplicationTemplate.ToList();
+                var getSingleFieldName = from app in _dataContext.ApplicationTemplate
+                                         where app.Deleted == false
+                                         select app;
+
                 var filledOutGood = new Dictionary<int, string>();
                 //if previously saved application, grab data that was saved
                 if (eName != "createNew")
@@ -360,7 +363,7 @@ namespace Interactive_Internship_Application.Controllers
     
         //allows a student to view an employer's job description and sign off on it
          public IActionResult ViewJobDescriptions()
-         {
+        {
 
             //get current user's email and ID
             var studentsEmail = (from student in _dataContext.StudentInformation
@@ -372,9 +375,9 @@ namespace Interactive_Internship_Application.Controllers
                                        where stuAppNum.StudentEmail == studentsEmail
                                        select stuAppNum.Id).ToList();
 
-            //if it exists, grab class descriptor(s)
+            //if it exists, grab class descriptor(s) and studentAppNum row
             List<string> classNames = new List<string>();
-            Dictionary<string, string> classStatus = new Dictionary<string, string>();
+            Dictionary<string, int> classInfo = new Dictionary<string, int>();
 
             if (currStudentRecordId.Count > 0)
             {
@@ -387,14 +390,21 @@ namespace Interactive_Internship_Application.Controllers
                                          where appData.RecordId == id
                                          where appData.DataKeyId == 1
                                          select appData.Value).First().ToString();
-                    classNames.Add(classNameCurr);
 
                     //status of application of particular class student has applied for
-                    var classStatusCurr = (from appData in _dataContext.StudentAppNum
-                                           where appData.Id == id
-                                           select appData.Status).First().ToString();
+                    var studAppID = (from appData in _dataContext.StudentAppNum
+                                     where appData.Id == id &&
+                                     appData.Status != "Incomplete" &&
+                                     appData.Status != "Pending Employer Approval"
+                                     select appData.Id).FirstOrDefault();
 
-                    classStatus.Add(classNameCurr, classStatusCurr);
+                    if (studAppID != 0)
+                    {
+                        classNames.Add(classNameCurr); //only add class name if pending professor approval
+
+                        int studAppIDint = Convert.ToInt16(studAppID);
+                        classInfo.Add(classNameCurr, studAppIDint);
+                    }
 
                 }
 
@@ -402,52 +412,90 @@ namespace Interactive_Internship_Application.Controllers
             //no else needed
 
             ViewBag.classNames = classNames;
-            ViewBag.classStatus = classStatus;
+            ViewBag.classInfo = classInfo;
 
             return View();
-         }
+        }
 
 
         /*Displays current application template fields onto web page  */
         public IActionResult SignJobDescription(int appId)
         {
             int id = appId;
-            string studName, className;
-            List<string> professorInputs = new List<string>();
+            string className;
+            // List<string> studentInputs = new List<string>();
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails
                 = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
-            using (var context1 = new Models.ApplicationDbContext())
-            {
-                var combined = from data in context1.ApplicationData
-                               join fields in context1.ApplicationTemplate on data.DataKeyId equals fields.Id
-                               where data.RecordId == appId
-                               select new { data, fields };
 
-                studName = (from student in context1.ApplicationData
-                            where student.RecordId == appId && student.DataKeyId == 3
-                            select student.Value).FirstOrDefault();
+            var combined = from data in _dataContext.ApplicationData
+                           join fields in _dataContext.ApplicationTemplate on data.DataKeyId equals fields.Id
+                           where data.RecordId == appId
+                           select new { data, fields };
+            var studentValues = from data in _dataContext.ApplicationTemplate
+                                where data.Entity == "Student"
+                                where data.FieldName.Contains("sig")
+                                || data.FieldName.Contains("date")
+                                where data.FieldDescription.Contains("employer")
+                                || data.FieldDescription.Contains("learning")
+                                select data;
 
-                className = (from data in context1.ApplicationData
+                className = (from data in _dataContext.ApplicationData
                              where data.RecordId == appId && data.DataKeyId == 1
                              select data.Value).FirstOrDefault();
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data);
 
-                var profValues = (from data in context1.ApplicationTemplate
-                                  where data.Entity == "Professor"
+              /*  var studentValues = (from data in _dataContext.ApplicationTemplate
+                                  where data.Entity == "Student" 
+                                  where data.FieldName.Contains("sig")
+                                  where data.FieldDescription.Contains("employer")
                                   select data.ProperName).ToList();
+               var studentDate = (from data in _dataContext.ApplicationTemplate
+                                  where data.Entity == "Student"
+                                  where data.FieldName.Contains("date")
+                                  where data.FieldDescription.Contains("learning")
+                                  select data.ProperName).ToString();
+            studentValues.Add(studentDate);
 
-                professorInputs = profValues;
-            }
+    */
+           // studentValues.Add("Today's Date");
+          //  studentInputs = studentValues;
 
-            ViewBag.studName = studName;
             ViewBag.className = className;
             ViewBag.recordId = appId;
-            ViewBag.profInputs = professorInputs;
+            ViewBag.studentInputs = studentValues;
 
             return View(appDetails);
           }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignedJobDescription(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel)
+        {
+            //save submitted information into a dictionary
+            var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+            int recId = Convert.ToInt32(dict["recordID"]);
+
+            int count = 0;//used to skip saving last 2 items in dict
+
+            foreach (var item in dict)
+            {
+                if (count < (dict.Count - 2))
+                {
+                    var appData = new ApplicationData { RecordId = recId, DataKeyId = Convert.ToInt32(item.Key), Value = item.Value };
+                    _dataContext.ApplicationData.Add(appData);
+                    _dataContext.SaveChanges();
+                }
+                count++; 
+
+            }
+
+
+
+
+            return View("Index");
         }
+
+    }
     
 }
 

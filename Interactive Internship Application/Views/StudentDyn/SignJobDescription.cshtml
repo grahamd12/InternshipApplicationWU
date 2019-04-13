@@ -34,7 +34,7 @@
     int count = 0; //used for html spacing
 
     //used for collecting already submitted data
-    @model Dictionary<int, string>
+    @model Dictionary<ApplicationTemplate, ApplicationData>
 
 }
 <div style="text-align: center">
@@ -43,54 +43,78 @@
     11, 19, 20, 22, 23,24, 28, 29, 30,
      -->
     <!--Course for which student is applying for internship credit-->
-    <h1><i>@ViewBag.className</i></h1>
+    <h1><i>@ViewBag.className -- Sign Job Description</i></h1>
     <br />
 
-    <p> Job Description Information</p>
-    <table align="center" width="80%" border="1" cellpadding="3">
-        <tr>
-            <font style:bold>
-                <td>
-                    <b>
-                        Field Name
-                    </b>
-                </td>
-                <td>
-                    <b>
-                        Answer
-                    </b>
-                </td>
-            </font>
-        </tr>
-        @Html.AntiForgeryToken()
+ 
 
-        <!--
 
-        @foreach (var item in Model)
-           {
+
+
+
+
+
+
+
+
+<body>
+    <table>
         <tr>
             <td>
-                //item.Key.ProperName
+                <table border="1" cellpadding="10" style="display:inline-block;overflow-y:auto;overflow-x:hidden;max-height:450px;">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var field in Model)
+                    {
+                        @if (field.Key.Entity == "Employer")
+                        {
+                            <tr>
+                                <td>@field.Key.ProperName</td>
+                                <td>@field.Value.Value</td>
+                            </tr>
+                        }
+                    }
+                </table>
             </td>
-            <td>
-               //item.Value.Value
+            <td style="padding-left:50px;width:20px;">
+                <form asp-action="SignedJobDescription" asp-controller="StudentDyn" asp-antiforgery="true" method="post">
+                    @foreach (var field in ViewBag.studentInputs)
+                    {
+                            @if (field.FieldName == "intern_sig1")
+                            {
+                                @field.ProperName <br />
+                                <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
+
+                            }
+                            @if (field.FieldName == "intern_date1")
+                            {
+                                @field.ProperName <br />
+                                <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
+
+                            }
+                       
+                    }
+
+                    <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' formaction=@Url.Action("SignedJobDescription") ;
+                           formmethod="post">
+
+                    <input type="hidden" name="recordID" value="@ViewBag.recordId" />
+                </form>
             </td>
         </tr>
-           }
     </table>
 
-            -->
 
-    <b>
-        Student Signature (typed)
-        <input type="text" name="studSignGuidelines" value="">
-        Date
-    </b>
-    <input type="text" name="studSignGuidelinesDate" value="">
+ 
 
 
-    <input type="submit" value="Submit">
+
+</body>
 
 
-</div>
 </html>
