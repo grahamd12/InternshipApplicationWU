@@ -1,29 +1,132 @@
-﻿@*@{var count = 0;}*@
+﻿<link href="~/css/site.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+
+    function acceptBoxes() {
+        acceptFields = document.getElementById('acceptFields');
+        acceptFields2 = document.getElementById('acceptFields2');
+
+
+        denyFields = document.getElementById('denyFields');
+        saveBox = document.getElementById('saveBox');
+
+        denyFields.style.display = "none";
+        denyFields.style.visibility = "hidden";
+
+        acceptFields.style.display = "block";
+        acceptFields.style.visibility = "visible";
+
+        acceptFields2.style.display = "block";
+        acceptFields2.style.visibility = "visible";
+
+        saveBox.style.display = "block";
+        saveBox.style.visibility = "visible";
+    }
+    function denyBoxes() {
+        denyFields = document.getElementById('denyFields');
+        acceptFields = document.getElementById('acceptFields');
+        acceptFields2 = document.getElementById('acceptFields2');
+        saveBox = document.getElementById('saveBox');
+
+        denyFields.style.display = "block";
+        denyFields.style.visibility = "visible";
+
+        acceptFields.style.display = "none";
+        acceptFields.style.visibility = "hidden";
+
+        acceptFields2.style.display = "none";
+        acceptFields2.style.visibility = "hidden";
+
+        saveBox.style.display = "block";
+        saveBox.style.visibility = "visible";
+    }
+</script>
 
 @model Dictionary<ApplicationTemplate, ApplicationData>
 
+<body>
+    <h1><i>Viewing @ViewBag.studName's Application (@ViewBag.className)</i></h1>
+    <h2><i>ID - @ViewBag.Id</i></h2>
+    <table>
+        <tr>
+            <td>
+                <table border="1" cellpadding="10" style="display:inline-block;overflow-y:auto;overflow-x:hidden;max-height:450px;">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
 
-<h1><i>Viewing @ViewBag.studName's Application (@ViewBag.className)</i></h1>
-@*<form asp-action="SaveChanges" asp-controller="DER" asp-antiforgery="true" method="post" />*@
-<div style="text-align: center">
-    <table border="1" cellpadding="10" align="center">
-        <thead>
-            <tr>
-                <th>Field Name</th>
-                <th>Answer</th>
-            </tr>
-        </thead>
-        <tbody style="display:block;overflow-y:auto;overflow-x:hidden;max-height:500px;">
-            @foreach (var field in Model)
-            {
-                <tr>
-                    <td>@field.Key.ProperName</td>
-                    <td>@field.Value.Value</td>
-                </tr>
-            }
-        </tbody>
+                    @foreach (var field in Model)
+                    {
+                        @if (field.Key.Entity != "D.E.R.")
+                        {
+                            <tr>
+                                <td>@field.Key.ProperName (@field.Key.Entity)</td>
+                                <td>@field.Value.Value</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </td>
+            <td style="padding-left:50px;width:20px;">
+                
+                <form asp-action="FinishApplication" asp-controller="DER" asp-antiforgery="true" method="post">
+                    @foreach (var field in Model)
+                    {
+                        @if ((ViewBag.status != "Approved") && (ViewBag.status != "Declined"))
+                        {
+                            <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
+                            <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
+
+                            @if (field.Key.FieldName == "DER_sig")
+                            {
+                                <br />
+                                <input type="text" id="acceptFields" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
+
+                            }
+                            @if (field.Key.FieldName == "DER_date")
+                            {
+                                <br />
+                                <input type="text" id="acceptFields2" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
+
+                            }
+                            @if (field.Key.FieldName == "denial_reas")
+                            {
+                                <br />
+                                <textarea type="text" id="denyFields" style="display:block; visibility:hidden"
+                                          class="input" name="@field.Key.Id" size="15" rows="5" cols="15" maxlength="500" placeholder="@field.Key.ProperName"></textarea> <br />
+                            }
+                        }
+                    }
+
+                    <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' style="visibility:hidden;display:none" formaction=@Url.Action("FinishApplication") ;
+                           formmethod="post">
+
+                    <input type="hidden" name="recordID" value="@ViewBag.Id" />
+                </form>
+            </td>
+        </tr>
     </table>
-</div>
+
+
+    @*<div id="acceptFields" style="visibility:hidden;">
+            D.E.R. Signature <br />
+            <input type="text" class='input' name="DER_sig" value="" size="15" /> <br />
+            Today's Date <br />
+            <input type="text" class="input" name="DER_date" value="" size="15" /> <br />
+        </div>
+        <div id="denyFields" style="visibility:hidden;">
+            Denial Reason <br />
+            <textarea type="text" class="input" name="denial_reas" value="" size="15" rows="5" cols="15" maxlength="500"></textarea> <br />
+        </div>*@
+
+
+
+</body>
+
+
+
 
 
 

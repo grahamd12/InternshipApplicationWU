@@ -1,10 +1,8 @@
-﻿<!-- AUTHORS: Brando Dill, Daniel Branham, Dustin Graham, and Matea Milojkovic
-     PURPOSE: Login Page for Winthrop Entities
-     LAST MODIFIED: 01/21/2019
+﻿@{
 
-    NEEDS WORK: -Validation of login and password combination
-                -link to appropriate homepage based on login (student, professor, etc)
- -->
+    Layout = "~/Views/Shared/_EmployerLayout.cshtml";
+
+}
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
@@ -27,11 +25,15 @@
                 <input type="password" id="passBox" autocomplete="off" name="pass"><br> <br>
                 <!-- NEEDS TO BE CHANGED IN THE FUTURE-->
                 <!-- validate() determines if valid login; if valid, send to appropriate page-->
-                <input type="submit" class="buttonMenu" name="response" value="Login Application" formaction=@Url.Action("Login")
+                <input type="submit" class="buttonMenu" name="response" value="Login" formaction=@Url.Action("Login")
                        formmethod="post">
                 <br><br>
 
-                <font size=".75em">*Login using the credentials emailed to you. Click here to be emailed a new pin</font>
+                    <font size=".75em">
+                        *Login using the credentials emailed to you.
+                        If you have forgotten your pin, please click  @Html.ActionLink("here ", "ClickToEmployerForgotLogin", "Employer")
+                        to have a new one emailed to you.
+                    </font>
 
             </form>
 
