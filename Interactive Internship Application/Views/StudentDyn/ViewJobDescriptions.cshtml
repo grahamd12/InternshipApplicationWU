@@ -1,0 +1,56 @@
+﻿
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+
+
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%"  margin-left= "10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://www.winthrop.edu">Winthrop Homepage</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <div style="text-align: center">
+            <h1><i>Sign Job Description--Choose a Course</i></h1>
+            <br />
+
+
+
+            <!--display applications student applied for and for which employer
+    has added job description-->
+            @foreach (var item in ViewBag.classNames)
+            {
+                <!--after employer submits their part of application, status
+        changes to "Pending Professor Approval"-->
+                <form asp-action="SignJobDescription" asp-controller="StudentDyn" method="post">
+                    <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("SignJobDescription", new { appId = @ViewBag.classInfo[item] }) 
+                           formmethod="post">
+                </form>
+
+                <br />
+
+
+
+            }
+
+        </div>
+</head>
+</html>

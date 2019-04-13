@@ -1,24 +1,27 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
 
 <!--Menu-->
 <div style="text-align: right">
     <a href="~/">
-    <button class="buttonMenu" type="button">Log Off</button> 
-    
+        <button class="buttonMenu" type="button">Log Off</button>
+
     </a>
 </div>
 
+@{
+    var count = 0; //used for html spacing
+}
 
 
 <head>
     <!-- Link CSS styling code to html page-->
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
-    
+
     <div style="text-align: center">
         <!--Quick Links-->
-        <table align="left" style="width:20%"  margin-left= "10px">
+        <table align="left" style="width:20%" margin-left="10px">
             <tr>
                 <th>Quick Links</th>
             </tr>
@@ -35,49 +38,88 @@
 
         </table>
 
-    <div style="text-align: center">
-        <h1><i>Check Status</i></h1>
-        <br><br>
-
-        <table style="width:100%">
-            <tr>
-                <th>Internship Class</th>
-                <th>Employer</th>
-                <th>Learning Agreement</th>
-                <th>Professor Review</th>
-                <th>Student Services Review</th>
-                <th>Decision</th>
-            </tr>
-            <tr>
-                <td>CSCI 491</td>
-                <td><font color="orange">In Progress (Reminder Sent: Jan. 10)</font></td>
-                <td><font color="green">Complete</font></td>
-                <td><font color="orange">In Progress (Reminder Sent: Jan. 11)</font></td>
-                <td><font color="orange">In Progress</font></td>
-                <td><font color="red">Waiting</font></td>
-            </tr>
-             <tr>
-                <td>MGMT 491</td>
-                <td><font color="green">Complete</font></td>
-                <td><font color="green">Complete</font></td>
-                <td><font color="green">Complete</font></td>
-                <td><font color="green">Complete</font></td>
-                <td><font color="green">Approved!</font></td>
-            </tr>
-        </table>
-
-
-
-
-
-       <!-- Connect to database
-        var databaseConnection = Database.Open("DATABASE_NAME");
-        var query = "SELECT * FROM TABLE_NAME" 
-           --> 
-
-        <!--add code to pull fields from database table that need to be filled out by student
-        if the field is already filled out-->
-
     </div>
 </head>
+
+<h1><i>Check the Status of Your Applications</i></h1>
+<br />
+      <table align="center" border="1" cellpadding="10">
+
+              <thead>
+                  <tr>
+                      <th>Class</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+
+              @foreach (var field in ViewBag.classStatus)
+              {
+
+                  <tr>
+                      <td>@field.Key</td>
+                      <td>@field.Value</td>
+                  </tr>
+
+              }
+          </table>
+          </td>
+
+          <br />
+          <br />
+          <p><center><b>Application Process Status Codes (In Chronological Order)</b></center></p>
+          <td>
+              <table border="1" cellpadding="10" style="display:inline-block;overflow-y:auto;overflow-x:hidden;max-height:450px;">
+                  <thead>
+                      <tr>
+                          <th>Status</th>
+                          <th>Description</th>
+                      </tr>
+                  </thead>
+                  <tr>
+                      <td>Incomplete</td>
+                      <td>You haven't submitted your application yet</td>
+                  </tr>
+                  <tr>
+                      <td>Pending Employer Approval</td>
+                      <td>Employer is filling out application</td>
+                  </tr>
+
+                  <tr>
+                      <td>Pending Professor Approval</td>
+                      <td>Professor is reviewing application</td>
+                  </tr>
+                  <tr>
+                      <td>Pending Department Representative Approval</td>
+                      <td>Department Representative is reviewing application</td>
+                  </tr>
+                  <tr>
+                      <td>Pending Student Services Approval</td>
+                      <td>Student Services is filling out application</td>
+                  </tr>
+                  <tr>
+                      <td>Pending Director of External Relations Approval</td>
+                      <td>Director of External Relations is reviewing application</td>
+                  </tr>
+                  <tr>
+                      <td>Withdrawn</td>
+                      <td>The Director of External Relations withdrew your application</td>
+                  </tr>
+                  <tr>
+                      <td>Approved</td>
+                      <td>Your application has been approved</td>
+                  </tr>
+                  <tr>
+                      <td>Declined</td>
+                      <td>Your application has been declined</td>
+                  </tr>
+                  <tr>
+                      <td>Add Corrections</td>
+                      <td>Resubmit your application with requested changes</td>
+                  </tr>
+
+
+              </table>
+          </td>
+
+
 </html>

@@ -1,0 +1,35 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_EmployerLayout.cshtml";
+
+}
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <h1><i>College of Business Administration</i></h1>
+        <h2>Forgot Pin</h2>
+        <br />
+
+        <body>
+            <!-- Login Buttons-->
+            <form asp-action="ForgotLogin" asp-controller="Employer" asp-antiforgery="true" method="post">
+                @Html.AntiForgeryToken()
+               <h3> Please enter your email for the pin to be sent to. Please go back to the login page with the newly generated pin and login.</h3>
+                
+                Email: <br>
+                <input type="text" id="emailBox" autocomplete="off" name="email"><br>
+                <input type="submit" class="buttonMenu" name="response" value="Login" formaction=@Url.Action("ForgotLogin", "Employer")
+                       formmethod="post">
+                <br><br>
+            </form>
+
+        </body>
+    </div>
+</head>
+
+</html> <!-- end login page code-->
