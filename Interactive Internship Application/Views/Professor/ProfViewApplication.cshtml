@@ -46,22 +46,26 @@
    <form asp-action="Submitted" asp-controller="Professor" asp-antiforgery="true" method="post">
        <table align="center" width="80%" cellpadding="3">
            <tr>
+               @{int id = 38; }
                @foreach (var item in ViewBag.profInputs)
                {
-                   int id = 38;
                    <td>
-                   @item
+                       @item
                    </td>
-                    <td><input type="text" name="@id" value="" size="15" />
-                    @{id++;
-                    }
-                    </td>
+                   <td>
+
+                       <input type="text" name="@id" value="" size="15" />
+                       @{id++;
+                       }
+
+                   </td>
                }
            </tr>
            <tr>
                 <td>
-                    <input type="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                    <input type="submit" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
                             formmethod="post">
+                    <input type ="hidden" id="submit" name="record" value="@ViewBag.recordId" />
                 </td>
             </tr>
        </table>   
