@@ -8,40 +8,32 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Interactive_Internship_Application.Controllers
 {
-    public class ProfessorController : Controller
+    public class SSController : Controller
     {
         int id;
         public Models.ApplicationDbContext _dataContext { get; set; }
-        public ProfessorController(Models.ApplicationDbContext dataContext)
+        public SSController(Models.ApplicationDbContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-
+        // GET: /<controller>/
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        // GET: /<controller>/
-        [HttpGet]
         public IActionResult ManageActiveApps()
         {
-            string profClass;
             List<string> tableData = new List<string>();
             Dictionary<int, List<string>> wholeTable = new Dictionary<int, List<string>>();
 
             using (var context = new Models.ApplicationDbContext())
             {
-                // First grab the professor's email. This will be used to get their class information.
-                var profEmail = User.Identity.Name.ToString();
 
                 // Get the professors class title. This will be used to query the database for all students
                 // taking this class.
-
-                profClass = (from faculty in context.FacultyInformation
-                         where faculty.ProfEmail == profEmail
-                         select faculty.CourseName).FirstOrDefault();
 
                 var tableRowSize = (from apps in context.StudentAppNum
                                     where apps.Status != "Complete"
@@ -49,8 +41,8 @@ namespace Interactive_Internship_Application.Controllers
 
                 var tableColumns = (from temp in context.ApplicationTemplate
                                     where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
-                                           temp.FieldName == "name" || temp.FieldName == "graduation year" ||
-                                           temp.FieldName == "major_conc" || temp.FieldName == "org_name"
+                                    temp.FieldName == "name" || temp.FieldName == "graduation year" ||
+                                    temp.FieldName == "major_conc" || temp.FieldName == "org_name"
                                     select temp.ProperName).ToList();
 
                 tableColumns.Add("Status");
@@ -61,11 +53,12 @@ namespace Interactive_Internship_Application.Controllers
                                    join data in context.ApplicationData on num.Id equals data.RecordId
                                    join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
                                    where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
-                                           temp.FieldName == "name" || temp.FieldName == "graduation year" ||
-                                           temp.FieldName == "major_conc" ||
-                                           temp.FieldName == "org_name" && num.Status != "Complete"
+                                   temp.FieldName == "name" || temp.FieldName == "graduation year" ||
+                                   temp.FieldName == "major_conc" ||
+                                   temp.FieldName == "org_name" && num.Status != "Complete"
                                    select new { id = num.Id, field = temp.FieldName, value = data.Value }).ToList();
-                
+
+
                 // this dictionary will tell the user if the application has been signed or not
                 Dictionary<int, string> signed = new Dictionary<int, string>();
 
@@ -78,37 +71,34 @@ namespace Interactive_Internship_Application.Controllers
 
                     // add status
                     tableData.Add((from num in context.StudentAppNum
-                                  where num.Id == id && num.Status != "Complete"
-                                  select num.Status).First().ToString());
+                                   where num.Id == id && num.Status != "Complete"
+                                   select num.Status).First().ToString());
                     tableData.Insert(0, id.ToString());
 
                     // ass data for each application to dictionary
                     wholeTable.Add(id, tableData);
 
-
                     var getSigned = (from data in context.ApplicationData
-                                     where data.DataKeyId == 38 && data.RecordId == id
+                                     where data.DataKeyId == 47 && data.RecordId == id
                                      select data.Value).FirstOrDefault();
 
                     signed.Add(id, getSigned);
                 }
 
-
-                ViewBag.Students = getStudents;
-                ViewBag.Professor = profClass;
                 ViewBag.getSigned = signed;
+                ViewBag.Students = getStudents;
                 ViewBag.tableCols = tableColumns;
                 return View(wholeTable);
             }
         }
-      
-        public IActionResult ProfViewApplication(int appId)
+
+        public IActionResult SSViewApplication(int appId)
         {
             id = appId;
             string studName, className;
-           List<string> professorInputs = new List<string>();
-            Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails 
-                = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
+            List<string> cbaInputs = new List<string>();
+            Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails
+            = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             using (var context1 = new Models.ApplicationDbContext())
             {
                 var combined = from data in context1.ApplicationData
@@ -125,26 +115,24 @@ namespace Interactive_Internship_Application.Controllers
                              select data.Value).FirstOrDefault();
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data);
 
-                var profValues = (from data in context1.ApplicationTemplate
-                                  where data.Entity == "Professor"
-                                  select data.ProperName).ToList();
+                var ssValues = (from data in context1.ApplicationTemplate
+                                where data.Entity == "CBA Student Services"
+                                select data.ProperName).ToList();
 
-                professorInputs = profValues;
+                cbaInputs = ssValues;
             }
-
             ViewBag.studName = studName;
             ViewBag.className = className;
             ViewBag.recordId = appId;
-            ViewBag.profInputs = professorInputs;
-
+            ViewBag.cbaInputs = cbaInputs;
             return View(appDetails);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Submitted(IEnumerable<Interactive_Internship_Application.Models.ApplicationTemplate> ApplicationTemplateModel, string response, int record)
         {
+
             string result = response; //used to determine if a new Student App Num needs to be created
             var context = new ApplicationDbContext();
 
@@ -153,24 +141,17 @@ namespace Interactive_Internship_Application.Controllers
             context.SaveChanges();
 
             //get students record ID 
-            var currStudentRecordId = record;
+            int currStudentRecordId = record;
 
-            //get number of fields student enters
-            int numProfFieldCount = (from x in context.ApplicationTemplate
-                                        where x.Entity == "Professor"
+            //get number of fields Student Services enters
+            int numSSFieldCount = (from x in context.ApplicationTemplate
+                                        where x.Entity == "CBA Student Services"
                                         select x).Count();
 
+            // Save the values to the database
             if (response.Contains("Submit"))
             {
-                foreach (var rec in dict)
-                {
-                    if (rec.Value.Length <= 0)
-                    {
-                        return View("ProfViewApplication");
-                    }
-                }
-
-                Save(dict, currStudentRecordId, numProfFieldCount);
+                Save(dict, currStudentRecordId, numSSFieldCount);
             }
             return View("Index");
         }
