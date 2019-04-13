@@ -350,7 +350,17 @@ namespace Interactive_Internship_Application.Controllers
                 {
                     if (item.Value.Length > 0) //only saves input information (no empty info)
                     {
-                        var key = item.Key.Substring(0, 2);
+                        string key;
+                        // var key = item.Key.Substring(0, 2);
+
+                        if(item.Key.Length < 2)
+                        {
+                            key = item.Key.Substring(0, 1);
+                        }
+                        else
+                        {
+                            key = item.Key.Substring(0, 2).Trim();
+                        }
                         int intKey = Int32.Parse(key);
                         var appDataCurrent = new ApplicationData { RecordId = currId, DataKeyId = intKey, Value = item.Value };
 

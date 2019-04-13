@@ -18,17 +18,24 @@
         <body>
             <!-- Login Buttons-->
             <form asp-action="Login" asp-controller="Employer" asp-antiforgery="true" method="post">
-                @Html.AntiForgeryToken()
-                Email: <br>
-                <input type="text" id="emailBox" autocomplete="off" name="email"><br>
-                Pin: <br>
-                <input type="password" id="passBox" autocomplete="off" name="pass"><br> <br>
-                <!-- NEEDS TO BE CHANGED IN THE FUTURE-->
-                <!-- validate() determines if valid login; if valid, send to appropriate page-->
-                <input type="submit" class="buttonMenu" name="response" value="Login" formaction=@Url.Action("Login")
-                       formmethod="post">
-                <br><br>
+                @Html.AntiForgeryToken();
+                
+                
+                <div class="form-group">
+                    <b>Email:</b> <br>
+                    <input type="text" id="emailBox" autocomplete="off" name="email"><br>
+                    <b>Pin: </b>  <br>
+                    <input type="password" id="passBox" autocomplete="off" name="pass"><br> <br>
+                    <!-- NEEDS TO BE CHANGED IN THE FUTURE-->
+                    <!-- validate() determines if valid login; if valid, send to appropriate page-->
+                    <input type="submit" class="buttonMenu" name="response" value="Login" formaction=@Url.Action("Login")
+                           formmethod="post">
+                    <br><br>
+                </div>
 
+
+                
+               
                     <font size=".75em">
                         *Login using the credentials emailed to you.
                         If you have forgotten your pin, please click  @Html.ActionLink("here ", "ClickToEmployerForgotLogin", "Employer")

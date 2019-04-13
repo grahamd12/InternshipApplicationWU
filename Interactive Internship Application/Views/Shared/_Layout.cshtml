@@ -27,17 +27,6 @@
                 <button type="submit" class="buttonMenu">Logout</button>
             </form>
         </header>
-
-    <header>
-        <div id="gradientTop"></div>
-        <div id="mastheadHomePage"></div>
-        <div id="gradientAudience"></div>
-        <form asp-area="Identity" asp-page="/Account/Logout"
-              asp-route-returnUrl="@Url.Page("/", new { area = "" })"
-              method="post">
-            <button type="submit" class="buttonMenu">Logout</button>
-        </form>
-    </header>
         
     <div class="container">
         <partial name="_CookieConsentPartial" />
@@ -53,15 +42,6 @@
                 803/323-2211
             </span>
         </div>
-
-        <footer class="footer" style="position:absolute;bottom:0;">
-            <div id="gradientBottom">
-                <span class="whiteBottomText">
-                    © Winthrop University · 701 Oakland Avenue · Rock Hill, SC 29733, USA ·
-                    803/323-2211
-                </span>
-            </div>
-        </footer>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
             crossorigin="anonymous"></script>
