@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Http;
 
 namespace Interactive_Internship_Application.Controllers
 {
@@ -64,7 +65,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 double secondsSinceLastLoggedIn = differenceOfTime.TotalSeconds;
 
-                if (secondsSinceLastLoggedIn > 10000)
+                if (secondsSinceLastLoggedIn > 172800)
                 {
                     //put error to user here to tell them to log in with the newly generated pin. 
 
@@ -232,13 +233,13 @@ namespace Interactive_Internship_Application.Controllers
 
         public IActionResult ClickToEmployerForgotLogin()
         {
-
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ForgotLogin(string empEmail)
+        public ActionResult ForgotLogin(IFormCollection collection)
         {
+            var empEmail = Request.Form["email"].ToString();
             try
 
             {
@@ -249,9 +250,10 @@ namespace Interactive_Internship_Application.Controllers
                 if (checkEmailExists == null)
                 {
                     //need to error check here just returning to the login page
-                    return LocalRedirect("~/Employer");
+                    return Redirect("~/Global/ErrorInvalidEmailForgotLogin");
                 }
 
+                
                 //employer's email did exist
                 else
                 {
@@ -274,7 +276,7 @@ namespace Interactive_Internship_Application.Controllers
                     Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
                     emailsGenerated.EmployerForgotPin(emailHost, emailPort, emailUsername, emailPassword, employerEmail, newPin);
 
-                    return LocalRedirect("~/Employer");
+                    return LocalRedirect("~/Employer/Index");
                 }
                
             }

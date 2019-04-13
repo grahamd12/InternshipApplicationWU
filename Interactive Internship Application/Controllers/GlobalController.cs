@@ -18,5 +18,10 @@ namespace Interactive_Internship_Application.Controllers
         {
             return View();
         }
+
+        public IActionResult ErrorInvalidEmailForgotLogin()
+        {
+            return View();
+        }
     }
 }
