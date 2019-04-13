@@ -182,7 +182,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 // get amount of active applications
                 var tableRowSize = (from apps in context.StudentAppNum
-                                    where apps.Status != "Complete"
+                                    where apps.Status != "Approved" && apps.Status != "Declined"
                                     select apps.Id).ToList();
 
                 // get proper column names that we want to display in table
@@ -197,14 +197,24 @@ namespace Interactive_Internship_Application.Controllers
                 tableColumns.Add("View Application Details");
 
                 // get data on each active application
-                var columnData = (from num in context.StudentAppNum
+                var allColumnData = (from num in context.StudentAppNum
                                    join data in context.ApplicationData on num.Id equals data.RecordId
                                    join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
                                    where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
                                       temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
-                                      temp.FieldName == "org_name" && num.Status != "Complete"
-                                   select new { id = num.Id, field = temp.FieldName, value = data.Value })
+                                      temp.FieldName == "org_name"
+                                   select new { id = num.Id, field = temp.FieldName, value = data.Value, stat=num.Status })
                                    .ToList();
+                var columnData = (from apps in allColumnData
+                                 where apps.stat != "Declined" && apps.stat != "Approved"
+                                 select new
+                                 {
+                                     id = apps.id,
+                                     field = apps.field,
+                                     value = apps.value
+                                 }).ToList();
+
+
 
                 foreach (var id in tableRowSize)
                 {
@@ -213,9 +223,12 @@ namespace Interactive_Internship_Application.Controllers
                                  where data.id == id
                                  select data.value).ToList();
 
+                    var studAppStatus = (from appNum in context.StudentAppNum
+                                   where appNum.Id == id
+                                   select appNum.Status).First();
                     // add status of each app to list
                     tableData.Add((from num in context.StudentAppNum
-                                  where num.Id == id && num.Status != "Complete"
+                                  where num.Id == id && num.Status == studAppStatus.ToString()
                                   select num.Status).First().ToString());
 
                     tableData.Insert(0, id.ToString());
@@ -239,7 +252,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 // get amount of active applications
                 var tableRowSize = (from apps in context.StudentAppNum
-                                    where apps.Status == "Complete"
+                                    where apps.Status == "Approved" || apps.Status == "Declined"
                                     select apps.Id).ToList();
 
                 // get proper column names that we want to display in table
@@ -249,19 +262,38 @@ namespace Interactive_Internship_Application.Controllers
                                            temp.FieldName == "org_name"
                                     select temp.ProperName).ToList();
 
+                tableColumns.Add("Status");
+
                 tableColumns.Add("View Application Details");
+
+                var allColumnData = (from num in context.StudentAppNum
+                                     join data in context.ApplicationData on num.Id equals data.RecordId
+                                     join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
+                                     where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
+                                        temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
+                                        temp.FieldName == "org_name"
+                                     select new { id = num.Id, field = temp.FieldName, value = data.Value, stat = num.Status })
+                                  .ToList();
+                var columnData = (from apps in allColumnData
+                                  where apps.stat == "Declined" || apps.stat == "Approved"
+                                  select new
+                                  {
+                                      id = apps.id,
+                                      field = apps.field,
+                                      value = apps.value
+                                  }).ToList();
 
 
                 // get data on each active application
-                var columnData = (from num in context.StudentAppNum
+        /*        var columnData = (from num in context.StudentAppNum
                                   join data in context.ApplicationData on num.Id equals data.RecordId
                                   join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
                                   where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
                                      temp.FieldName == "name" || temp.FieldName == "graduation year" || temp.FieldName == "major_conc" ||
-                                     temp.FieldName == "org_name" && num.Status != "Complete"
+                                     temp.FieldName == "org_name" && num.Status == "Approved" && num.Status == "Declined"
                                   select new { id = num.Id, field = temp.FieldName, value = data.Value })
                                   .ToList();
-
+*/
                 foreach (var id in tableRowSize)
                 {
                     // add data from each application to list
@@ -271,7 +303,7 @@ namespace Interactive_Internship_Application.Controllers
 
                     tableData.Insert(0, id.ToString());
                     // add "complete" status to each of the applications
-                    tableData.Add("Complete");
+                    tableData.Add("Approved");
 
                     //add data for each application to dictionary
                     wholeTable.Add(id, tableData);
@@ -285,8 +317,7 @@ namespace Interactive_Internship_Application.Controllers
         public IActionResult ApplicationDetails(int appID)
         {
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
-            string studName, className;
-
+            string studName, className, status;
             using (var context = new Models.ApplicationDbContext())
             {
                 // get fields and their data
@@ -305,6 +336,9 @@ namespace Interactive_Internship_Application.Controllers
                              where data.RecordId == appID && data.DataKeyId == 1
                              select data.Value).FirstOrDefault();
 
+                status = (from data in context.StudentAppNum
+                         where data.Id == appID
+                         select data.Status).First();
 
                 // fancy lambda functions for combining the two lists into a dictionary
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data); 
@@ -314,6 +348,7 @@ namespace Interactive_Internship_Application.Controllers
             ViewBag.Id = appID;
             ViewBag.studName = studName;
             ViewBag.className = className;
+            ViewBag.status = status;
             return View(appDetails);
         }
 
@@ -323,10 +358,27 @@ namespace Interactive_Internship_Application.Controllers
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             int appID = Int32.Parse(dict["recordID"]);
             var context = new ApplicationDbContext();
+            int count = 0;
+
+         //   var studentAppNum = new StudentAppNum { Id = appID };
+
+            var studApp = (from appNum in context.StudentAppNum
+                           where appNum.Id == appID
+                           select appNum).First();
+
+            if (dict.ElementAt(2).Value.Length == 0)
+            {
+                studApp.Status = "Approved";
+            }
+            else
+            {
+                studApp.Status = "Declined";
+            }
+            context.SaveChanges();
 
             foreach (var item in dict)
             {
-                int count = 0;
+
                 if (count < (dict.Count - 2))
                 {
                     if (item.Value.Length > 0)
@@ -337,7 +389,7 @@ namespace Interactive_Internship_Application.Controllers
                         var prevSaved = (from record in context.ApplicationData
                                          where record.DataKeyId == intKey && record.RecordId == appID
                                          select record).SingleOrDefault();
-
+                      
                         if (prevSaved != null)
                         {
                             prevSaved.Value = appDataCurrent.Value;
@@ -349,6 +401,7 @@ namespace Interactive_Internship_Application.Controllers
                         context.SaveChanges();
                     }
                 }
+
                 count++;
             }
 
@@ -371,8 +424,8 @@ namespace Interactive_Internship_Application.Controllers
                     columnData = (from num in context.StudentAppNum
                                       join data in context.ApplicationData on num.Id equals data.RecordId
                                       join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
-                                      where num.Status != "Complete"
-                                      select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
+                                      where num.Status != "Approved" || num.Status != "Declined"
+                                  select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
                                       .ToList();
                 }
 
@@ -382,7 +435,7 @@ namespace Interactive_Internship_Application.Controllers
                     columnData = (from num in context.StudentAppNum
                                       join data in context.ApplicationData on num.Id equals data.RecordId
                                       join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
-                                      where num.Status == "Complete"
+                                      where num.Status == "Approved" || num.Status == "Declined"
                                       select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
                                       .ToList();
                 }

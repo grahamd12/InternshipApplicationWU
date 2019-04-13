@@ -3,21 +3,41 @@
 
     function acceptBoxes() {
         acceptFields = document.getElementById('acceptFields');
+        acceptFields2 = document.getElementById('acceptFields2');
+
+
         denyFields = document.getElementById('denyFields');
         saveBox = document.getElementById('saveBox');
 
+        denyFields.style.display = "none";
         denyFields.style.visibility = "hidden";
+
+        acceptFields.style.display = "block";
         acceptFields.style.visibility = "visible";
+
+        acceptFields2.style.display = "block";
+        acceptFields2.style.visibility = "visible";
+
+        saveBox.style.display = "block";
         saveBox.style.visibility = "visible";
     }
     function denyBoxes() {
         denyFields = document.getElementById('denyFields');
         acceptFields = document.getElementById('acceptFields');
+        acceptFields2 = document.getElementById('acceptFields2');
         saveBox = document.getElementById('saveBox');
 
-        acceptFields.style.visibility = "hidden";
-        saveBox.style.visibility = "visible";
+        denyFields.style.display = "block";
         denyFields.style.visibility = "visible";
+
+        acceptFields.style.display = "none";
+        acceptFields.style.visibility = "hidden";
+
+        acceptFields2.style.display = "none";
+        acceptFields2.style.visibility = "hidden";
+
+        saveBox.style.display = "block";
+        saveBox.style.visibility = "visible";
     }
 </script>
 
@@ -50,35 +70,37 @@
                 </table>
             </td>
             <td style="padding-left:50px;width:20px;">
-                <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
-                <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
+                
                 <form asp-action="FinishApplication" asp-controller="DER" asp-antiforgery="true" method="post">
-                        @foreach (var field in Model)
+                    @foreach (var field in Model)
+                    {
+                        @if ((ViewBag.status != "Approved") && (ViewBag.status != "Declined"))
                         {
-                            <div id="acceptFields" style="visibility:hidden;">
-                                @if (field.Key.FieldName == "DER_sig" )
-                                {
-                                    @field.Key.ProperName <br />
-                                    <input type="text" class='input' name=@field.Key.Id value="" size="15" /> <br />
+                            <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
+                            <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
 
-                                }
-                                @if (field.Key.FieldName == "DER_date")
-                                {
-                                    @field.Key.ProperName <br />
-                                    <input type="text" class='input' name=@field.Key.Id value="" size="15" /> <br />
+                            @if (field.Key.FieldName == "DER_sig")
+                            {
+                                <br />
+                                <input type="text" id="acceptFields" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
 
-                                }
-                            </div>    
-                            <div id="denyFields" style="visibility:hidden;">
-                                @if (field.Key.FieldName == "denial_reas")
-                                {
-                                    @field.Key.ProperName <br />
-                                    <textarea type="text" class="input" name=@field.Key.Id value="" size="15" rows="5" cols="15" maxlength="500"></textarea> <br />
-                                }
-                            </div>
+                            }
+                            @if (field.Key.FieldName == "DER_date")
+                            {
+                                <br />
+                                <input type="text" id="acceptFields2" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
+
+                            }
+                            @if (field.Key.FieldName == "denial_reas")
+                            {
+                                <br />
+                                <textarea type="text" id="denyFields" style="display:block; visibility:hidden"
+                                          class="input" name="@field.Key.Id" size="15" rows="5" cols="15" maxlength="500" placeholder="@field.Key.ProperName"></textarea> <br />
+                            }
                         }
-                    
-                    <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' style="visibility:hidden;" formaction=@Url.Action("FinishApplication") ;
+                    }
+
+                    <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' style="visibility:hidden;display:none" formaction=@Url.Action("FinishApplication") ;
                            formmethod="post">
 
                     <input type="hidden" name="recordID" value="@ViewBag.Id" />
