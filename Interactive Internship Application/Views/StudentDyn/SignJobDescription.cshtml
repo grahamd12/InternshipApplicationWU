@@ -85,25 +85,35 @@
                 <form asp-action="SignedJobDescription" asp-controller="StudentDyn" asp-antiforgery="true" method="post">
                     @foreach (var field in ViewBag.studentInputs)
                     {
-                            @if (field.FieldName == "intern_sig1")
-                            {
-                                @field.ProperName <br />
-                                <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
 
-                            }
-                            @if (field.FieldName == "intern_date1")
-                            {
-                                @field.ProperName <br />
-                                <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
+                        @if (field.FieldName == "intern_sig1")
+                        {
+                            @field.ProperName <br />
+                            <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
 
-                            }
-                       
+                        }
+                        @if (field.FieldName == "intern_date1")
+                        {
+                            @field.ProperName <br />
+                            <input type="text" class='input' name=@field.Id value="" size="15" /> <br />
+
+                        }
+
+
                     }
+                    @if (ViewBag.prevId == null)
+                    {
+                        <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' formaction=@Url.Action("SignedJobDescription") ;
+                               formmethod="post">
 
-                    <input type='submit' id="saveBox" class="buttonMenu" value='Submit Response' formaction=@Url.Action("SignedJobDescription") ;
+                        <input type="hidden" name="recordID" value="@ViewBag.recordId" />
+                    }
+                    else
+                    {
+                    <input type='submit' id="saveBox" class="buttonMenuDisabled" disabled="disabled" value='Submit Response' formaction=@Url.Action("SignedJobDescription") ;
                            formmethod="post">
 
-                    <input type="hidden" name="recordID" value="@ViewBag.recordId" />
+                    }
                 </form>
             </td>
         </tr>

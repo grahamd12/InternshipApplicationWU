@@ -94,6 +94,13 @@ namespace Interactive_Internship_Application.Controllers
                 var getSingleFieldName = from app in _dataContext.ApplicationTemplate
                                          where app.Deleted == false
                                          select app;
+                var studentValues = from data in _dataContext.ApplicationTemplate
+                                    where data.Entity == "Student"
+                                    where data.FieldName.Contains("sig")
+                                    || data.FieldName.Contains("date")
+                                    where data.FieldDescription.Contains("guidelines")
+                                    || data.FieldDescription.Contains("section")
+                                    select data;
 
                 var filledOutGood = new Dictionary<int, string>();
                 //if previously saved application, grab data that was saved
@@ -134,6 +141,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 ViewBag.className = eName;
                 ViewBag.fieldNames = getSingleFieldName;
+                ViewBag.studentValues = studentValues;
 
                 return View(filledOutGood);
 
@@ -444,7 +452,18 @@ namespace Interactive_Internship_Application.Controllers
                              select data.Value).FirstOrDefault();
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data);
 
-              /*  var studentValues = (from data in _dataContext.ApplicationTemplate
+            var prevIds = from data in _dataContext.ApplicationTemplate
+                          where data.Entity == "Student"
+                          where data.FieldName.Contains("sig")
+                          || data.FieldName.Contains("date")
+                          where data.FieldDescription.Contains("employer")
+                          || data.FieldDescription.Contains("learning")
+                          select data.ApplicationData;
+          /*  var prevSigned = (from data in _dataContext.ApplicationData
+                              where data.DataKeyId == Convert.ToInt32(studentValues.Id)
+                                select data.ApplicationData.Value);
+
+                var studentValues = (from data in _dataContext.ApplicationTemplate
                                   where data.Entity == "Student" 
                                   where data.FieldName.Contains("sig")
                                   where data.FieldDescription.Contains("employer")
@@ -463,6 +482,7 @@ namespace Interactive_Internship_Application.Controllers
             ViewBag.className = className;
             ViewBag.recordId = appId;
             ViewBag.studentInputs = studentValues;
+            ViewBag.prevId = prevIds;
 
             return View(appDetails);
           }
