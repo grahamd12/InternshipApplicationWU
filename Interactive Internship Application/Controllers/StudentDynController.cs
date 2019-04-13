@@ -160,10 +160,9 @@ namespace Interactive_Internship_Application.Controllers
         {
 
             string result = response;  //used to determine if a new Student App Num needs to be created
-            var context = new ApplicationDbContext();
 
             //below gets the student's email using queries
-            var studentsEmail = (from student in context.StudentInformation
+            var studentsEmail = (from student in _dataContext.StudentInformation
                                  where student.Email == User.Identity.Name.ToString()
                                  select student.Email).FirstOrDefault();
 
@@ -212,38 +211,38 @@ namespace Interactive_Internship_Application.Controllers
                 newEmployerLogin.Email = employerEmail;
                 newEmployerLogin.Pin = Convert.ToInt16(pin);
                 newEmployerLogin.LastLogin = DateTime.Now;
-                context.EmployerLogin.Add(newEmployerLogin);
-                context.SaveChanges();
+                _dataContext.EmployerLogin.Add(newEmployerLogin);
+                _dataContext.SaveChanges();
 
                 //save student email, employer ID, and application status to Student App Num Table
                 StudentAppNum newApp = new StudentAppNum();
                 newApp.StudentEmail = studentsEmail;
-                newApp.EmployerId = (from application in context.EmployerLogin
+                newApp.EmployerId = (from application in _dataContext.EmployerLogin
                                      where application.StudentEmail == studentsEmail &&
                                      application.Email == employerEmail
                                      select application.Id).FirstOrDefault();
 
                 newApp.Status = "Incomplete";
 
-                context.StudentAppNum.Add(newApp);
-                context.SaveChanges();
+                _dataContext.StudentAppNum.Add(newApp);
+                _dataContext.SaveChanges();
 
             }
 
             //used to determine which Student App Num ID to use
-            int empId = (from application in context.EmployerLogin
+            int empId = (from application in _dataContext.EmployerLogin
                          where application.StudentEmail == studentsEmail &&
                          application.Email == employerEmail
                          select application.Id).FirstOrDefault();
 
             //get students record ID 
-            var currStudentRecordId = (from stuAppNum in context.StudentAppNum
+            var currStudentRecordId = (from stuAppNum in _dataContext.StudentAppNum
                                        where stuAppNum.StudentEmail == studentsEmail &&
                                        stuAppNum.EmployerId == empId
                                        select stuAppNum.Id).FirstOrDefault();
 
             //get number of fields student enters
-            int numStudentFieldCount = (from x in context.ApplicationTemplate
+            int numStudentFieldCount = (from x in _dataContext.ApplicationTemplate
                                         where x.Entity == "Student"
                                         select x).Count();
 
@@ -278,50 +277,32 @@ namespace Interactive_Internship_Application.Controllers
 
                 //if submitting application, ensure everything is saved in database
 
-
-                //get employer's name
-                var employerName = (from appData in context.ApplicationData
-                                    join appTemp in context.ApplicationTemplate
-                                    on appData.DataKeyId equals appTemp.Id
-                                    where appData.RecordId == currStudentRecordId
-                                    && appTemp.FieldName == "supervisors_name"
-                                    select appData.Value).FirstOrDefault();
-
-
-                //get employer's title
-                var employerTitle = (from appData in context.ApplicationData
-                                     join appTemp in context.ApplicationTemplate
-                                     on appData.DataKeyId equals appTemp.Id
-                                     where appData.RecordId == currStudentRecordId
-                                     && appTemp.FieldName == "supervisors_title"
-                                     select appData.Value).FirstOrDefault();
-
                 //get employer's pin
-                var empPin = (from empData in context.EmployerLogin
+                var empPin = (from empData in _dataContext.EmployerLogin
                               where empData.Email == employerEmail
                               select empData.Pin).FirstOrDefault();
 
                 short employerPin = Convert.ToInt16(empPin);
 
                 //get employer's Company name
-                var employerCompanyName = (from appData in context.ApplicationData
-                                           join appTemp in context.ApplicationTemplate
+                var employerCompanyName = (from appData in _dataContext.ApplicationData
+                                           join appTemp in _dataContext.ApplicationTemplate
                                            on appData.DataKeyId equals appTemp.Id
                                            where appData.RecordId == currStudentRecordId
                                            && appTemp.FieldName == "org_name"
                                            select appData.Value).FirstOrDefault();
 
                 //get student's name
-                var studentName = (from appData in context.ApplicationData
-                                   join appTemp in context.ApplicationTemplate
+                var studentName = (from appData in _dataContext.ApplicationData
+                                   join appTemp in _dataContext.ApplicationTemplate
                                    on appData.DataKeyId equals appTemp.Id
                                    where appData.RecordId == currStudentRecordId
                                    && appTemp.FieldName == "name"
                                    select appData.Value).FirstOrDefault();
 
                 //get class student is trying to enroll in
-                var classEnrolled = (from appData in context.ApplicationData
-                                     join appTemp in context.ApplicationTemplate
+                var classEnrolled = (from appData in _dataContext.ApplicationData
+                                     join appTemp in _dataContext.ApplicationTemplate
                                      on appData.DataKeyId equals appTemp.Id
                                      where appData.RecordId == currStudentRecordId &&
                                      appTemp.FieldName == "class_enrolled"
@@ -341,12 +322,14 @@ namespace Interactive_Internship_Application.Controllers
 
                 //change student's application status to "Pending Employer Approval"       
 
-                var changeStatusApp = new StudentAppNum { Id = currStudentRecordId,StudentEmail = studentsEmail,EmployerId =empId };
+                //  var changeStatusApp = new StudentAppNum { Id = currStudentRecordId,StudentEmail = studentsEmail,EmployerId =empId, Status ="Incomplete" };
+                StudentAppNum changeStatusApp = (from appNum in _dataContext.StudentAppNum
+                                                 where appNum.Id == currStudentRecordId
+                                                 select appNum).FirstOrDefault();
                 changeStatusApp.Status = "Pending Employer Approval";
             
-                context.SaveChanges();
+                _dataContext.SaveChanges();
 
-                return View("Index");
 
             }
             return View("Index");
@@ -394,9 +377,41 @@ namespace Interactive_Internship_Application.Controllers
             return View("Index");
         }
 
+        //shows student in which part of application process each of their
+        //applications is in
         public IActionResult CheckStatus()
-        {
+        { 
+            //get current user's email and Student App Num IDs
+            var studentEmail = (from student in _dataContext.StudentInformation
+                                where student.Email == User.Identity.Name.ToString()
+                                select student.Email).FirstOrDefault();
 
+            //get all application IDs for student 
+            var currStudentRecordId = (from stuAppNum in _dataContext.StudentAppNum
+                                       where stuAppNum.StudentEmail == studentEmail
+                                       select stuAppNum.Id).ToList();
+            Dictionary<string, string> classStatus = new Dictionary<string, string>();
+
+            foreach (var item in currStudentRecordId)
+            {
+                //get status of particular student app num id
+                string status = (from stuAppNum in _dataContext.StudentAppNum
+                                 where stuAppNum.Id == item
+                                 select stuAppNum.Status).FirstOrDefault().ToString();
+
+                //get class name of particular student app num id
+                string className = (from appData in _dataContext.ApplicationData
+                                    join appTemp in _dataContext.ApplicationTemplate
+                                    on appData.DataKeyId equals appTemp.Id
+                                    where appData.RecordId == item &&
+                                    appTemp.FieldName == "class_enrolled"
+                                    select appData.Value).FirstOrDefault().ToString();
+
+                classStatus.Add(className, status);
+                   
+            }
+
+            ViewBag.classStatus = classStatus;
             return View();
         }
     
@@ -426,8 +441,10 @@ namespace Interactive_Internship_Application.Controllers
 
                     //class names of classes student has applied for
                     var classNameCurr = (from appData in _dataContext.ApplicationData
+                                         join appTemp in _dataContext.ApplicationTemplate
+                                        on appData.DataKeyId equals appTemp.Id
                                          where appData.RecordId == id
-                                         where appData.DataKeyId == 1
+                                         where appTemp.FieldName=="class_enrolled"
                                          select appData.Value).First().ToString();
 
                     //status of application of particular class student has applied for
