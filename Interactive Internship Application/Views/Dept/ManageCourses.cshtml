@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<!--Menu-->
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://www.winthrop.edu">Winthrop Homepage</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+
+
+        </table>
+
+        <h1><i>Department Representative</i></h1>
+        <br /><br />
+        @foreach (var item in ViewBag.courseData)
+        {
+                <input name="button" type="button" class="buttonMenu" value="@item.Key" onclick="location.href='@Url.Action("ManageProfApps", "Dept", new { Class = item.Key })'">
+        <br /><br />
+        }
+
+        <br /><br />
+    </div>
+</head>
+
+
+
+</html>

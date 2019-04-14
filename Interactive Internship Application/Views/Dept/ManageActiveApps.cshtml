@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+        </table>
+        <style>
+            .activeTable
+            table {
+                display: inline-block;
+                overflow-y: auto;
+                height: 400px;
+                width: inherit;
+            }
+        </style>
+</head>
+<body>
+    @model Dictionary<int, List<string>>
+    <div style="text-align: center">
+        <h1>Active Applications</h1>
+        <table class ="activeTable" border="1" cellpadding="10" align="center">
+            <thead>
+                <tr>
+                    <th>App ID</th>
+                    @foreach (var column in ViewBag.tableCols)
+                    {
+                        <th>@column</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{List<int> recordIds = new List<int>(); }
+                @{ var professorClass = ViewBag.Professor;}
+
+                @foreach (var row in Model)
+                {
+
+                    if (!ViewBag.Dept.Contains(row.Value[1]))
+                    {
+                        // whenever the Value from Application Data is equal to any course name
+                        // the department rep covers, grab that record ID. Then, use it to make
+                        // entries into the table. 
+                        continue;
+                    }
+
+
+                    int id = 0;
+                    int count = 0;
+                    <tr>
+                        @foreach (var item in row.Value)
+                        {
+                            if (count == 0)
+                            {
+                                id = Convert.ToInt32(item);
+                            }
+                            <td>@item</td>
+                            count++;
+                        }
+                        <td>
+                            @{int studRecord = row.Key;
+                                string result;
+                                bool test = ViewBag.getSigned.TryGetValue(studRecord, out result);
+                                bool trueTest = string.IsNullOrEmpty(result);
+
+                                if (!trueTest)
+                                {
+                                    <input name="approve" checked='checked' type="checkbox" disabled />
+                                }
+                                else
+                                {
+                                    <input name="approve" type="checkbox" disabled />
+                                }
+                            }
+                        </td>
+                        <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("DeptViewApplication", "Dept", new { appID = id })'"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

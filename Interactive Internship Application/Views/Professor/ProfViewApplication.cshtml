@@ -8,11 +8,30 @@
 <meta charset="UTF-8">
 <html>
 <head>
-    <h1><u>@ViewBag.className</u></h1>
-    <title>
-       <i>Viewing @ViewBag.studName's Application</i>
-    </title>
-    <h1><i>Viewing @ViewBag.studName's Application</i></h1>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+            </table>
+            <h1><u>@ViewBag.className</u></h1>
+            <title>
+                <i>Viewing @ViewBag.studName's Application</i>
+            </title>
+            <h1><i>Viewing @ViewBag.studName's Application</i></h1>
 </head>
 <body>
     

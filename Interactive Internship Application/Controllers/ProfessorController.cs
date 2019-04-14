@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Interactive_Internship_Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Interactive_Internship_Application.Controllers
 {
+    [Authorize(Roles = "Admin,Professor")]
     public class ProfessorController : Controller
     {
         int id;
@@ -27,7 +29,9 @@ namespace Interactive_Internship_Application.Controllers
         [HttpGet]
         public IActionResult ManageActiveApps()
         {
-            string profClass;
+
+            //Gets list of all classes this professor teaches.
+            List<string> profClass = new List<string>();
             List<string> tableData = new List<string>();
             Dictionary<int, List<string>> wholeTable = new Dictionary<int, List<string>>();
 
@@ -41,7 +45,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 profClass = (from faculty in context.FacultyInformation
                          where faculty.ProfEmail == profEmail
-                         select faculty.CourseName).FirstOrDefault();
+                         select faculty.CourseName).ToList();
 
                 var tableRowSize = (from apps in context.StudentAppNum
                                     where apps.Status != "Complete"
@@ -101,7 +105,7 @@ namespace Interactive_Internship_Application.Controllers
                 return View(wholeTable);
             }
         }
-      
+
         public IActionResult ProfViewApplication(int appId)
         {
             id = appId;
