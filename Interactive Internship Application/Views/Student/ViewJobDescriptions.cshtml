@@ -40,7 +40,7 @@
             {
                 <!--after employer submits their part of application, status
         changes to "Pending Professor Approval"-->
-                <form asp-action="SignJobDescription" asp-controller="StudentDyn" method="post">
+                <form asp-action="SignJobDescription" asp-controller="Student" method="post">
                     <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("SignJobDescription", new { appId = @ViewBag.classInfo[item] }) 
                            formmethod="post">
                 </form>

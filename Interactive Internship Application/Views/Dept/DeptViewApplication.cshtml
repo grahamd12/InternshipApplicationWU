@@ -1,0 +1,98 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <!-- Link CSS styling code to html page-->
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
+    <div style="text-align: center">
+        <!--Quick Links-->
+        <table align="left" style="width:20%" margin-left="10px">
+            <tr>
+                <th>Quick Links</th>
+            </tr>
+            <tr>
+                <td><a href="https://bb-winthrop.blackboard.com">Blackboard</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://ssb.winthrop.edu/prod/bwckctlg.p_disp_dyn_ctlg">Course Descriptions</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://wingspan.winthrop.edu">Wingspan</a></td>
+            </tr>
+        </table>
+        <h1><u>@ViewBag.className</u></h1>
+        <title>
+            <i>Viewing @ViewBag.studName's Application</i>
+        </title>
+        <h1><i>Viewing @ViewBag.studName's Application</i></h1>
+</head>
+<body>
+
+    @{int count = 0;}
+    @model Dictionary<ApplicationTemplate, ApplicationData>
+
+    <table align="center" width="80%" border="1" cellpadding="3">
+        <tr>
+            <font style:bold>
+                <td>
+                    <b>
+                        Field Name
+                    </b>
+                </td>
+                <td>
+                    <b>
+                        Answer
+                    </b>
+                </td>
+            </font>
+        </tr>
+        @Html.AntiForgeryToken()
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Key.ProperName
+                </td>
+                <td>
+                    @item.Value.Value
+                </td>
+            </tr>
+        }
+    </table>
+    <form asp-action="Submitted" asp-controller="Professor" asp-antiforgery="true" method="post">
+        <table align="center" width="80%" cellpadding="3">
+            <tr>
+                @{int id = 38; }
+                @foreach (var item in ViewBag.profInputs)
+                {
+                    <td>
+                        @item
+                    </td>
+                    <td>
+
+                        <input type="text" name="@id" value="" size="15" />
+                        @{id++;
+                        }
+
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" class="buttonMenu" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                           formmethod="post">
+                    <input type="hidden" id="submit" name="record" value="@ViewBag.recordId" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

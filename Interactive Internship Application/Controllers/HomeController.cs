@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ * Controller for initial login page for WU Entities
+ * */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

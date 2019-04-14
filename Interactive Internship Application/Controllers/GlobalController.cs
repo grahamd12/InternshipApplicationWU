@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ * Controller for Employer's Regenerate Pin and Invalid Login errors
+ * */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

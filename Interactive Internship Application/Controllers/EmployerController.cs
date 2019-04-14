@@ -1,3 +1,7 @@
+/*
+ * Controller for Employer Views
+ * */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -214,12 +218,17 @@ namespace Interactive_Internship_Application.Controllers
                 Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
                 emailsGenerated.EmployerToProfessorEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, professorEmail, employerCompanyName, classEnrolled);
 
-
+                //change status of student's application
+                var stuApp = (from studentApp in context.StudentAppNum
+                              where studentApp.Id == studentUniqueRecordNum
+                              select studentApp).First();
+                stuApp.Status = "Pending Professor Approval";
+                context.SaveChanges();
             }
             catch
             {
                 
-                return View();
+                return View("~/Views/Employer/CompanyInformation.cshtml");
             }
             return View("~/Views/Employer/ThankYouLogout.cshtml");
         }
@@ -262,7 +271,7 @@ namespace Interactive_Internship_Application.Controllers
                     var employerEmail = EmployerEmail.employerEmail;
                     //grab the employers current row and save the newly generated pin here. 
                     var employerLoginRow = (from employer in context.EmployerLogin
-                                            where employer.Email == EmployerEmail.employerEmail
+                                            where employer.Email == empEmail
                                             select employer).First();
                     employerLoginRow.Pin = newPin;
                     employerLoginRow.LastLogin = DateTime.Now;
@@ -274,9 +283,9 @@ namespace Interactive_Internship_Application.Controllers
                     string emailPassword = configuration["Email:Smtp:Password"];
 
                     Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
-                    emailsGenerated.EmployerForgotPin(emailHost, emailPort, emailUsername, emailPassword, employerEmail, newPin);
+                    emailsGenerated.EmployerForgotPin(emailHost, emailPort, emailUsername, emailPassword, empEmail, newPin);
 
-                    return LocalRedirect("~/Employer/Index");
+                    return RedirectToAction("Index");
                 }
                
             }

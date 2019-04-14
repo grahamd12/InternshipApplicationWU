@@ -37,7 +37,7 @@
         {
             if (ViewBag.classStatus[@item] == "Incomplete")
             {
-                <form asp-action="Application" asp-controller="StudentDyn" method="post">
+                <form asp-action="Application" asp-controller="Student" method="post">
                     <input type="submit" class="buttonMenu" name="response" value=@item formaction=@Url.Action("Application", new { eName = @item }) ;
                            formmethod="post">
                 </form>
@@ -45,7 +45,7 @@
             }
             else
             {
-                <form asp-action="Application" asp-controller="StudentDyn" method="post">
+                <form asp-action="Application" asp-controller="Student" method="post">
                     <input type="submit" class="buttonMenuDisabled" name="response" disabled="disabled" value=@item formaction=@Url.Action("Application", new { eName = @item }) ;
                            formmethod="post">
                 </form>
@@ -55,7 +55,7 @@
         }
 
         <!--display option for student to create a new application-->
-        <form asp-action="Application" asp-controller="StudentDyn" method="post">
+        <form asp-action="Application" asp-controller="Student" method="post">
             <input type="submit" class="buttonMenu" name="response" value="CREATE NEW APPLICATION" formaction=@Url.Action("Application", new { eName = "New" }) ;
                    formmethod="post">
         </form>

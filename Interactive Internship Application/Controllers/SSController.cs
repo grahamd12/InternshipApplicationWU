@@ -1,13 +1,19 @@
-﻿using System;
+﻿/*
+ * Controller for CBA Student Services Views
+ * */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Interactive_Internship_Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Interactive_Internship_Application.Controllers
 {
+    [Authorize(Roles = "Admin,SS")]
     public class SSController : Controller
     {
         int id;
