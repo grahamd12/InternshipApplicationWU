@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <html>
 <head>
-    <h1><u>@ViewBag.className</u></h1>
     <title>
         <i>Viewing @ViewBag.studName's Application</i>
     </title>
@@ -39,8 +38,8 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @item.Key.ProperName
+                <td title="@item.Key.FieldDescription">
+                        @item.Key.ProperName
                 </td>
                 <td>
                     @item.Value.Value
@@ -51,16 +50,16 @@
     <form asp-action="Submitted" asp-controller="SS" asp-antiforgery="true" method="post">
         <table align="center" width="80%" cellpadding="3">
             <tr>
-                @{int id = 47;
+                @{
                     int counts = 0;}
                 @foreach (var item in ViewBag.cbaInputs)
                 {
                     <td>
-                        @item
+                        @item.Value
                     </td>
                     <td>
-                        <input type="text" name="@id" value="" size="15" />
-                        @{id++;
+                        <input type="text" name="@item.Key" value="" size="15" />
+                        @{
                             counts++;
                             if (counts == 2) {
                                 counts = 0;
