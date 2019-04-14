@@ -214,12 +214,17 @@ namespace Interactive_Internship_Application.Controllers
                 Global.EmailsGenerated emailsGenerated = new EmailsGenerated();
                 emailsGenerated.EmployerToProfessorEmail(emailHost, emailPort, emailUsername, emailPassword, studentName, professorEmail, employerCompanyName, classEnrolled);
 
-
+                //change status of student's application
+                var stuApp = (from studentApp in context.StudentAppNum
+                              where studentApp.Id == studentUniqueRecordNum
+                              select studentApp).First();
+                stuApp.Status = "Pending Professor Approval";
+                context.SaveChanges();
             }
             catch
             {
                 
-                return View();
+                return View("~/Views/Employer/CompanyInformation.cshtml");
             }
             return View("~/Views/Employer/ThankYouLogout.cshtml");
         }

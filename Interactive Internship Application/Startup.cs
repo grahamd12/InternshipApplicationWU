@@ -168,10 +168,10 @@ namespace Interactive_Internship_Application
             var UserSS = new IdentityUser();
             await UserManager.AddToRoleAsync(userSS, "SS");
 
-            /*           IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
+                     IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
                        var UserEmployer = new IdentityUser();
                        await UserManager.AddToRoleAsync(userEmployer, "Employer");
-
+/*
                        IdentityUser userEmployer2 = await UserManager.FindByEmailAsync("brandonadill1@gmail.com");
                        var UserEmployer2 = new IdentityUser();
                        await UserManager.AddToRoleAsync(userEmployer2, "Employer");
