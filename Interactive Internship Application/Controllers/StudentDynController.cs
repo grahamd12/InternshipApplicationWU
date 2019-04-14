@@ -506,41 +506,34 @@ namespace Interactive_Internship_Application.Controllers
                                 select data;
 
                 className = (from data in _dataContext.ApplicationData
-                             where data.RecordId == appId && data.DataKeyId == 1
+                             join appTemp in _dataContext.ApplicationTemplate
+                             on data.DataKeyId equals appTemp.Id
+                             where data.RecordId == appId &&
+                             appTemp.FieldName == "class_enrolled"
                              select data.Value).FirstOrDefault();
                 appDetails = combined.ToDictionary(t => t.fields, t => t.data);
 
-            var prevIds = from data in _dataContext.ApplicationTemplate
-                          where data.Entity == "Student"
-                          where data.FieldName.Contains("sig")
-                          || data.FieldName.Contains("date")
-                          where data.FieldDescription.Contains("employer")
-                          || data.FieldDescription.Contains("learning")
-                          select data.ApplicationData;
-          /*  var prevSigned = (from data in _dataContext.ApplicationData
-                              where data.DataKeyId == Convert.ToInt32(studentValues.Id)
-                                select data.ApplicationData.Value);
-
-                var studentValues = (from data in _dataContext.ApplicationTemplate
-                                  where data.Entity == "Student" 
-                                  where data.FieldName.Contains("sig")
-                                  where data.FieldDescription.Contains("employer")
-                                  select data.ProperName).ToList();
-               var studentDate = (from data in _dataContext.ApplicationTemplate
-                                  where data.Entity == "Student"
-                                  where data.FieldName.Contains("date")
-                                  where data.FieldDescription.Contains("learning")
-                                  select data.ProperName).ToString();
-            studentValues.Add(studentDate);
-
-    */
-           // studentValues.Add("Today's Date");
-          //  studentInputs = studentValues;
+            var prevIds = (from data in _dataContext.ApplicationData
+                          join appTemp in _dataContext.ApplicationTemplate
+                          on data.DataKeyId equals appTemp.Id
+                          where appTemp.Entity == "Student"
+                          where data.RecordId == appId
+                          where appTemp.FieldName.Contains("sig")
+                          && appTemp.FieldDescription.Contains("employer")
+                          select data.Value).ToList();
+    
 
             ViewBag.className = className;
             ViewBag.recordId = appId;
             ViewBag.studentInputs = studentValues;
-            ViewBag.prevId = prevIds;
+            if(prevIds.Count > 0)
+            {
+                ViewBag.prevId = prevIds;
+            }
+            else
+            {
+                ViewBag.prevId = null;
+            }
 
             return View(appDetails);
           }
