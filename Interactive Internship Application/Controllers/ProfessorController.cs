@@ -114,7 +114,7 @@ namespace Interactive_Internship_Application.Controllers
         {
             id = appId;
             string studName, className;
-           List<string> professorInputs = new List<string>();
+           Dictionary<int, string> professorInputs = new Dictionary<int, string>();
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails 
                 = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             using (var context1 = new Models.ApplicationDbContext())
@@ -136,8 +136,16 @@ namespace Interactive_Internship_Application.Controllers
                 var profValues = (from data in context1.ApplicationTemplate
                                   where data.Entity == "Professor"
                                   select data.ProperName).ToList();
+                var profKeys = (from data in context1.ApplicationTemplate
+                                where data.Entity == "Professor"
+                                select data.Id).ToList();
 
-                professorInputs = profValues;
+                for(int i = 0; i < profKeys.Count(); i++)
+                {
+                    professorInputs.Add(profKeys[i], profValues[i]);
+                }
+
+                
             }
 
             ViewBag.studName = studName;

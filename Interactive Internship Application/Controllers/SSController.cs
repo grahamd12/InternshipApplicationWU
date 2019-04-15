@@ -102,7 +102,7 @@ namespace Interactive_Internship_Application.Controllers
         {
             id = appId;
             string studName, className;
-            List<string> cbaInputs = new List<string>();
+            Dictionary<int, string> cbaInputs = new Dictionary<int, string>();
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails
             = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             using (var context1 = new Models.ApplicationDbContext())
@@ -125,7 +125,16 @@ namespace Interactive_Internship_Application.Controllers
                                 where data.Entity == "CBA Student Services"
                                 select data.ProperName).ToList();
 
-                cbaInputs = ssValues;
+                var ssKeys = (from data in context1.ApplicationTemplate
+                              where data.Entity == "CBA Student Services"
+                              select data.Id).ToList();
+
+                for(int i = 0; i < ssKeys.Count(); i++)
+                {
+                    cbaInputs.Add(ssKeys[i], ssValues[i]);
+                }
+
+                
             }
             ViewBag.studName = studName;
             ViewBag.className = className;

@@ -107,6 +107,11 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
                     }
                     else if (getCurrentRole[0] == "SS")
                     {
+                        return LocalRedirect("/Dept");
+                    }
+                    else if (getCurrentRole[0] == "SS")
+                    {
+
                         return LocalRedirect("/SS");
                     }
 
