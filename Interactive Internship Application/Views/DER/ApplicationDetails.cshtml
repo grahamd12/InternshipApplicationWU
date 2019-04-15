@@ -70,7 +70,9 @@
                 </table>
             </td>
             <td style="padding-left:50px;width:20px;">
-                
+                <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
+                <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
+
                 <form asp-action="FinishApplication" asp-controller="DER" asp-antiforgery="true" method="post">
                     @foreach (var field in Model)
                     {
@@ -79,8 +81,7 @@
 
                             @if (field.Key.FieldName == "DER_sig")
                             {
-                                <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
-                                <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
+
                                 <br />
                                 <input type="text" id="acceptFields" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
 

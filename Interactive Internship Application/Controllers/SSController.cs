@@ -153,6 +153,13 @@ namespace Interactive_Internship_Application.Controllers
 
             //save submitted information into a dictionary
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            //grab the current status and then update it in the database.
+            var currentApp = (from stuAppNum in context.StudentAppNum
+                              where stuAppNum.Id == record
+                              select stuAppNum).First();
+
+            currentApp.Status = "Pending Director of External Relations Approval";
             context.SaveChanges();
 
             //get students record ID 

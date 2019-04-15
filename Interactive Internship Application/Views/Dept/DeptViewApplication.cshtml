@@ -83,9 +83,18 @@
             </tr>
             <tr>
                 <td>
-                    <input type="submit" class="buttonMenu" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
-                           formmethod="post">
-                    <input type="hidden" id="submit" name="record" value="@ViewBag.recordId" />
+                    @if (ViewBag.prevId != null)
+                    {
+                        <input type="submit" class="buttonMenuDisabled" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                               formmethod="post" disabled="disabled">
+                        <input type="hidden" id="submit" name="record" value="@ViewBag.recordId" />
+                    }
+                    else
+                    {
+                        <input type="submit" class="buttonMenu" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                               formmethod="post">
+                        <input type="hidden" id="submit" name="record" value="@ViewBag.recordId" />
+                    }
                 </td>
             </tr>
         </table>

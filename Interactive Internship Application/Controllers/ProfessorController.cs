@@ -85,17 +85,29 @@ namespace Interactive_Internship_Application.Controllers
                                  select data.value).ToList();
 
                     // add status
-                    tableData.Add((from num in context.StudentAppNum
-                                  where num.Id == id && num.Status != "Complete"
-                                  select num.Status).First().ToString());
-                    tableData.Insert(0, id.ToString());
+                    var statusAdd = (from num in context.StudentAppNum
+                                     where num.Id == id && num.Status == "Pending Professor Approval"
+                                     select num.Status).FirstOrDefault();
+                    if (statusAdd == null)
+                    {
+
+                    }
+                    else
+                    {
+                        statusAdd = statusAdd.ToString();
+                        tableData.Add(statusAdd);
+                        tableData.Insert(0, id.ToString());
+                    }
+                   
 
                     // ass data for each application to dictionary
                     wholeTable.Add(id, tableData);
 
-
+                    
                     var getSigned = (from data in context.ApplicationData
-                                     where data.DataKeyId == 38 && data.RecordId == id
+                                     join appTemp in context.ApplicationTemplate
+                                     on data.DataKeyId equals appTemp.Id
+                                     where appTemp.FieldName == "prof_sig" && data.RecordId == id
                                      select data.Value).FirstOrDefault();
 
                     signed.Add(id, getSigned);
@@ -144,10 +156,23 @@ namespace Interactive_Internship_Application.Controllers
                 {
                     professorInputs.Add(profKeys[i], profValues[i]);
                 }
-
-                
+                //check to see if they professor already signed the students portion of the application. If so, then disable the button for them to do so again, to avoid error
+                var prevIds = (from data in _dataContext.ApplicationData
+                               join appTemp in _dataContext.ApplicationTemplate
+                               on data.DataKeyId equals appTemp.Id
+                               where appTemp.Entity == "Professor"
+                               where data.RecordId == appId
+                               where appTemp.FieldName.Contains("prof_sig")
+                               select data.Value).ToList();
+                if (prevIds.Count > 0)
+                {
+                    ViewBag.prevId = prevIds;
+                }
+                else
+                {
+                    ViewBag.prevId = null;
+                }
             }
-
             ViewBag.studName = studName;
             ViewBag.className = className;
             ViewBag.recordId = appId;
@@ -166,6 +191,13 @@ namespace Interactive_Internship_Application.Controllers
 
             //save submitted information into a dictionary
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+          
+            //grab the current status and then update it in the database.
+            var currentApp = (from stuAppNum in context.StudentAppNum
+                              where stuAppNum.Id == record
+                              select stuAppNum).First();
+        
+            currentApp.Status = "Pending Student Services Approval";
             context.SaveChanges();
 
             //get students record ID 

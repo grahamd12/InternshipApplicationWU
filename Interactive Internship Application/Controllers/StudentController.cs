@@ -348,7 +348,7 @@ namespace Interactive_Internship_Application.Controllers
             foreach (var item in dict)
             {
 
-                if (count < (numFields - 3)) //don't count submitted button response
+                if (count < (numFields - 5)) //don't count submitted button response
                                              //in field count
                 {
                     if (item.Value.Length > 0) //only saves input information (no empty info)

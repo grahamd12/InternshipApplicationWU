@@ -318,10 +318,26 @@ namespace Interactive_Internship_Application.Controllers
 
         public IActionResult ApplicationDetails(int appID)
         {
+            
             Dictionary<Models.ApplicationTemplate, Models.ApplicationData> appDetails = new Dictionary<Models.ApplicationTemplate, Models.ApplicationData>();
             string studName, className, status;
             using (var context = new Models.ApplicationDbContext())
             {
+                ApplicationData row = new ApplicationData();
+                row.DataKeyId = 40;
+                row.RecordId = appID;
+                row.Value = "";
+                context.SaveChanges();
+
+                row.DataKeyId = 41;
+                row.RecordId = appID;
+                row.Value = "";
+                context.SaveChanges();
+
+                row.DataKeyId = 42;
+                row.RecordId = appID;
+                row.Value = "";
+                context.SaveChanges();
                 // get fields and their data
                 var combined = from data in context.ApplicationData
                                join fields in context.ApplicationTemplate on data.DataKeyId equals fields.Id
@@ -444,7 +460,7 @@ namespace Interactive_Internship_Application.Controllers
 
                 // get current time and decide name for generated csv filed
                 DateTime currTime = DateTime.Today;
-                string filePath = @"C:\Users\Daniel Branham\Desktop\" + actInact + "_Applications_Generated_Report_" + currTime.ToString("MM - dd - yyy") + ".csv";
+                string filePath = @"C:\Users\Brand\Desktop\" + actInact + "_Applications_Generated_Report_" + currTime.ToString("MM - dd - yyy") + ".csv";
                 string delimiter = ",";
                 string columnString = "";
                 string dataString = "";

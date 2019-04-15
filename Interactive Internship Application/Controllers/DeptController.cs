@@ -82,7 +82,7 @@ namespace Interactive_Internship_Application.Controllers
                              select faculty.CourseName).ToList();
 
                 var tableRowSize = (from apps in context.StudentAppNum
-                                    where apps.Status != "Complete"
+                                    where apps.Status == "Pending Professor Approval"
                                     select apps.Id).ToList();
 
                 var tableColumns = (from temp in context.ApplicationTemplate
@@ -117,18 +117,18 @@ namespace Interactive_Internship_Application.Controllers
 
                     // add status
                     tableData.Add((from num in context.StudentAppNum
-                                   where num.Id == id && num.Status != "Complete"
+                                   where num.Id == id && num.Status == "Pending Professor Approval"
                                    select num.Status).First().ToString());
                     tableData.Insert(0, id.ToString());
 
                     // ass data for each application to dictionary
                     wholeTable.Add(id, tableData);
 
-                    var getSigned = (from data in context.ApplicationData
-                                     where data.DataKeyId == 47 && data.RecordId == id
-                                     select data.Value).FirstOrDefault();
+                 //   var getSigned = (from data in context.ApplicationData
+                   //                  where data.DataKeyId == 47 && data.RecordId == id
+                     //                select data.Value).FirstOrDefault();
 
-                    signed.Add(id, getSigned);
+                    //signed.Add(id, getSigned);
                 }
 
                 ViewBag.Dept = deptClass;
@@ -172,7 +172,7 @@ namespace Interactive_Internship_Application.Controllers
                                    where temp.FieldName == "class_enrolled" || temp.FieldName == "semester" ||
                                            temp.FieldName == "name" || temp.FieldName == "graduation year" ||
                                            temp.FieldName == "major_conc" ||
-                                           temp.FieldName == "org_name" && num.Status != "Complete"
+                                           temp.FieldName == "org_name" && num.Status == "Pending Professor Approval"
                                    select new { id = num.Id, field = temp.FieldName, value = data.Value }).ToList();
 
                 // this dictionary will tell the user if the application has been signed or not
@@ -184,19 +184,29 @@ namespace Interactive_Internship_Application.Controllers
                     tableData = (from data in getStudents
                                  where data.id == id
                                  select data.value).ToList();
-
+                   
                     // add status
-                    tableData.Add((from num in context.StudentAppNum
-                                   where num.Id == id && num.Status != "Complete"
-                                   select num.Status).First().ToString());
-                    tableData.Insert(0, id.ToString());
+                    var statusAdd = (from num in context.StudentAppNum
+                                     where num.Id == id && num.Status == "Pending Professor Approval"
+                                     select num.Status).FirstOrDefault();
+                    if (statusAdd == null)
+                    {
 
+                    }
+                    else
+                    {
+                        statusAdd = statusAdd.ToString();
+                        tableData.Add(statusAdd);
+                        tableData.Insert(0, id.ToString());
+                    }
                     // ass data for each application to dictionary
                     wholeTable.Add(id, tableData);
 
 
                     var getSigned = (from data in context.ApplicationData
-                                     where data.DataKeyId == 38 && data.RecordId == id
+                                     join appTemp in context.ApplicationTemplate
+                                     on data.DataKeyId equals appTemp.Id
+                                     where appTemp.FieldName == "prof_sig" && data.RecordId == id
                                      select data.Value).FirstOrDefault();
 
                     signed.Add(id, getSigned);
@@ -245,6 +255,23 @@ namespace Interactive_Internship_Application.Controllers
                                 where data.Entity == "Professor"
                                 select data.Id).ToList();
 
+                //check to see if they professor already signed the students portion of the application. If so, then disable the button for them to do so again, to avoid error
+                var prevIds = (from data in _dataContext.ApplicationData
+                               join appTemp in _dataContext.ApplicationTemplate
+                               on data.DataKeyId equals appTemp.Id
+                               where appTemp.Entity == "Professor"
+                               where data.RecordId == appId
+                               where appTemp.FieldName.Contains("prof_sig")
+                               select data.Value).ToList();
+                if (prevIds.Count > 0)
+                {
+                    ViewBag.prevId = prevIds;
+                }
+                else
+                {
+                    ViewBag.prevId = null;
+                }
+
                 for (int i = 0; i < profKeys.Count(); i++)
                 {
                     professorInputs.Add(profKeys[i], profValues[i]);
@@ -269,6 +296,13 @@ namespace Interactive_Internship_Application.Controllers
 
             //save submitted information into a dictionary
             var dict = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+
+            //grab the current status and then update it in the database.
+            var currentApp = (from stuAppNum in context.StudentAppNum
+                              where stuAppNum.Id == id
+                              select stuAppNum).First();
+
+            currentApp.Status = "Pending Student Services Approval";
             context.SaveChanges();
 
             //get students record ID 
