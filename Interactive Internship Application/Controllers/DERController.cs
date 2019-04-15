@@ -1,3 +1,6 @@
+/*
+ * Controller for D.E.R. Views
+ * */
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -193,7 +196,6 @@ namespace Interactive_Internship_Application.Controllers
                                     select temp.ProperName).ToList();
 
                 tableColumns.Add("Status");
-                tableColumns.Add("Signed");
                 tableColumns.Add("View Application Details");
 
                 // get data on each active application
@@ -424,7 +426,7 @@ namespace Interactive_Internship_Application.Controllers
                     columnData = (from num in context.StudentAppNum
                                       join data in context.ApplicationData on num.Id equals data.RecordId
                                       join temp in context.ApplicationTemplate on data.DataKeyId equals temp.Id
-                                      where num.Status != "Approved" || num.Status != "Declined"
+                                      where num.Status != "Approved" && num.Status != "Declined"
                                   select new { id = num.Id, prop = temp.ProperName, field = temp.FieldName, ent = temp.Entity, value = data.Value })
                                       .ToList();
                 }

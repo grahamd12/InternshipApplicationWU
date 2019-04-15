@@ -1,10 +1,8 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
+﻿
 <!DOCTYPE html>
+<!-- Link CSS styling code to html page-->
+<link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
 <meta charset="UTF-8">
 <html>
 <head>
@@ -61,23 +59,24 @@
                         <input type="text" name="@item.Key" value="" size="15" />
                         @{
                             counts++;
-                            if (counts == 2) {
+                            if (counts == 2)
+                            {
                                 counts = 0;
-                                <tr></tr>
-                            }
+                        <tr></tr>
+                    }
                         }
 
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" class="buttonMenu" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
+                               formmethod="post">
+                        <input type="hidden" id="submit" name="record" value="@ViewBag.recordId"
                     </td>
-                }
-            </tr>
-            <tr>
-                <td>
-                    <input type="submit" id="submit" name="response" value="Submit" formaction=@Url.Action("Submitted")
-                           formmethod="post">
-                    <input type="hidden" id="submit" name="record" value="@ViewBag.recordId"
-                </td>
-            </tr>
-        </table>
-    </form>
-</body>
+                </tr>
+            </table>
+        </form>
+    </body>
 </html>

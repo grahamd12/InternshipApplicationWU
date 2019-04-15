@@ -136,12 +136,12 @@ namespace Interactive_Internship_Application
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Dept"));
             }
             // Adding CBA Student Services Role
-            var roleCheckSS = await RoleManager.RoleExistsAsync("SS");
-            if (!roleCheckSS)
-            {
-                //create the roles and seed them to the database 
-                roleResult = await RoleManager.CreateAsync(new IdentityRole("SS"));
-            }
+            //var roleCheckSS = await RoleManager.RoleExistsAsync("SS");
+            //if (!roleCheckSS)
+            //{
+            //    //create the roles and seed them to the database 
+            //    roleResult = await RoleManager.CreateAsync(new IdentityRole("SS"));
+            //}
             /*
                         //Adding Employer Role 
                         var roleCheckEmployer = await RoleManager.RoleExistsAsync("Employer");
@@ -152,7 +152,7 @@ namespace Interactive_Internship_Application
                         }
             */
             //the below gives people roles, for testing and should be changed with winthrop authentication as well
-            IdentityUser userStudent = await UserManager.FindByEmailAsync("milokjovicm2@mailbox.winthrop.edu");
+            IdentityUser userStudent = await UserManager.FindByEmailAsync("milojkovicm2@mailbox.winthrop.edu");
             var UserStudent = new IdentityUser();
             await UserManager.AddToRoleAsync(userStudent, "Student");
 
@@ -164,14 +164,18 @@ namespace Interactive_Internship_Application
             var UserDept = new IdentityUser();
             await UserManager.AddToRoleAsync(userDept, "Dept");
 
-            IdentityUser userSS = await UserManager.FindByEmailAsync("dust.grahm@gmail.com");
-            var UserSS = new IdentityUser();
-            await UserManager.AddToRoleAsync(userSS, "SS");
+            //IdentityUser userSS = await UserManager.FindByEmailAsync("dust.grahm@gmail.com");
+            //var UserSS = new IdentityUser();
+            //await UserManager.AddToRoleAsync(userSS, "SS");
 
                      IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
                        var UserEmployer = new IdentityUser();
                        await UserManager.AddToRoleAsync(userEmployer, "Employer");
 /*
+                       IdentityUser userEmployer = await UserManager.FindByEmailAsync("lloydb2@mailbox.winthrop.edu");
+                       var UserEmployer = new IdentityUser();
+                       await UserManager.AddToRoleAsync(userEmployer, "Employer");
+            
                        IdentityUser userEmployer2 = await UserManager.FindByEmailAsync("brandonadill1@gmail.com");
                        var UserEmployer2 = new IdentityUser();
                        await UserManager.AddToRoleAsync(userEmployer2, "Employer");

@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿<!--
+Shows student's portion of application   
+-->
+
+<!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
 
@@ -45,12 +49,7 @@
     <br>
 
 </head>
-<!--display data from Controller-->
-<!-- Iterates through every piece in the list and displays it-->
-<!--NEED TO ADD DROP DOWN MENU TO DB-->
-<!--variable to determine where to put breaks-->
-<!-- determine if student tried to save/submit without entering class
-    enrolled and/or employer email-->
+
 
 @{
     var count = 0; //used for html spacing
@@ -60,7 +59,7 @@
 
 }
 
-<form asp-action="Submitted" asp-controller="StudentDynamic" asp-antiforgery="true" method="post">
+<form asp-action="Submitted" asp-controller="Student" asp-antiforgery="true" method="post">
     @Html.AntiForgeryToken()
     <table align="center">
         <tr>

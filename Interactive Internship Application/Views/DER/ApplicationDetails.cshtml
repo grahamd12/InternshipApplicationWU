@@ -76,11 +76,11 @@
                     {
                         @if ((ViewBag.status != "Approved") && (ViewBag.status != "Declined"))
                         {
-                            <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
-                            <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
 
                             @if (field.Key.FieldName == "DER_sig")
                             {
+                                <input type='submit' class="buttonMenu" value='Approve Application' onclick='acceptBoxes(); return false;'><br />
+                                <input type='submit' class="buttonMenu" value='Deny Application' onclick='denyBoxes(); return false;'>
                                 <br />
                                 <input type="text" id="acceptFields" style="visibility:hidden; display:none" class="input" name="@field.Key.Id" size="15" placeholder="@field.Key.ProperName" /> <br />
 
@@ -96,6 +96,7 @@
                                 <br />
                                 <textarea type="text" id="denyFields" style="display:block; visibility:hidden"
                                           class="input" name="@field.Key.Id" size="15" rows="5" cols="15" maxlength="500" placeholder="@field.Key.ProperName"></textarea> <br />
+
                             }
                         }
                     }

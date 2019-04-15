@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ * Controller for CBA Student Services Views
+ * */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Interactive_Internship_Application.Models;
