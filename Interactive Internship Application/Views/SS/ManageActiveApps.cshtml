@@ -1,4 +1,7 @@
 ﻿<!DOCTYPE html>
+<!-- Link CSS styling code to html page-->
+<link href="~/css/site.css" rel="stylesheet" type="text/css" />
+
 <meta charset="UTF-8">
 <html>
 <head>
@@ -47,27 +50,27 @@
                             <td>@item</td>
                             count++;
                         }
-                            <td>
+                        <td>
 
-                                @*This code determines if each individual application has already been
+                            @*This code determines if each individual application has already been
                                 signed or not. If so, it selects the checkbox, and if not it leaves
-                                the box unchecked.*@ 
+                                the box unchecked.*@
 
-                                @{int studRecord = row.Key;
-                                    string result;
-                                    bool test = ViewBag.getSigned.TryGetValue(studRecord, out result);
-                                    bool trueTest = string.IsNullOrEmpty(result);
+                            @{int studRecord = row.Key;
+                                string result;
+                                bool test = ViewBag.getSigned.TryGetValue(studRecord, out result);
+                                bool trueTest = string.IsNullOrEmpty(result);
 
-                                    if (!trueTest)
-                                    {
-                                        <input name="approve" checked='checked' type="checkbox" disabled />
-                                    }
-                                    else
-                                    {
-                                        <input name="approve" type="checkbox" disabled />
-                                    }
+                                if (!trueTest)
+                                {
+                                    <input name="approve" checked='checked' type="checkbox" disabled />
                                 }
-                            </td>
+                                else
+                                {
+                                    <input name="approve" type="checkbox" disabled />
+                                }
+                            }
+                        </td>
                         <td><input name="details" type="button" class="buttonMenu" value="View App @id" onclick="location.href='@Url.Action("SSViewApplication", "SS", new { appID = id })'"></td>
                     </tr>
                 }
