@@ -99,23 +99,15 @@ namespace Interactive_Internship_Application.Areas.Identity.Pages.Account
                     }
                     else if (getCurrentRole[0] == "Student")
                     {
-                        return LocalRedirect("/StudentDyn");
+                        return LocalRedirect("/Student");
                     }
-       /*             else if (getCurrentRole[0] == "Employer")
-                    {
-                      
-
-                        }
-                       else
-                        {
-                            return LocalRedirect("/Employer/CompanyInformation");
-                        }
-                    }
-*/
-                    //yo we gotta change this in the future when we get a department controller
                     else if (getCurrentRole[0] == "Dept")
                     {
-                        return LocalRedirect("/Home");
+                        return LocalRedirect("/Dept");
+                    }
+                    else if (getCurrentRole[0] == "SS")
+                    {
+                        return LocalRedirect("/SS");
                     }
 
                     return LocalRedirect(returnUrl);

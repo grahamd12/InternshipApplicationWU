@@ -16,11 +16,11 @@ namespace Interactive_Internship_Application.Controllers
 
     [Authorize(Roles = "Admin,Student")]
 
-    public class StudentDynController : Controller
+    public class StudentController : Controller
     {
         public Models.ApplicationDbContext _dataContext { get; set; }
         IConfiguration configuration;
-        public StudentDynController(Models.ApplicationDbContext dataContext, IConfiguration iconfiguration)
+        public StudentController(Models.ApplicationDbContext dataContext, IConfiguration iconfiguration)
         {
             _dataContext = dataContext;
             configuration = iconfiguration;
